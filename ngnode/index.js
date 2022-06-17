@@ -14,7 +14,7 @@ app.put('/update-Student/:id',StudentController.update);
 app.get('/edit-Student/:id',StudentController.getid);
 const io = require('socket.io')(http, {
   cors: {
-    origins: ['http://localhost:4200', 'http://localhost:3000']
+    origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001']
   }
 });
 
