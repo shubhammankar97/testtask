@@ -35,6 +35,6 @@ app.all('*', function (req, res) {
     res.status(200).sendFile(`/`, {root: _app_folder});
 });
 
-http.listen(3000, () => {
-  console.log('listening on *:3000');
+http.listen(3001, () => {
+  console.log('listening on *:3001');
 });
