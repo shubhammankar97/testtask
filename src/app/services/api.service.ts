@@ -31,5 +31,9 @@ return this.http.post('http://localhost:3000/add-Student',dataSourceChangedEvent
   
     return this.http.put('http://localhost:3000/update-Student/'+id,dataSourceChangedEvent.data, httpOptions);
       }
+      deleteRecord(state:any,id:any){
   
+        return this.http.delete('http://localhost:3000/delete-Student/'+state.data[0].id, httpOptions);
+          }
 }
+

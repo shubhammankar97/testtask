@@ -27,13 +27,18 @@ export class AppComponent {
   public formatOptions!: Object;
   public contextMenuItems!: Object[];
   public selectionSettings!: Object;
-  
+  public contextMenuSettings: any;
   @ViewChild('treegrid')
   public treegrid!: TreeGridComponent;
   public d1data!: Object;
   
 
-  constructor(private api : ApiService , private http : HttpClient ,private socketService: SocketioService){ }
+  constructor(private api : ApiService , private http : HttpClient ,private socketService: SocketioService){ 
+    this.contextMenuSettings = {
+      showContextMenu: true,
+      contextMenuItems: ["add", "edit", "delete"]
+  }
+  }
   ngOnInit(): void {
   
           this.api.getAll().subscribe((res:any)=>{
@@ -170,6 +175,13 @@ public dataSourceChanged(dataSourceChangedEvent: DataSourceChangedEventArgs):voi
   { 
     var getId:any = dataSourceChangedEvent.data;
     this.api.updateRecord(dataSourceChangedEvent,getId.id).subscribe(()=>{
+      dataSourceChangedEvent.endEdit
+    })
+  }
+  if(dataSourceChangedEvent.requestType === "delete")
+  { 
+    var getId:any = dataSourceChangedEvent.data;
+    this.api.deleteRecord(dataSourceChangedEvent,getId.id).subscribe(()=>{
       dataSourceChangedEvent.endEdit
     })
   }
