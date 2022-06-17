@@ -14,7 +14,7 @@ app.put('/update-Student/:id',StudentController.update);
 app.get('/edit-Student/:id',StudentController.getid);
 const io = require('socket.io')(http, {
   cors: {
-    origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001']
+    origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001', 'http://192.168.7.136:4001']
   }
 });
 
@@ -35,6 +35,6 @@ app.all('*', function (req, res) {
     res.status(200).sendFile(`/`, {root: _app_folder});
 });
 
-http.listen(3001, () => {
-  console.log('listening on *:3001');
+http.listen(4001, () => {
+  console.log('listening on *:4001');
 });
