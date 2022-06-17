@@ -35,9 +35,11 @@ export class AppComponent {
 
   constructor(private api : ApiService , private http : HttpClient ,private socketService: SocketioService){ }
   ngOnInit(): void {
-    this.socketService.setupSocketConnection();
+  
           this.api.getAll().subscribe((res:any)=>{
-            this.data = res
+            // this.data = res
+            this.data = res.filter((item: any) => item);
+            console.log("data",res)
           })
           this.selectionSettings = { type: 'Multiple' };
 
@@ -49,7 +51,7 @@ export class AppComponent {
 
         this.contextMenuItems = ['AutoFit', 'AutoFitAll', 'SortAscending', 'SortDescending','Edit', 'Delete', 'Save', 'Cancel', 'PdfExport', 'ExcelExport', 'CsvExport', 'FirstPage', 'PrevPage', 'LastPage', 'NextPage'];
         this.selectionSettings = { type: 'Multiple' };
-        
+        this.socketService.setupSocketConnection();
         }
 
         actionComplete(args: DialogEditEventArgs) {
@@ -158,7 +160,6 @@ alert(asdasd)
         }
 
 public dataSourceChanged(dataSourceChangedEvent: DataSourceChangedEventArgs):void{
-  console.log(dataSourceChangedEvent.action);
   if(dataSourceChangedEvent.action === "add")
   {
     this.api.addRecord(dataSourceChangedEvent).subscribe(()=>{
