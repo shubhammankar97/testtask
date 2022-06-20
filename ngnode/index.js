@@ -14,7 +14,7 @@ app.put('/update-Student/:id',StudentController.update);
 app.get('/edit-Student/:id',StudentController.getid);
 const io = require('socket.io')(http, {
   cors: {
-    origins: ['http://localhost:4200']
+    origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001', 'http://192.168.7.136:4001','https://pdptappsensor.elb.cisinlive.com']
   }
 });
 
@@ -24,6 +24,17 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 });
-http.listen(3000, () => {
-  console.log('listening on *:3000');
+const _app_folder = 'dist/testaskk';
+//const app = express();
+
+// ---- SERVE STATIC FILES ---- //
+app.get('*.*', express.static(_app_folder, {maxAge: '1y'}));
+
+// ---- SERVE APLICATION PATHS ---- //
+app.all('*', function (req, res) {
+    res.status(200).sendFile(`/`, {root: _app_folder});
+});
+
+http.listen(4001, () => {
+  console.log('listening on *:4001');
 });
