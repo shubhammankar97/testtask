@@ -5,6 +5,10 @@ parentIdMapping='parentID' [height]='265' [editSettings]='editSettings' [toolbar
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
  [selectionSettings]='selectionSettings' allowSelection='true'
 (dataSourceChanged)="dataSourceChanged($event)"
+(beforeOpen)='beforeOpen($event)'
+itemBeforeEvent={this.itemBeforeEvent.bind(this)}
+(select)="onSelect($event)" 
+ 
 >
   <e-columns>
     <e-column field='id' headerText='Student ID' textAlign='Right' width=70 [showColumnMenu]="true" isPrimaryKey="true" type="number"></e-column>
@@ -14,8 +18,23 @@ parentIdMapping='parentID' [height]='265' [editSettings]='editSettings' [toolbar
     
 </e-columns>
 </ejs-treegrid>
-
-
+<ejs-contextmenu
+    id="contextmenu"
+    #contextmenu
+    target=".e-content"
+    [items]="menuItems"
+    (select)="onSelect($event)"
+    (beforeItemRender)="itemBeforeEvent($event)"
+  ></ejs-contextmenu
+  >
+  <div>
+  <ejs-contextmenu #headercontextmenu target='.e-gridheader'
+  [items]='headermenuItems' 
+  (beforeItemRender)="itemBeforeEvent($event)"
+   (select)='select($event)'></ejs-contextmenu>
+  </div>
+  <div>
+ 
 <!-- frozen code
  [frozenColumns]='1' [frozenRows]='3' [allowSelection]='false' [enableHover]='false'
  -->

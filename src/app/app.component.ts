@@ -3,10 +3,10 @@ import { Component, ViewChild, OnInit, ViewEncapsulation} from '@angular/core';
 import { VirtualScrollService, TreeGridComponent, EditSettingsModel, ToolbarItems , EditService, ToolbarService  } from '@syncfusion/ej2-angular-treegrid';
 import { ApiService } from './services/api.service';
 import {PageSettingsModel, SortSettingsModel } from '@syncfusion/ej2-angular-treegrid';
-import { DataSourceChangedEventArgs, dialogDestroy, DialogEditEventArgs, GridComponent } from '@syncfusion/ej2-angular-grids';
+import { DataSourceChangedEventArgs, dialogDestroy, DialogEditEventArgs, GridComponent, parentsUntil } from '@syncfusion/ej2-angular-grids';
 import { Dialog } from '@syncfusion/ej2-popups';
 import { SocketioService } from './socketio.service';
-import { ContextMenuComponent, MenuItemModel } from '@syncfusion/ej2-angular-navigations';
+import { ContextMenuComponent, MenuEventArgs, MenuItemModel } from '@syncfusion/ej2-angular-navigations';
 
 declare var $: any;
 
@@ -31,8 +31,8 @@ export class AppComponent {
   @ViewChild('treegrid')
   public treegrid!: TreeGridComponent;
   public d1data!: Object;
-  
 
+  
   constructor(private api : ApiService , private http : HttpClient ,private socketService: SocketioService){ 
     this.contextMenuSettings = {
       showContextMenu: true,
@@ -42,9 +42,9 @@ export class AppComponent {
   ngOnInit(): void {
   
           this.api.getAll().subscribe((res:any)=>{
-            // this.data = res
-            this.data = res.filter((item: any) => item);
-            console.log("data",res)
+            this.data =res;
+            // this.data = res.filter((item: any) => item);
+            console.log("data",this.data)
           })
           this.selectionSettings = { type: 'Multiple' };
 
@@ -94,75 +94,12 @@ export class AppComponent {
         {
             text: 'Paste'
         }];
-         public headermenuItems: MenuItemModel[] = [
-        {
-            text: 'Hide Column',
-            id:'hide'
-        },
-        {
-            text: 'UnHide Column',
-            id:'unhide'
-        }];
-    
+   
         public editing!: EditSettingsModel;
-    
-    beforeOpen(args:any): void {
-       //debugger
-       if(this.grid.getColumnByField('ShipCountry').visible == true){
-         debugger
-         $("unhide").style.display = "none";
-         $("hide").style.display = "";
-         $("unhide").disabled = true
-     this.contextmenu.hideItems(['UnHide Column']);
-       }
-       else{
-         $("hide").style.display = "none"; 
-         $("unhide").style.display = "";
-       }
-      
-     }
-
+   
      getVal(asdasd:any){
 alert(asdasd)
      }
-        select(args:any):void {
-          //debugger
-          this.selectitem = args.item.text;
-           if(args.item.text === "Save Grid Changes") {
-             alert('kjh')
-             this.grid.editModule.batchSave();
-           }
-           if(args.item.text === 'Print Preview') {
-            this.grid.print();
-          }
-          if(args.item.text === 'Show Summary') {
-            this.grid.aggregates = [{
-            columns: [{
-                type: 'Sum',
-                field: 'Freight',
-                footerTemplate: 'Sum: ${Sum}'
-            }]
-            }]
-          }
-          if(args.item.text === 'Hide Column') {
-             this.grid.getColumnByField('ShipCountry').visible = false;
-             this.grid.refreshColumns();
-           }
-           if(args.item.text === 'UnHide Column') {
-             this.grid.getColumnByField('ShipCountry').visible = true;
-             this.grid.refreshColumns();
-           }
-           if(args.item.text === 'Column background color') {
-             (document.getElementsByClassName('e-headercell')[1] as any).style = "background-color: green";
-           }
-           if(args.item.text === 'Reset color') {
-             (document.getElementsByClassName('e-headercell')[1] as any).style.cssText = "";
-           }
-           if(args.item.text === 'Paste') {
-             debugger;
-             (document.getElementsByClassName('e-headercell')[1] as any).style.cssText = "";
-           }
-        }
 
 public dataSourceChanged(dataSourceChangedEvent: DataSourceChangedEventArgs):void{
   if(dataSourceChangedEvent.action === "add")
@@ -188,4 +125,103 @@ public dataSourceChanged(dataSourceChangedEvent: DataSourceChangedEventArgs):voi
   
 }
 
+public headermenuItems: MenuItemModel[] = [ 
+  { 
+      text: 'Hide Column', 
+      id:'hide' 
+  }, 
+  { 
+      text: 'UnHide Column', 
+      id:'unhide' 
+  }, 
+  { 
+      text: 'Add Column', 
+      id:'addCol' 
+  }, 
+  { 
+      text: 'Edit Column', 
+      id:'editCol' 
+  }, 
+  { 
+      text: 'View Column', 
+      id:'viewCol' 
+  }
+
+  ]; 
+
+beforeOpen(args:any): void { 
+  this.headercontextmenu.showItems(['Sort Column', 'Clear Sort', 'UnHide Column', 'Hide Column']); 
+  if (parentsUntil(args.event.target, 'first', true)) {   // checks  the grid id with the target element’s parent until it matches with the id. 
+    if (this.grid.getColumnByField('name').visible == true) { 
+      this.headercontextmenu.hideItems(['UnHide Column', 'Sort Column', 'Clear Sort']); 
+    } 
+    else { 
+      this.headercontextmenu.hideItems(['Hide Column', 'Sort Column', 'Clear Sort']); 
+      this.headercontextmenu.showItems(['UnHide Column']); 
+    } 
+  } else { 
+    this.headercontextmenu.hideItems(['UnHide Column', 'Hide Column']); 
+    this.headercontextmenu.showItems(['Sort Column', 'Clear Sort']); 
+  } 
+
+} 
+
+select(args:any):void {
+  //debugger
+  this.selectitem = args.item.text;
+   if(args.item.text === "Hide Column") {
+     this.grid.getColumnByField('name').visible =false;
+   }
+   if(args.item.text === 'UnHide Column') {
+    this.grid.getColumnByField('name').visible =true;
+  }
+  if(args.item.text === 'Add Column') {
+    this.grid.addRecord()
+  }
+  if(args.item.text === 'Edit Column') {
+    this.grid.getColumnByField('name').visible =true;
+  }
+  if(args.item.text === 'View Column') {
+     this.grid.getColumnByField('name').visible = false;
+     this.grid.refreshColumns();
+   }
+   
 }
+
+
+  public itemBeforeEvent(args: MenuEventArgs) {
+    if (args.item.text !== 'Edit') {
+      let shortCutSpan: HTMLElement = document.createElement('span');
+      let text: string = args.item.text!;
+      args.element.textContent = '';
+
+      let inputEle = document.createElement('input');
+      inputEle.type = 'checkbox';
+      inputEle.setAttribute('class', 'e-checkbox');
+      shortCutSpan.innerText = text;
+
+      args.element.appendChild(inputEle);
+      args.element.appendChild(shortCutSpan);
+    }
+  }
+
+  onSelect(args:any) {
+    if (
+      !args.event.target.classList.contains('e-checkbox') &&
+      args.item.text !== 'Edit'
+    ) {
+      var checkbox = args.element.querySelector('.e-checkbox');
+      checkbox.checked = !checkbox.checked;
+    }
+
+    if (args.item.text === 'Edit') {
+      if (this.grid.getSelectedRecords().length) {
+        this.grid.startEdit();
+      } else {
+        alert('Select any row');
+      }
+    }
+  }
+  
+} 
+
