@@ -10,30 +10,30 @@ const httpOptions ={headers:new HttpHeaders({
 })
 
 export class ApiService {
-
+  API_URL =  'https://pdptappsensor.elb.cisinlive.com'
   constructor(private http:HttpClient) { }
 
   getAll(){
-    return this.http.get('http://localhost:3000/all-Student');
+    return this.http.get(this.API_URL+'/all-Student');
   }
 
   deleteData(item:any){
-    return this.http.delete('http://localhost:3000/delete-Student/',item)
+    return this.http.delete(this.API_URL+'/delete-Student/',item)
   }
   addData(addNew:any){
-    return this.http.post('http://localhost:3000/add-Student',addNew)
+    return this.http.post(this.API_URL+'/add-Student',addNew)
   }
 
   addRecord(dataSourceChangedEvent: DataSourceChangedEventArgs){
-return this.http.post('http://localhost:3000/add-Student',dataSourceChangedEvent.data, httpOptions);
+return this.http.post(this.API_URL+'/add-Student',dataSourceChangedEvent.data, httpOptions);
   }
   updateRecord(dataSourceChangedEvent: DataSourceChangedEventArgs,id:any){
   
-    return this.http.put('http://localhost:3000/update-Student/'+id,dataSourceChangedEvent.data, httpOptions);
+    return this.http.put(this.API_URL+'/update-Student/'+id,dataSourceChangedEvent.data, httpOptions);
       }
       deleteRecord(state:any,id:any){
   
-        return this.http.delete('http://localhost:3000/delete-Student/'+state.data[0].id, httpOptions);
+        return this.http.delete(this.API_URL+'/delete-Student/'+state.data[0].id, httpOptions);
           }
 }
 

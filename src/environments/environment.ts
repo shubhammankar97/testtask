@@ -4,7 +4,8 @@
 
 export const environment = {  
 	production: false,  
-	SOCKET_ENDPOINT: 'http://localhost:3001'
+	SOCKET_ENDPOINT: 'https://pdptappsensor.elb.cisinlive.com'
+
 };
 /*
  * For easier debugging in development mode, you can import the following file
