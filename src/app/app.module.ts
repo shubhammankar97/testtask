@@ -11,7 +11,7 @@ import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
 import { DropDownListAllModule } from '@syncfusion/ej2-angular-dropdowns';
 import { SocketioService } from './socketio.service';
 import { CheckBoxAllModule } from '@syncfusion/ej2-angular-buttons';
-// import { IgxPreventDocumentScrollModule } from "./directives/prevent-scroll.directive";
+import { ContextMenuModule } from '@syncfusion/ej2-angular-navigations';
 import { IgxTreeGridModule } from "igniteui-angular";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IgxDropDownModule, IgxToggleModule } from 'igniteui-angular';
@@ -31,7 +31,7 @@ import { CommonModule } from '@angular/common';
     ButtonModule,
     DropDownListAllModule,
     CheckBoxAllModule,
-    // IgxPreventDocumentScrollModule,
+    ContextMenuModule,
     IgxTreeGridModule,
     BrowserAnimationsModule, CommonModule, IgxDropDownModule, IgxToggleModule
   ],
