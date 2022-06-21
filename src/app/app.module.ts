@@ -14,8 +14,8 @@ import { CheckBoxAllModule } from '@syncfusion/ej2-angular-buttons';
 import { ContextMenuModule } from '@syncfusion/ej2-angular-navigations';
 import { IgxTreeGridModule } from "igniteui-angular";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { IgxDropDownModule, IgxToggleModule } from 'igniteui-angular';
 import { CommonModule } from '@angular/common';
+// import { DialogComponent } from '@syncfusion/ej2-angular-popups';
 
 @NgModule({
   declarations: [
@@ -33,7 +33,8 @@ import { CommonModule } from '@angular/common';
     CheckBoxAllModule,
     ContextMenuModule,
     IgxTreeGridModule,
-    BrowserAnimationsModule, CommonModule, IgxDropDownModule, IgxToggleModule
+    BrowserAnimationsModule, CommonModule,
+    // DialogComponent
   ],
   providers: [ApiService, PageService, SortService, FilterService, SocketioService],
   bootstrap: [AppComponent]

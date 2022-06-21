@@ -4,3 +4,7 @@
 .grid__wrapper {
     margin: 10px;
 }
+
+e-columns:nth-child(even) {
+    background-color: aliceblue;
+}

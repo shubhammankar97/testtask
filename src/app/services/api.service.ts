@@ -10,7 +10,9 @@ const httpOptions ={headers:new HttpHeaders({
 })
 
 export class ApiService {
-  API_URL =  'https://pdptappsensor.elb.cisinlive.com'
+  // API_URL =  'https://pdptappsensor.elb.cisinlive.com'
+  API_URL =  'http://localhost:4001'
+
   constructor(private http:HttpClient) { }
 
   getAll(){

@@ -1,4 +1,3 @@
-
 <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="true" [sortSettings]="sortSettings"
 [allowSorting]="true" [pageSettings]='pageSettings' [treeColumnIndex]='1' Save="getVal($event)"  idMapping='id' 
 parentIdMapping='parentID' [height]='265' [editSettings]='editSettings' [toolbar]='toolbar' 
@@ -8,13 +7,14 @@ parentIdMapping='parentID' [height]='265' [editSettings]='editSettings' [toolbar
 (beforeOpen)='beforeOpen($event)'
 itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 (select)="onSelect($event)" 
- 
+
+[allowFiltering]='true' [filterSettings]="filterSettings"
 >
   <e-columns>
-    <e-column field='id' headerText='Student ID' textAlign='Right' width=70 [showColumnMenu]="true" isPrimaryKey="true" type="number"></e-column>
-    <e-column field='name' headerText='Student Name' textAlign='Left' width=200></e-column>
+    <e-column field='id' headerText='Student ID' textAlign='Centre' width=70 [showColumnMenu]="true" isPrimaryKey="true" type="number" [validationRules]='orderidrules'></e-column>
+    <e-column field='name' headerText='Student Name' textAlign='Left' width=200 [validationRules]='customeridrules'></e-column>
     <e-column field='roll_no' headerText='Roll Number' textAlign='Left' width=90></e-column>
-    <e-column field='class' headerText='Class' textAlign='Left' width=80></e-column>
+    <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate"></e-column>
     
 </e-columns>
 </ejs-treegrid>
@@ -33,8 +33,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   (beforeItemRender)="itemBeforeEvent($event)"
    (select)='select($event)'></ejs-contextmenu>
   </div>
-  <div>
- 
+  <!-- <div>
+    <ejs-dialog #Dialog content='' [buttons]='buttons' width='250px'
+    [visible]='hidden' [target]='targetElement'> </ejs-dialog> -->
+    
 <!-- frozen code
  [frozenColumns]='1' [frozenRows]='3' [allowSelection]='false' [enableHover]='false'
  -->

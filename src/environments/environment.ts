@@ -4,7 +4,8 @@
 
 export const environment = {  
 	production: false,  
-	SOCKET_ENDPOINT: 'https://pdptappsensor.elb.cisinlive.com'
+	// SOCKET_ENDPOINT: 'https://pdptappsensor.elb.cisinlive.com'
+	SOCKET_ENDPOINT: 'http://localhost:4001'
 
 };
 /*
