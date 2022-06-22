@@ -22,6 +22,7 @@
     "@syncfusion/ej2-angular-buttons": "^20.1.55",
     "@syncfusion/ej2-angular-dropdowns": "^20.1.60",
     "@syncfusion/ej2-angular-grids": "^20.1.59",
+    "@syncfusion/ej2-angular-inputs": "^20.1.61",
     "@syncfusion/ej2-angular-navigations": "^20.1.60",
     "@syncfusion/ej2-angular-popups": "^20.1.58",
     "@syncfusion/ej2-angular-treegrid": "^20.1.60",

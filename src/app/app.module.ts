@@ -15,7 +15,15 @@ import { ContextMenuModule } from '@syncfusion/ej2-angular-navigations';
 import { IgxTreeGridModule } from "igniteui-angular";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
-// import { DialogComponent } from '@syncfusion/ej2-angular-popups';
+import { DialogModule } from '@syncfusion/ej2-angular-popups';
+
+import { MultiSelectAllModule } from '@syncfusion/ej2-angular-dropdowns';
+import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
+import { ToolbarModule, ToolbarAllModule } from '@syncfusion/ej2-angular-navigations';
+import { ButtonAllModule } from '@syncfusion/ej2-angular-buttons';
+import { NumericTextBoxAllModule } from '@syncfusion/ej2-angular-inputs';
+import { TreeGridAllModule } from '@syncfusion/ej2-angular-treegrid';
+import { ColorPickerModule } from '@syncfusion/ej2-angular-inputs';
 
 @NgModule({
   declarations: [
@@ -34,7 +42,14 @@ import { CommonModule } from '@angular/common';
     ContextMenuModule,
     IgxTreeGridModule,
     BrowserAnimationsModule, CommonModule,
-    // DialogComponent
+    DialogModule,
+    ColorPickerModule,
+    NumericTextBoxAllModule,
+    TreeGridAllModule,
+    ButtonAllModule,
+    ToolbarModule, ToolbarAllModule,
+    DropDownListModule,
+    MultiSelectAllModule
   ],
   providers: [ApiService, PageService, SortService, FilterService, SocketioService],
   bootstrap: [AppComponent]

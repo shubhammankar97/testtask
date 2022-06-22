@@ -7,14 +7,23 @@ parentIdMapping='parentID' [height]='265' [editSettings]='editSettings' [toolbar
 (beforeOpen)='beforeOpen($event)'
 itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 (select)="onSelect($event)" 
-
 [allowFiltering]='true' [filterSettings]="filterSettings"
+[contextMenuItems]="contextMenuItems"
+    (contextMenuOpen)="contextMenuOpen($event)"
+    (contextMenuClick)="contextMenuClick($event)"
+    [columns]="treeColumns"
+    sizeSettings.height="100%"
+    height=100%
+    [allowReordering]='true' [allowSelection]='false'
+    [allowResizing]='true' 
+    (actionComplete)='actionComplete($event)'
 >
   <e-columns>
-    <e-column field='id' headerText='Student ID' textAlign='Centre' width=70 [showColumnMenu]="true" isPrimaryKey="true" type="number" [validationRules]='orderidrules'></e-column>
-    <e-column field='name' headerText='Student Name' textAlign='Left' width=200 [validationRules]='customeridrules'></e-column>
-    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' width=90></e-column>
-    <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate"></e-column>
+    <e-column field='id' headerText='Student ID' textAlign='Centre' width=70 isPrimaryKey="true" type="number" [validationRules]='studentidrules'
+    [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
+    <e-column field='name' headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
+    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' width=90 [validationRules]='studentidrules'></e-column>
+    <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentnamerules'></e-column>
     
 </e-columns>
 </ejs-treegrid>
@@ -33,10 +42,3 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   (beforeItemRender)="itemBeforeEvent($event)"
    (select)='select($event)'></ejs-contextmenu>
   </div>
-  <!-- <div>
-    <ejs-dialog #Dialog content='' [buttons]='buttons' width='250px'
-    [visible]='hidden' [target]='targetElement'> </ejs-dialog> -->
-    
-<!-- frozen code
- [frozenColumns]='1' [frozenRows]='3' [allowSelection]='false' [enableHover]='false'
- -->
