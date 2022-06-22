@@ -78,7 +78,13 @@ SEE LICENSE IN license
 @syncfusion/ej2-angular-grids
 SEE LICENSE IN license
 
+@syncfusion/ej2-angular-inputs
+SEE LICENSE IN license
+
 @syncfusion/ej2-angular-navigations
+SEE LICENSE IN license
+
+@syncfusion/ej2-angular-popups
 SEE LICENSE IN license
 
 @syncfusion/ej2-angular-treegrid
