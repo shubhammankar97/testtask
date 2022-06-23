@@ -83,3 +83,11 @@ div#_gridcontrol_dialogEdit_wrapper_dialog-content {
 .e-treegrid .e-altrow {
     background-color: #fafafae5;
 }
+.e-treegrid::-webkit-scrollbar{
+  overflow: hidden!important;
+}
+
+//drag
+.e-dragclonerow {
+  font-family: fantasy;
+}

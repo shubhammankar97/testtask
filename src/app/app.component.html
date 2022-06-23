@@ -1,6 +1,6 @@
 <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="true" [sortSettings]="sortSettings"
 [allowSorting]="true" [pageSettings]='pageSettings' [treeColumnIndex]='1' Save="getVal($event)"  idMapping='id' 
-parentIdMapping='parentID' [height]='265' [editSettings]='editSettings' [toolbar]='toolbar' 
+parentIdMapping='parentID' [height]='check' [editSettings]='editSettings' [toolbar]='toolbar' 
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
  [selectionSettings]='selectionSettings' allowSelection='true'
 (dataSourceChanged)="dataSourceChanged($event)"
@@ -12,18 +12,20 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     (contextMenuOpen)="contextMenuOpen($event)"
     (contextMenuClick)="contextMenuClick($event)"
     [columns]="treeColumns"
-    sizeSettings.height="100%"
-    height=100%
     [allowReordering]='true' [allowSelection]='false'
     [allowResizing]='true' 
     (actionComplete)='actionComplete($event)'
+    [allowRowDragAndDrop]='true'
+    (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
+    childMapping='Crew'
+    [selectionSettings]="this.selectionOptions"
 >
   <e-columns>
-    <e-column field='id' headerText='Student ID' textAlign='Centre' width=70 isPrimaryKey="true" type="number" [validationRules]='studentidrules'
+    <e-column field='id' headerText='Student ID' textAlign='Centre' width=70 [isPrimaryKey]="true" type="number"
     [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
     <e-column field='name' headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
-    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' width=90 [validationRules]='studentidrules'></e-column>
-    <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentnamerules'></e-column>
+    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' [isPrimaryKey]="true" type="number" width=90 [validationRules]='studentidrules'></e-column>
+    <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
     
 </e-columns>
 </ejs-treegrid>

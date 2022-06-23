@@ -1,24 +1,25 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild, OnInit, ViewEncapsulation} from '@angular/core';
-import { VirtualScrollService, TreeGridComponent, EditSettingsModel, ToolbarItems , EditService, ToolbarService, Column, checkboxChange  } from '@syncfusion/ej2-angular-treegrid';
+import { VirtualScrollService, TreeGridComponent, EditSettingsModel, ToolbarItems , EditService, ToolbarService, Column, checkboxChange, SelectionSettingsModel, RowDDService, SelectionService  } from '@syncfusion/ej2-angular-treegrid';
 import { ApiService } from './services/api.service';
 import {PageSettingsModel, SortSettingsModel } from '@syncfusion/ej2-angular-treegrid';
-import { DataSourceChangedEventArgs, dialogDestroy, DialogEditEventArgs, GridComponent, parentsUntil } from '@syncfusion/ej2-angular-grids';
+import { DataSourceChangedEventArgs, DialogEditEventArgs, GridComponent } from '@syncfusion/ej2-angular-grids';
 import { Dialog } from '@syncfusion/ej2-popups';
 import { SocketioService } from './socketio.service';
 import { ContextMenuComponent, MenuEventArgs, MenuItemModel } from '@syncfusion/ej2-angular-navigations';
-import { ChangeEventArgs, DropDownList } from '@syncfusion/ej2-angular-dropdowns';
+import { ChangeEventArgs, DropDownList, DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { DialogUtility } from '@syncfusion/ej2-popups';
 import { DialogComponent } from '@syncfusion/ej2-angular-popups';
 import { ReorderService } from '@syncfusion/ej2-angular-treegrid';
 import { ResizeService  } from '@syncfusion/ej2-angular-treegrid';
+import { ButtonComponent } from '@syncfusion/ej2-angular-buttons';
 declare var $: any;
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  providers: [EditService, ToolbarService, VirtualScrollService, ReorderService, ResizeService],
+  providers: [EditService, ToolbarService, VirtualScrollService, ReorderService, ResizeService, RowDDService, SelectionService],
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
@@ -27,26 +28,31 @@ export class AppComponent {
   public sortSettings!: SortSettingsModel;
   public pageSettings!: PageSettingsModel;
   public editSettings!: EditSettingsModel;
-  public editSettings1!: EditSettingsModel;
+  public selectionSettings!: SelectionSettingsModel;;
+
   public toolbar!: ToolbarItems[];
-  public toolbar1!: ToolbarItems[];
 
   public editOptions!: Object;
-  public editOptions1!: Object;
   public formatOptions!: Object;
+  public selectionOptions!: object;
   public contextMenuItems!: Object[];
-  public selectionSettings!: Object;
   public contextMenuSettings: any;
+
   @ViewChild('treegrid')
   public treegrid!: TreeGridComponent;
+  @ViewChild('treegrid')
+  public treeGridObj!: TreeGridComponent;
+  @ViewChild('button1')
+    public button1!: ButtonComponent;
+    @ViewChild('button2')
+    public button2!: ButtonComponent;
+
   public d1data!: Object;
   public filterSettings!: Object;
   public filterBarTemplate!: Object;
-  @ViewChild('treegrid')
-  public treeGridObj!: TreeGridComponent;
+ 
   public studentidrules!: Object;
   public studentnamerules!: Object;
-  public freightrules!: Object;
   public modal: boolean = true;
   public inputEle:any;
   public ColName: string = "";
@@ -62,22 +68,42 @@ export class AppComponent {
   public fields!: Object;
   public rowIndex!: number;
 
+  public check = this.data?.length<50
   public textWrap: boolean = false;
 
   ColChecked: boolean = false;
 
   public d2data:any[]=[];
-
   public d4data:any[]=[];
-
   public d3data:any[]= [];
-
   @ViewChild("ejDialog")
   ejDialog!: DialogComponent;
   customAttributes!: { class: string; };
+  public cellIndex!: number;
+  @ViewChild('grid')
+  public grid!: GridComponent;
+      @ViewChild('contextmenu')
+      public contextmenu!: ContextMenuComponent;
+      @ViewChild('headercontextmenu')
+      public headercontextmenu!: ContextMenuComponent;
+      @ViewChild('dropdown1')
+    public dropdown1!: DropDownListComponent;
+  public dropEditSettings!: object;
+    @ViewChild('treegrid')
+     public DropGrid: any;
+     public taskidrules!: Object;
+     public tasknamerules!: Object;
+     public startdaterules!: Object;
+     public durationrules!: Object;
+     public edit!: Object;
+     public ddlfields!: Object;
+   
+
+
   constructor(private api : ApiService , private http : HttpClient ,private socketService: SocketioService){ 
     this.contextMenuSettings = {
       showContextMenu: true,
+      toolbar : ['Add', 'Edit', 'Delete']
   }
   }
   ngOnInit(): void {
@@ -86,20 +112,20 @@ export class AppComponent {
             this.data = res.filter((item: any) => item);
             console.log("data",this.data)
           })
-          this.selectionSettings = { type: 'Multiple' };
+          this.selectionSettings = { type: 'Multiple', enableToggle:true,  checkboxMode: 'ResetOnRowClick'};
           this.contextMenuItems = [
             { text: 'Edit ', target: '.e-headercontent', id: 'editCol' }];
           this.sortSettings = { columns: [{ field: 'name', direction: 'Ascending' }, { field: 'name', direction: 'Descending' }]  };
           this.pageSettings = { pageSize: 6 };
           this.editOptions = { params: { format: 'y/M/d' } };
-        this.editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog',  newRowPosition: 'Child'};
+        this.editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog',  newRowPosition: 'Child', showDeleteConfirmDialog: true};
         this.toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel','Search'];
-        this.toolbar1 = ['Add', 'Edit'];
-        this.editSettings1 = { allowEditing: true, allowAdding: true};
-
-        this.studentidrules = { required: true, number: true, length:15 };
-        this.studentnamerules = { required: true, string: true, length: 15 };
-        this.freightrules = { required: true };
+        this.dropEditSettings = {allowEditing: true, allowAdding: true}
+        this.selectionOptions = {cellSelectionMode: 'Box', type: 'Multiple', mode: 'dialog'
+          
+        };
+        this.studentidrules = { required: true};
+        this.studentnamerules = { required: true};
         // this.contextMenuItems = ['AutoFit', 'AutoFitAll', 'SortAscending', 'SortDescending','Edit', 'Delete', 'Save',
         //  'Cancel', 'PdfExport', 'ExcelExport', 'CsvExport', 'FirstPage', 'PrevPage', 'LastPage', 'NextPage',{ text: "EditCol ", target: ".e-headercontent", id: "editCol" },];
         this.customAttributes = {class: 'customcss'};
@@ -150,8 +176,17 @@ export class AppComponent {
               this.dropDownFilter.appendTo('#duration');
           }
       }
-      
-      
+      this.taskidrules = { required: true, number: true };
+    this.tasknamerules = { required: true };
+    this.startdaterules = { date: true };
+    this.durationrules = { number: true, min: 0 };
+    this.edit = { params: { format: 'n' } };
+    this.ddlfields = { text: 'name', value: 'id' };
+    this.d1data = [
+      { id: 'CellEditing', name: 'Cell Editing' },
+      { id: 'RowEditing', name: 'Row Editing' },
+    ];
+      //close of ngOninit
         }
 
         actionComplete(args: DialogEditEventArgs) {
@@ -167,31 +202,31 @@ export class AppComponent {
           }
           
         }
-      @ViewChild('grid')
-  public grid!: GridComponent;
-      @ViewChild('contextmenu')
-      public contextmenu!: ContextMenuComponent;
-      @ViewChild('headercontextmenu')
-      public headercontextmenu!: ContextMenuComponent;
+      
   
        public selectitem! : string[];
 
       public menuItems: MenuItemModel[] = [
         {
-            text: 'Save Grid Changes'
+            text: 'CopyAsNext'
         },
         {
-            text: 'Print Preview'
+            text: 'CopyAsChild'
         },
         {
-            text: 'Show Summary'
+            text: 'MoveAsNext'
         },
         {
-            text: 'Paste'
+            text: 'MoveAsChild'
+        },
+        {
+            text: 'AddNext'
+        },
+        {
+            text: 'AddChild'
         }];
    
         public editing!: EditSettingsModel;
-   
      getVal(asdasd:any){
 alert(asdasd)
      }
@@ -249,17 +284,17 @@ public headermenuItems: MenuItemModel[] = [
   ]; 
 
 beforeOpen(args:any): void { 
-//   if(this.grid.getColumnByField('roll_no').visible == true){
-//     debugger
-//     $("unhide").css.display = "none";
-//     $("hide").css.display = "";
-//     //document.getElementById("unhide").disabled = true
-// //this.contextmenu.hideItems(['UnHide Column']);
-//   }
-//   else{
-//     $("hide").style.display = "none"; 
-//     $("unhide").style.display = "";
-//   }
+  if(this.grid.getColumnByField('roll_no').visible == true){
+    debugger
+    $("unhide").css.display = "none";
+    $("hide").css.display = "";
+    //document.getElementById("unhide").disabled = true
+//this.contextmenu.hideItems(['UnHide Column']);
+  }
+  else{
+    $("hide").style.display = "none"; 
+    $("unhide").style.display = "";
+  }
 } 
 
 select(args:any):void {
@@ -267,6 +302,9 @@ select(args:any):void {
   this.selectitem = args.item.text;
    if(args.item.text === "Hide Column") {
      this.grid.getColumnByField('name').visible =false;
+     this.hide()
+    // this.treeGridObj.hideColumns('Student Name', 'Roll Number');
+
    }
    if(args.item.text === 'UnHide Column') {
     this.grid.getColumnByField('name').visible =true;
@@ -341,7 +379,8 @@ select(args:any):void {
     }
     this.selectitem = args.item.text;
    if(args.item.text === "Hide Column") {
-      this.hide()
+      // this.hide()
+      this.treeGridObj.hideColumns('Student Name', 'Roll Number');
     }
    if(args.item.text === 'UnHide Column') {
     this.show()
@@ -356,6 +395,32 @@ select(args:any):void {
   if(args.item.text === 'View Column') {
      this.grid.getColumnByField('name').visible = false;
      this.grid.refreshColumns();
+   }
+   if(args.item.text === 'AddChild'){
+     console.log("Add Child")
+    // this.onAddRecord(args)
+   }
+   if(args.item.text === 'CopyAsNext'){
+     console.log("CopyAsNext");
+     let i = this.grid.getSelectedRecords()
+     console.log("copyAsnext",i)
+    // this.onAddRecord(args)
+   }
+   if(args.item.text === 'CopyAsChild'){
+     console.log("CopyAsChild")
+    // this.onAddRecord(args)
+   }
+   if(args.item.text === 'MoveAsNext'){
+     console.log("MoveAsNext")
+    // this.onAddRecord(args)
+   }
+   if(args.item.text === 'MoveAsChild'){
+     console.log("MoveAsChild")
+    // this.onAddRecord(args)
+   }
+   if(args.item.text === 'AddNext'){
+     console.log("AddNext")
+    // this.onAddRecord(args)
    }
   }
 
@@ -413,7 +478,6 @@ public onOpenDialogEdit = (): void => {
               <input
                 type="text"
                 name="ColName"
-                required
                 [(ngModel)]="ColName"
                 #ColumnName="ngModel"
               />
@@ -422,9 +486,7 @@ public onOpenDialogEdit = (): void => {
               <div
                 *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
               >
-                <div class="e-error" *ngIf="ColumnName.errors.required">
-                  * Enter Column name
-                </div>
+                
               </div>
             </div>
           </div>
@@ -530,8 +592,7 @@ public onOpenDialogEdit = (): void => {
     </ejs-dialog>
     </div>
   `,
-  okButton: {  text: 'OK' },
-  cancelButton: {  text: 'Cancel', click: this.cancelClick.bind(this) },
+  
   showCloseIcon: true,
   closeOnEscape: true,
   animationSettings: { effect: 'Zoom' }
@@ -588,7 +649,6 @@ public onOpenDialogDelete = ():void => {
               <input
                 type="text"
                 name="ColName"
-                required
                 [(ngModel)]="ColName"
                 #ColumnName="ngModel"
               />
@@ -597,9 +657,7 @@ public onOpenDialogDelete = ():void => {
               <div
                 *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
               >
-                <div class="e-error" *ngIf="ColumnName.errors.required">
-                  * Enter Column name
-                </div>
+                
               </div>
             </div>
           </div>
@@ -720,6 +778,9 @@ public onOpenDialogDelete = ():void => {
     else{}
     let row: Element = elem.closest(".e-row")!;
     let uid: string = row && row.getAttribute("data-uid")!;
+
+    this.rowIndex = arg.rowInfo.rowIndex;
+    this.cellIndex = arg.rowInfo.cellIndex;
     
   }
 
@@ -730,14 +791,23 @@ public onOpenDialogDelete = ():void => {
       this.showEditColumn = true;
       this.getCurrentField();
     } 
+//copying row on right click
+    // if (args.item.id === 'customCopy') {
+    //   this.treeGridObj.copy();
+    // } else if (args.item.id === 'customPaste') {
+    //   var rowIndex = this.rowIndex;
+    //   var cellIndex = this.cellIndex;
+    //   // var copyContent = this.treeGridObj.clipboardModule.copyContent;
+    //   // this.treeGridObj.paste(copyContent, rowIndex, cellIndex);
+    // }
      
   }
  
-  public saveColumn(args:any) {
+  saveColumn(args:any) {
     console.log("saveColumn:");
     if (this.checkNewEdit == 'edit') {
       var catched = false;
-
+document.createElement('e-column');
      
       
     console.log("edit:")
@@ -849,9 +919,97 @@ public onOpenDialogDelete = ():void => {
   this.treeGridObj.showColumns(['Student Name', 'Roll Number']); //show by HeaderText
 }
 
-hide() {
+hide():void {
   this.treeGridObj.hideColumns(['Class', 'Roll Number']); //hide by HeaderText
+
+  //hide column
+  let columnName: string = <string>this.dropdown1.value;
+  let column = this.treegrid.getColumnByField(columnName);
+  let hiddenColumns: HTMLTextAreaElement = document.getElementById('hiddencolumns') as HTMLTextAreaElement;
+
+  if (this.treegrid.getHeaderTable().querySelectorAll('th.e-hide').length === 3) {
+      alert('Atleast one Column should be visible');
+  } else {
+      this.treegrid.grid.hideColumns(column.headerText, 'headerText');
+      this.button1.disabled = true;
+      this.button2.disabled = false;
+      hiddenColumns.value = hiddenColumns.value + column.headerText + '\n';
+  }
+
 }
+
+//row drag and drop
+rowDataBound(args: any){
+  if (args.data.taskID == 1) {
+    args.row.querySelector('td').innerHTML = " ";  //hide the DragIcon(td element)
+   
+  }
+}
+rowDragStartHelper(args: any){
+  if (args.data[0].taskID == 1) {
+    args.cancel = 'true';   ;                 //prevent Drag operations by setting args.cancel as true
+  }
+}
+rowDrop(args: any) {
+    var treeGridobj = (document.getElementById('TreeGrid') as any).ej2_instances[0];
+   var data = treeGridobj.getCurrentViewRecords()[args.dropIndex];
+   if (data.hasChildRecords)  {             //apply your own customized condition                                   
+         args.cancel = 'true'
+        alert("dropping disabled for parent row")     //alert message while dropping on parent row
+     }
+}
+rowDragStart (args: any) {
+ args.rows[0].classList.add('e-dragclonerow'); //customize the dragged row here
+}
+rowDrag (args: any) {
+   var treeGridobj = (document.getElementById('TreeGrid') as any).ej2_instances[0];
+   var rowEle: Element = args.target ? args.target.closest('tr') : null;
+   var rowIdx: number = rowEle ? (rowEle as HTMLTableRowElement).rowIndex : -1;
+   var currentData = treeGridobj.getCurrentViewRecords()[rowIdx];
+  if (rowIdx !== -1) {
+    if (currentData.hasChildRecords)
+      treeGridobj.rowDragAndDropModule.addErrorElem();//shown (no drop) icon for the parent records
+  }
+};
  
+//adding child record
+onAddRecord(args:any) {
+  var parentdata = {
+    id: String(Math.floor(Math.random() * (100000 + 1 - 50000) + 50000)),
+    name: 'test',
+  };
+
+  this.treegrid.addRecord(parentdata, 8, 'Above');
+}
+validation(args:any) {
+  this.treegrid.endEdit();
+}
+
+actioncomplete(args:any) {console.log("action complete")}
+
+toolabarclickHandler(args:any) {
+  if (args.item.id === 'savebutton') {
+    this.treegrid.endEdit(); //you can save a record by invoking endEdit
+  }
+}
+
+//  i = 0;
+// change() {
+//   let doc = document.getElementById("background");
+//   let color = ["black", "blue", "brown", "green"];
+//   doc.style.backgroundColor = color[i];
+//   i = (i + 1) % color.length;
+// }
+// setInterval(change, 1000);
+// setToRed ( )
+// {
+//   document.getElementById("colourButton").style.color = "#FF0000";
+//   setTimeout ( "setToBlack()", 2000 );
+// }
+
+// setToBlack ( )
+// {
+//   document.getElementById("colourButton").style.color = "#000000";
+// }
 } 
 
