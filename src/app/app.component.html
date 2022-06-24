@@ -2,7 +2,7 @@
 [allowSorting]="true" [pageSettings]='pageSettings' [treeColumnIndex]='1' Save="getVal($event)"  idMapping='id' 
 parentIdMapping='parentID' [height]='check' [editSettings]='editSettings' [toolbar]='toolbar' 
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
- [selectionSettings]='selectionSettings' allowSelection='true'
+ [selectionSettings]='selectionSettings' [allowSelection]='true'
 (dataSourceChanged)="dataSourceChanged($event)"
 (beforeOpen)='beforeOpen($event)'
 itemBeforeEvent={this.itemBeforeEvent.bind(this)}
@@ -19,6 +19,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
     childMapping='Crew'
     [selectionSettings]="this.selectionOptions"
+    allowSelection='true' 
+
+
+   
 >
   <e-columns>
     <e-column field='id' headerText='Student ID' textAlign='Centre' width=70 [isPrimaryKey]="true" type="number"
@@ -26,7 +30,9 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <e-column field='name' headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
     <e-column field='roll_no' headerText='Roll Number' textAlign='Left' [isPrimaryKey]="true" type="number" width=90 [validationRules]='studentidrules'></e-column>
     <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
-    
+    <div class="form-group col-md-6">
+      <ejs-checkbox #Verified formControlName="Verified" name="Verified" id="Verified" label="Verified" [checked]="data" ></ejs-checkbox>
+  </div>
 </e-columns>
 </ejs-treegrid>
 <ejs-contextmenu
@@ -44,3 +50,165 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   (beforeItemRender)="itemBeforeEvent($event)"
    (select)='select($event)'></ejs-contextmenu>
   </div>
+
+  <igx-dialog #dialogAdd title="New Employee" [rightButtonLabel]="'Add'" [leftButtonLabel]="'Cancel'"
+        (leftButtonSelect)="cancel()" (rightButtonSelect)="addRow()">
+        <div class="dialogNewRecord">
+          <igx-input-group>
+            <label igxLabel for="employeeAge">Student ID</label>
+            <input igxInput id="employeeAge" type="number" [(ngModel)]="student.ID" />
+        </igx-input-group>
+            <igx-input-group>
+                <label igxLabel for="employeeName">Student Name</label>
+                <input igxInput id="employeeName" type="text" [(ngModel)]="student.StudentName" />
+            </igx-input-group>
+            <igx-input-group>
+                <label igxLabel for="employeeTitle">Roll Number</label>
+                <input igxInput id="employeeTitle" type="number" [(ngModel)]="student.RollNumber" />
+            </igx-input-group>
+            <igx-input-group>
+                <label igxLabel for="employeeAge">Class</label>
+                <input igxInput id="employeeAge" type="number" [(ngModel)]="student.Class" />
+            </igx-input-group>
+        </div>
+    </igx-dialog>
+
+
+
+    <!-- edit col -->
+
+    <div *ngIf="showEditColumn">
+      <ejs-dialog
+        id="dialog"
+        #ejDialog
+        
+        header="Edit Column"
+        
+        width="300px"
+        
+      >
+        <ng-template #content>
+          <form id="template_driven" #userForm="ngForm" novalidate>
+            <div class="form-group" style="padding-top: 11px;">
+              <div class="e-float-input">
+                <input
+                  type="text"
+                  name="ColName"
+                  required
+                  [(ngModel)]="ColName"
+                  #ColumnName="ngModel"
+                />
+                <span class="e-float-line"></span>
+                <label class="e-float-text e-label-top" for="name">Name</label>
+                <!-- <div
+                  *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
+                >
+                  <div class="e-error" *ngIf="ColumnName.errors.required">
+                    * Enter Column name
+                  </div>
+                </div> -->
+              </div>
+            </div>
+  
+            <div class="form-group" style="padding-top: 11px;">
+              <div class="e-float-input">
+                <ejs-dropdownlist
+                  
+                  id="coltypeid"
+                  [dataSource]="d2data"
+                  [fields]="fields"
+                  placeholder="Type"
+                  name="ColType"
+                  [(ngModel)]="ColType"
+                ></ejs-dropdownlist>
+                </div>
+            </div>
+  
+      
+  
+            <div class="form-group" style="padding-top: 11px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span class="e-float-text e-label-top"
+                  >Choose new Font-color</span
+                >
+  
+                <input
+                  ejs-colorpicker
+                  type="color"
+                  id="element"
+                  value="#FFFFFF"
+                  (change)="changeFontColor($event)"
+                  id="colorpicker"
+                />
+              </div>
+            </div>
+            <div class="form-group" style="padding-top: 11px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span class="e-float-text e-label-top"
+                  >Choose new Background-color</span
+                >
+  
+                <input
+                  ejs-colorpicker
+                  type="color"
+                  id="element"
+                  value="#FFFFFF"
+                  (change)="changeBackground($event)"
+                  id="colorpicker"
+                />
+              </div>
+            </div>
+            <div class="form-group" style="padding-top: 11px;">
+              <div class="e-float-input">
+                <ejs-dropdownlist
+                  #dropdown2
+                  id="element"
+                  [dataSource]="d3data"
+                  [fields]="fields"
+                  name="ColAlign"
+                  [(ngModel)]="ColAlign"
+                  placeholder="Alignment"
+                ></ejs-dropdownlist>
+              </div>
+            </div>
+            <div class="form-group" style="padding-top: 11px;">
+              <div style="display: flex; justify-content: space-between;">
+                <span class="e-float-text e-label-top" for="email"
+                  >Text-wrap</span
+                >
+  
+                <ejs-checkbox
+                  labelPosition="Before"
+                  [checked]="false"
+                  name="ColChecked"
+                  [(ngModel)]="ColChecked"
+                ></ejs-checkbox>
+              </div>
+            </div>
+          </form>
+        </ng-template>
+        <ng-template #footerTemplate>
+          <div>
+            <button
+              id="Button1"
+              class="e-control e-btn e-primary e-flat"
+              (click)="saveColumn()"
+              data-ripple="true"
+            >
+              <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
+            </button>
+            <button
+              id="Button2"
+              class="e-control e-btn e-flat"
+              (click)="btnclick($event)"
+              data-ripple="true"
+            >
+              <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+              >Cancel
+            </button>
+          </div>
+        </ng-template>
+      </ejs-dialog>
+    </div>
+
+  

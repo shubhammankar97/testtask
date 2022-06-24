@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild, OnInit, ViewEncapsulation} from '@angular/core';
-import { VirtualScrollService, TreeGridComponent, EditSettingsModel, ToolbarItems , EditService, ToolbarService, Column, checkboxChange, SelectionSettingsModel, RowDDService, SelectionService  } from '@syncfusion/ej2-angular-treegrid';
+import { VirtualScrollService, TreeGridComponent, EditSettingsModel, ToolbarItems , EditService, ToolbarService, Column, checkboxChange, SelectionSettingsModel, RowDDService, SelectionService, PageService  } from '@syncfusion/ej2-angular-treegrid';
 import { ApiService } from './services/api.service';
 import {PageSettingsModel, SortSettingsModel } from '@syncfusion/ej2-angular-treegrid';
 import { DataSourceChangedEventArgs, DialogEditEventArgs, GridComponent } from '@syncfusion/ej2-angular-grids';
@@ -13,13 +13,16 @@ import { DialogComponent } from '@syncfusion/ej2-angular-popups';
 import { ReorderService } from '@syncfusion/ej2-angular-treegrid';
 import { ResizeService  } from '@syncfusion/ej2-angular-treegrid';
 import { ButtonComponent } from '@syncfusion/ej2-angular-buttons';
+import { IgxDialogComponent, IgxNumberSummaryOperand, IgxSummaryOperand, IgxSummaryResult, IgxTreeGridComponent } from 'igniteui-angular';
+import { Student } from './student';
+import { BeforeOpenCloseEventArgs } from '@syncfusion/ej2-angular-inputs';
 declare var $: any;
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  providers: [EditService, ToolbarService, VirtualScrollService, ReorderService, ResizeService, RowDDService, SelectionService],
+  providers: [EditService, ToolbarService, VirtualScrollService, ReorderService, ResizeService, RowDDService, SelectionService, PageService],
   encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent {
@@ -35,11 +38,9 @@ export class AppComponent {
   public editOptions!: Object;
   public formatOptions!: Object;
   public selectionOptions!: object;
-  public contextMenuItems!: Object[];
   public contextMenuSettings: any;
 
-  @ViewChild('treegrid')
-  public treegrid!: TreeGridComponent;
+
   @ViewChild('treegrid')
   public treeGridObj!: TreeGridComponent;
   @ViewChild('button1')
@@ -55,29 +56,9 @@ export class AppComponent {
   public studentnamerules!: Object;
   public modal: boolean = true;
   public inputEle:any;
-  public ColName: string = "";
-  columnValue!: number;
-  columnField!: string;
-  ColAlign: string = "";
-  ColMinWidth!: number;
-  public showEditColumn: boolean = false;
-  public ColType: string = "";
-  ColFColor: string = '';
-  ColBColor: string = '';
-  public dropDownFilter!: DropDownList;
-  public fields!: Object;
-  public rowIndex!: number;
-
+  
   public check = this.data?.length<50
-  public textWrap: boolean = false;
-
-  ColChecked: boolean = false;
-
-  public d2data:any[]=[];
-  public d4data:any[]=[];
-  public d3data:any[]= [];
-  @ViewChild("ejDialog")
-  ejDialog!: DialogComponent;
+ 
   customAttributes!: { class: string; };
   public cellIndex!: number;
   @ViewChild('grid')
@@ -97,7 +78,44 @@ export class AppComponent {
      public durationrules!: Object;
      public edit!: Object;
      public ddlfields!: Object;
-   
+     @ViewChild("treeGrid") public treeGrid!: IgxTreeGridComponent;
+     @ViewChild("dialogAdd", { read: IgxDialogComponent }) public dialog!: IgxDialogComponent;
+     public student!: Student;
+     private nextRow!: number;
+     public numberSummaries = CustomNumberSummary;
+
+     ///////////////////////////////////////////// 
+     public dropDownFilter!: DropDownList;
+
+  public fields!: Object;
+  public rowIndex!: number;
+  public contextMenuItems!: Object;
+  public ColName: string = "";
+  columnValue!: number;
+  columnField!: string;
+  ColAlign: string = "";
+  ColMinWidth!: number;
+  public showEditColumn: boolean = false;
+  public ColType: string = "";
+  ColFColor: string = '';
+  ColBColor: string = '';
+  @ViewChild("treegrid")
+  public treegrid!: TreeGridComponent;
+
+
+  @ViewChild("ejDialog") ejDialog!: DialogComponent;
+
+
+  public textWrap: boolean = false;
+
+  ColChecked: boolean = false;
+
+  public d2data:any=[];
+
+  public d4data:any=[];
+
+  public d3data:any= [];
+//////////////////////////////////////////////////
 
 
   constructor(private api : ApiService , private http : HttpClient ,private socketService: SocketioService){ 
@@ -112,7 +130,8 @@ export class AppComponent {
             this.data = res.filter((item: any) => item);
             console.log("data",this.data)
           })
-          this.selectionSettings = { type: 'Multiple', enableToggle:true,  checkboxMode: 'ResetOnRowClick'};
+          // this.selectionSettings = { type: 'Multiple', enableToggle:true,  checkboxMode: 'ResetOnRowClick',persistSelection: true};
+          this.selectionSettings = {persistSelection: true};
           this.contextMenuItems = [
             { text: 'Edit ', target: '.e-headercontent', id: 'editCol' }];
           this.sortSettings = { columns: [{ field: 'name', direction: 'Ascending' }, { field: 'name', direction: 'Descending' }]  };
@@ -121,10 +140,8 @@ export class AppComponent {
         this.editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog',  newRowPosition: 'Child', showDeleteConfirmDialog: true};
         this.toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel','Search'];
         this.dropEditSettings = {allowEditing: true, allowAdding: true}
-        this.selectionOptions = {cellSelectionMode: 'Box', type: 'Multiple', mode: 'dialog'
-          
-        };
-        this.studentidrules = { required: true};
+        this.selectionOptions = {cellSelectionMode: 'Box', type: 'Multiple', mode: 'dialog',rowSelecting:true};
+        this.studentidrules = { required: true, length: 10};
         this.studentnamerules = { required: true};
         // this.contextMenuItems = ['AutoFit', 'AutoFitAll', 'SortAscending', 'SortDescending','Edit', 'Delete', 'Save',
         //  'Cancel', 'PdfExport', 'ExcelExport', 'CsvExport', 'FirstPage', 'PrevPage', 'LastPage', 'NextPage',{ text: "EditCol ", target: ".e-headercontent", id: "editCol" },];
@@ -187,6 +204,27 @@ export class AppComponent {
       { id: 'RowEditing', name: 'Row Editing' },
     ];
       //close of ngOninit
+      this.student = new Student();
+      this.nextRow = this.data?.length + 1;
+/////////////////////////////////////////////////////////
+this.contextMenuItems = [
+  { text: 'Edit ', target: '.e-headercontent', id: 'editCol' },
+];
+(this.d2data = [
+  { id: "string", type: "string" },
+  { id: "number", type: "number" },
+  { id: "boolean", type: "boolean" },
+  { id: "datetime", type: "datetime" },
+  { id: "date", type: "date" }
+]);
+
+(this.d3data = [
+  { id: "right", type: "Right" },
+  { id: "left", type: "Left" },
+  { id: "Center", type: "Center" }
+]);
+
+(this.fields = { text: "type", value: "id" });
         }
 
         actionComplete(args: DialogEditEventArgs) {
@@ -224,6 +262,9 @@ export class AppComponent {
         },
         {
             text: 'AddChild'
+        },
+        {
+            text: 'AddParent'
         }];
    
         public editing!: EditSettingsModel;
@@ -301,8 +342,9 @@ select(args:any):void {
   //debugger
   this.selectitem = args.item.text;
    if(args.item.text === "Hide Column") {
-     this.grid.getColumnByField('name').visible =false;
-     this.hide()
+    //  this.grid.getColumnByField('name').visible =false;
+    //  this.hide()
+    this.treegrid.hideColumns('Student Name')
     // this.treeGridObj.hideColumns('Student Name', 'Roll Number');
 
    }
@@ -380,6 +422,7 @@ select(args:any):void {
     this.selectitem = args.item.text;
    if(args.item.text === "Hide Column") {
       // this.hide()
+      this.treeColumns.hideColumns('Student Name')
       this.treeGridObj.hideColumns('Student Name', 'Roll Number');
     }
    if(args.item.text === 'UnHide Column') {
@@ -420,6 +463,11 @@ select(args:any):void {
    }
    if(args.item.text === 'AddNext'){
      console.log("AddNext")
+    // this.onAddRecord(args)
+   }
+   if(args.item.text === 'AddParent'){
+     console.log("AddParent")
+     this.dialog.open()
     // this.onAddRecord(args)
    }
   }
@@ -751,120 +799,120 @@ public onOpenDialogDelete = ():void => {
   ];
   checkNewEdit!: string;
 
- contextMenuOpen(arg:any): void {
-   console.log("contextMenuOpen:",arg);
-    this.rowIndex = arg.rowInfo.rowIndex;
-    let elem: Element = arg.event.target as Element;
+//  contextMenuOpen(arg:any): void {
+//    console.log("contextMenuOpen:",arg);
+//     this.rowIndex = arg.rowInfo.rowIndex;
+//     let elem: Element = arg.event.target as Element;
 
-    if (arg.column.headerText == "Student ID") {
-      this.columnValue = 1;
-      this.columnField = "id";
-    }
-    if (arg.column.headerText == "Student Name") {
-      this.columnValue = 2;
-      this.columnField = "name";
-    }
-    if (arg.column.headerText == "Roll Number") {
-      this.columnValue = 3;
+//     if (arg.column.headerText == "Student ID") {
+//       this.columnValue = 1;
+//       this.columnField = "id";
+//     }
+//     if (arg.column.headerText == "Student Name") {
+//       this.columnValue = 2;
+//       this.columnField = "name";
+//     }
+//     if (arg.column.headerText == "Roll Number") {
+//       this.columnValue = 3;
 
-      this.columnField = "roll_no";
-    }
-    if (arg.column.headerText == "Class") {
-      this.columnValue = 4;
+//       this.columnField = "roll_no";
+//     }
+//     if (arg.column.headerText == "Class") {
+//       this.columnValue = 4;
 
-      this.columnField = "class";
-    }
+//       this.columnField = "class";
+//     }
 
-    else{}
-    let row: Element = elem.closest(".e-row")!;
-    let uid: string = row && row.getAttribute("data-uid")!;
+//     else{}
+//     let row: Element = elem.closest(".e-row")!;
+//     let uid: string = row && row.getAttribute("data-uid")!;
 
-    this.rowIndex = arg.rowInfo.rowIndex;
-    this.cellIndex = arg.rowInfo.cellIndex;
+//     this.rowIndex = arg.rowInfo.rowIndex;
+//     this.cellIndex = arg.rowInfo.cellIndex;
     
-  }
+//   }
 
 
-  contextMenuClick(args:any): void {
-    if (args.item.id === "editCol") {
-      this.checkNewEdit = "edit";
-      this.showEditColumn = true;
-      this.getCurrentField();
-    } 
-//copying row on right click
-    // if (args.item.id === 'customCopy') {
-    //   this.treeGridObj.copy();
-    // } else if (args.item.id === 'customPaste') {
-    //   var rowIndex = this.rowIndex;
-    //   var cellIndex = this.cellIndex;
-    //   // var copyContent = this.treeGridObj.clipboardModule.copyContent;
-    //   // this.treeGridObj.paste(copyContent, rowIndex, cellIndex);
-    // }
+//   contextMenuClick(args:any): void {
+//     if (args.item.id === "editCol") {
+//       this.checkNewEdit = "edit";
+//       this.showEditColumn = true;
+//       this.getCurrentField();
+//     } 
+// //copying row on right click
+//     // if (args.item.id === 'customCopy') {
+//     //   this.treeGridObj.copy();
+//     // } else if (args.item.id === 'customPaste') {
+//     //   var rowIndex = this.rowIndex;
+//     //   var cellIndex = this.cellIndex;
+//     //   // var copyContent = this.treeGridObj.clipboardModule.copyContent;
+//     //   // this.treeGridObj.paste(copyContent, rowIndex, cellIndex);
+//     // }
      
-  }
+//   }
  
-  saveColumn(args:any) {
-    console.log("saveColumn:");
-    if (this.checkNewEdit == 'edit') {
-      var catched = false;
-document.createElement('e-column');
+//   saveColumn(args:any) {
+//     console.log("saveColumn:");
+//     if (this.checkNewEdit == 'edit') {
+//       var catched = false;
+// document.createElement('e-column');
      
       
-    console.log("edit:")
-      this.treeColumns.forEach((r:any) => {
-        console.log("R:",r);
-        if (!catched) {
-          console.log('catched:', catched);
-          catched = true;
-          var style = document.createElement('style');
-          style.type = 'text/css';
-          style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
-            color:${this.ColFColor};
-          }`;
-          document.body.append(style);
-        }
+//     console.log("edit:")
+//       this.treeColumns.forEach((r:any) => {
+//         console.log("R:",r);
+//         if (!catched) {
+//           console.log('catched:', catched);
+//           catched = true;
+//           var style = document.createElement('style');
+//           style.type = 'text/css';
+//           style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
+//             color:${this.ColFColor};
+//           }`;
+//           document.body.append(style);
+//         }
 
-        if (r.field == this.columnField) {
-          console.log('r.field:', r.field, 'columnField:', this.columnField);
-          r.headerText = this.ColName;
-          r.type = this.ColType;
-          r.textAlign = this.ColAlign;
-          r['customAttributes'] = { class: 'cssClassaa' };
-        }
-      });
+//         if (r.field == this.columnField) {
+//           console.log('r.field:', r.field, 'columnField:', this.columnField);
+//           r.headerText = this.ColName;
+//           r.type = this.ColType;
+//           r.textAlign = this.ColAlign;
+//           r['customAttributes'] = { class: 'cssClassaa' };
+//         }
+//       });
 
    
-      this.treegrid.refreshColumns();
-      this.textWrap = this.ColChecked;
-    }
+//       this.treegrid.refreshColumns();
+//       this.textWrap = this.ColChecked;
+//     }
 
-    this.showEditColumn = false;
+//     this.showEditColumn = false;
 
-    this.ejDialog.hide();
-  }
-  public changeFontColor(e: ChangeEventArgs): void {
-    this.ColFColor = <string>e.value;
-  }
-  public changeBackground(e: ChangeEventArgs): void {
-    this.ColBColor = <string>e.value;
-  }
+//     this.ejDialog.hide();
+//   }
+//   public changeFontColor(e: ChangeEventArgs): void {
+//     this.ColFColor = <string>e.value;
+//   }
+//   public changeBackground(e: ChangeEventArgs): void {
+//     this.ColBColor = <string>e.value;
+//   }
  
 
 
-  getCurrentField() {
+//   getCurrentField() {
   
-    if (this.checkNewEdit == "edit") {
-      this.ColName = this.treegrid.getColumnByField(
-        this.columnField
-      ).headerText;
+//     if (this.checkNewEdit == "edit") {
+//       this.ColName = this.treegrid.getColumnByField(
+//         this.columnField
+//       ).headerText;
      
-      this.ColType = this.treegrid.getColumnByField(this.columnField).type;
-      console.log("ColType:",this.ColType)
-    } else {
-      this.ColName = "";
-      this.ColType = "";
-    }
-  }
+//       this.ColType = this.treegrid.getColumnByField(this.columnField).type;
+//       console.log("ColType:",this.ColType)
+//     } else {
+//       this.ColName = "";
+//       this.ColType = "";
+//     }
+//   }
   btnclick(args:any){}
 
   //Delete Column
@@ -1011,5 +1059,192 @@ toolabarclickHandler(args:any) {
 // {
 //   document.getElementById("colourButton").style.color = "#000000";
 // }
+
+public gridOptions = {
+  rowSelection: 'multiple',
+
+  treeData: true,
+  getDataPath: (params:any) => {
+    return params.group;
+  },
 } 
 
+//add data as parent
+public openDialog(parentID:any) {
+  this.student.ParentID = parentID;
+  this.dialog.open();
+}
+
+addRow() {
+  console.log("add", this.student);
+  // this.student.
+  this.treeGrid.createRow(this.data?.length+1, this.student)
+  this.student.ID = this.nextRow++;
+  console.log("check add")
+
+  if (this.student.ParentID === 1) {
+      this.treeGrid?.addRow(this.student);
+  } else {
+      this.treeGrid?.addRow(this.student, this.student.ParentID);
+      
+  }
+  this.cancel();
+}
+
+cancel() {
+  console.log("cancel")
+  this.dialog.close();
+  this.student = new Student();
+}
+
+public deleteRow(id:any) {
+  this.treeGrid.deleteRow(id);
+}
+
+
+
+
+rowSelecting(): void {
+  console.log("row select")
+  this.appendElement('Tree Grid <b style="color:#388e3c">rowSelecting</b> event called<hr>');
+}
+// rowSelected(): void {
+//   this.appendElement('Tree Grid <b style="color:#388e3c">rowSelected</b> event called<hr>');
+// }
+appendElement(html: string): void {
+  let span: HTMLElement = document.createElement('span');
+  span.innerHTML = html;
+  let log: HTMLElement = document.getElementById('EventLog')!;
+  log?.insertBefore(span, log.firstChild);
+}
+
+onClick () {
+  $('.EventLog').innerHTML = '';
+}
+
+//edit col
+
+contextMenuOpen(arg?: any): void {
+  console.log("contextMenuOpen:",arg);
+   this.rowIndex = arg.rowInfo.rowIndex;
+   let elem: Element = arg.event.target as Element;
+
+   if (arg.column.headerText == "Order Name") {
+     this.columnValue = 1;
+     this.columnField = "orderName";
+   }
+   if (arg.column.headerText == "Category") {
+     this.columnValue = 2;
+     this.columnField = "category";
+   }
+   if (arg.column.headerText == "Order Date") {
+     this.columnValue = 3;
+
+     this.columnField = "orderDate";
+   }
+   if (arg.column.headerText == "Units") {
+     this.columnValue = 4;
+
+     this.columnField = "units";
+   }
+
+   else{}
+   let row: Element = elem.closest(".e-row")!;
+   let uid: string = row && row.getAttribute("data-uid")!;
+   
+ }
+
+
+ contextMenuClick(args:any): void {
+   if (args.item.id === "editCol") {
+     this.checkNewEdit = "edit";
+     this.showEditColumn = true;
+     this.getCurrentField();
+   } 
+    
+ }
+
+ public saveColumn() {
+   console.log("saveColumn:");
+   if (this.checkNewEdit == 'edit') {
+     var catched = false;
+
+    
+     
+   console.log("edit:")
+     this.treeColumns.forEach((r:any) => {
+       console.log("R:",r);
+       if (!catched) {
+         console.log('catched:', catched);
+         catched = true;
+         var style = document.createElement('style');
+         style.type = 'text/css';
+         style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
+           color:${this.ColFColor};
+         }`;
+         document.body.append(style);
+       }
+
+       if (r.field == this.columnField) {
+         console.log('r.field:', r.field, 'columnField:', this.columnField);
+         r.headerText = this.ColName;
+         r.type = this.ColType;
+         r.textAlign = this.ColAlign;
+         r['customAttributes'] = { class: 'cssClassaa' };
+       }
+     });
+
+  
+     this.treegrid.refreshColumns();
+     this.textWrap = this.ColChecked;
+   }
+
+   this.showEditColumn = false;
+
+   this.ejDialog.hide();
+ }
+ public changeFontColor(e: ChangeEventArgs): void {
+   this.ColFColor = <string>e.value;
+ }
+ public changeBackground(e: ChangeEventArgs): void {
+   this.ColBColor = <string>e.value;
+ }
+
+
+ getCurrentField() {
+ 
+   if (this.checkNewEdit == "edit") {
+     this.ColName = this.treegrid.getColumnByField(
+       this.columnField
+     ).headerText;
+    
+     this.ColType = this.treegrid.getColumnByField(this.columnField).type;
+     console.log("ColType:",this.ColType)
+   } else {
+     this.ColName = "";
+     this.ColType = "";
+   }
+ }
+
+}
+
+class CustomNumberSummary extends IgxSummaryOperand {
+
+  constructor() {
+      super();
+  }
+  public override operate(data?: any[]): IgxSummaryResult[] {
+      const result = super.operate(data);
+      result.push({
+          key: "Min",
+          label: "Min",
+          summaryResult: IgxNumberSummaryOperand.min([data])
+      });
+      result.push({
+          key: "max",
+          label: "Max",
+          summaryResult: IgxNumberSummaryOperand.max([data])
+      });
+      return result;
+  }
+}
