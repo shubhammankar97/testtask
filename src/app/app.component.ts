@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ViewChild, OnInit, ViewEncapsulation} from '@angular/core';
+import { Component, ViewChild, OnInit, ViewEncapsulation, ViewContainerRef} from '@angular/core';
 import { VirtualScrollService, TreeGridComponent, EditSettingsModel, ToolbarItems , EditService, ToolbarService, Column, checkboxChange, SelectionSettingsModel, RowDDService, SelectionService, PageService  } from '@syncfusion/ej2-angular-treegrid';
 import { ApiService } from './services/api.service';
 import {PageSettingsModel, SortSettingsModel } from '@syncfusion/ej2-angular-treegrid';
-import { DataSourceChangedEventArgs, DialogEditEventArgs, GridComponent } from '@syncfusion/ej2-angular-grids';
+import { appendChildren, DataSourceChangedEventArgs, DialogEditEventArgs, GridComponent } from '@syncfusion/ej2-angular-grids';
 import { Dialog } from '@syncfusion/ej2-popups';
 import { SocketioService } from './socketio.service';
 import { ContextMenuComponent, MenuEventArgs, MenuItemModel } from '@syncfusion/ej2-angular-navigations';
@@ -16,6 +16,7 @@ import { ButtonComponent } from '@syncfusion/ej2-angular-buttons';
 import { IgxDialogComponent, IgxNumberSummaryOperand, IgxSummaryOperand, IgxSummaryResult, IgxTreeGridComponent } from 'igniteui-angular';
 import { Student } from './student';
 import { BeforeOpenCloseEventArgs } from '@syncfusion/ej2-angular-inputs';
+
 declare var $: any;
 
 @Component({
@@ -31,7 +32,8 @@ export class AppComponent {
   public sortSettings!: SortSettingsModel;
   public pageSettings!: PageSettingsModel;
   public editSettings!: EditSettingsModel;
-  public selectionSettings!: SelectionSettingsModel;;
+  public selectionSettings!: SelectionSettingsModel;
+;
 
   public toolbar!: ToolbarItems[];
 
@@ -101,6 +103,10 @@ export class AppComponent {
   ColBColor: string = '';
   @ViewChild("treegrid")
   public treegrid!: TreeGridComponent;
+  public copiedRecord: any;
+  private moveRow: any = null;
+  // Copy/Paste
+private clone: any = null;
 
 
   @ViewChild("ejDialog") ejDialog!: DialogComponent;
@@ -115,7 +121,7 @@ export class AppComponent {
   public d4data:any=[];
 
   public d3data:any= [];
-//////////////////////////////////////////////////
+  /////////////////////////////////
 
 
   constructor(private api : ApiService , private http : HttpClient ,private socketService: SocketioService){ 
@@ -141,7 +147,7 @@ export class AppComponent {
         this.toolbar = ['Add', 'Edit', 'Delete', 'Update', 'Cancel','Search'];
         this.dropEditSettings = {allowEditing: true, allowAdding: true}
         this.selectionOptions = {cellSelectionMode: 'Box', type: 'Multiple', mode: 'dialog',rowSelecting:true};
-        this.studentidrules = { required: true, length: 10};
+        this.studentidrules = { required: true, max: 150000};
         this.studentnamerules = { required: true};
         // this.contextMenuItems = ['AutoFit', 'AutoFitAll', 'SortAscending', 'SortDescending','Edit', 'Delete', 'Save',
         //  'Cancel', 'PdfExport', 'ExcelExport', 'CsvExport', 'FirstPage', 'PrevPage', 'LastPage', 'NextPage',{ text: "EditCol ", target: ".e-headercontent", id: "editCol" },];
@@ -246,10 +252,7 @@ this.contextMenuItems = [
 
       public menuItems: MenuItemModel[] = [
         {
-            text: 'CopyAsNext'
-        },
-        {
-            text: 'CopyAsChild'
+            text: 'Copy'
         },
         {
             text: 'MoveAsNext'
@@ -329,8 +332,6 @@ beforeOpen(args:any): void {
     debugger
     $("unhide").css.display = "none";
     $("hide").css.display = "";
-    //document.getElementById("unhide").disabled = true
-//this.contextmenu.hideItems(['UnHide Column']);
   }
   else{
     $("hide").style.display = "none"; 
@@ -342,10 +343,7 @@ select(args:any):void {
   //debugger
   this.selectitem = args.item.text;
    if(args.item.text === "Hide Column") {
-    //  this.grid.getColumnByField('name').visible =false;
-    //  this.hide()
-    this.treegrid.hideColumns('Student Name')
-    // this.treeGridObj.hideColumns('Student Name', 'Roll Number');
+     this.hide()
 
    }
    if(args.item.text === 'UnHide Column') {
@@ -353,7 +351,8 @@ select(args:any):void {
   }
   if(args.item.text === 'Add Column') {
     console.log("add")
-    this.onOpenDialog()
+    // this.onOpenDialog()
+   
   }
   if(args.item.text === 'Edit Column') {
     console.log("edit")
@@ -441,29 +440,33 @@ select(args:any):void {
    }
    if(args.item.text === 'AddChild'){
      console.log("Add Child")
-    // this.onAddRecord(args)
+     this.treegrid.addRecord()
+     this.dialog.open()
+    this.onAddRecord(args)
    }
-   if(args.item.text === 'CopyAsNext'){
-     console.log("CopyAsNext");
-     let i = this.grid.getSelectedRecords()
-     console.log("copyAsnext",i)
-    // this.onAddRecord(args)
-   }
-   if(args.item.text === 'CopyAsChild'){
-     console.log("CopyAsChild")
+   if(args.item.text === 'Copy'){
+     console.log("Copy");
+    //  this.copiedRecord = args.rowData;
+    //  this.copiedRecord.data.id = this.treeGridObj.getCurrentViewRecords.length + 1;
+    //  let i = this.grid.getSelectedRecords()
+    //  this.treegrid.copy(args.data)
+     console.log("copy",this.copiedRecord.data.id)
     // this.onAddRecord(args)
    }
    if(args.item.text === 'MoveAsNext'){
      console.log("MoveAsNext")
+     
     // this.onAddRecord(args)
    }
    if(args.item.text === 'MoveAsChild'){
      console.log("MoveAsChild")
+            this.treegrid.getSelectedRecords
     // this.onAddRecord(args)
    }
    if(args.item.text === 'AddNext'){
-     console.log("AddNext")
-    // this.onAddRecord(args)
+     console.log("AddNext", args.data)
+     this.treegrid.clipboardModule.copy()
+   
    }
    if(args.item.text === 'AddParent'){
      console.log("AddParent")
@@ -477,6 +480,7 @@ select(args:any):void {
     this.DialogObj = DialogUtility.confirm({
     title: 'Add Column Details',
     content: `
+   
   <input type="text" id="form12" class="form-control" placeholder="Column Name" />
   <br><br>
   <div class="dropdown">
@@ -490,7 +494,7 @@ select(args:any):void {
   </div>
 </div>
     `,
-    okButton: {  text: 'OK' },
+    okButton: {  text: 'OK', click: this.treeColumns.addCol()},
     cancelButton: {  text: 'Cancel', click: this.cancelClick.bind(this) },
     showCloseIcon: true,
     closeOnEscape: true,
@@ -799,120 +803,6 @@ public onOpenDialogDelete = ():void => {
   ];
   checkNewEdit!: string;
 
-//  contextMenuOpen(arg:any): void {
-//    console.log("contextMenuOpen:",arg);
-//     this.rowIndex = arg.rowInfo.rowIndex;
-//     let elem: Element = arg.event.target as Element;
-
-//     if (arg.column.headerText == "Student ID") {
-//       this.columnValue = 1;
-//       this.columnField = "id";
-//     }
-//     if (arg.column.headerText == "Student Name") {
-//       this.columnValue = 2;
-//       this.columnField = "name";
-//     }
-//     if (arg.column.headerText == "Roll Number") {
-//       this.columnValue = 3;
-
-//       this.columnField = "roll_no";
-//     }
-//     if (arg.column.headerText == "Class") {
-//       this.columnValue = 4;
-
-//       this.columnField = "class";
-//     }
-
-//     else{}
-//     let row: Element = elem.closest(".e-row")!;
-//     let uid: string = row && row.getAttribute("data-uid")!;
-
-//     this.rowIndex = arg.rowInfo.rowIndex;
-//     this.cellIndex = arg.rowInfo.cellIndex;
-    
-//   }
-
-
-//   contextMenuClick(args:any): void {
-//     if (args.item.id === "editCol") {
-//       this.checkNewEdit = "edit";
-//       this.showEditColumn = true;
-//       this.getCurrentField();
-//     } 
-// //copying row on right click
-//     // if (args.item.id === 'customCopy') {
-//     //   this.treeGridObj.copy();
-//     // } else if (args.item.id === 'customPaste') {
-//     //   var rowIndex = this.rowIndex;
-//     //   var cellIndex = this.cellIndex;
-//     //   // var copyContent = this.treeGridObj.clipboardModule.copyContent;
-//     //   // this.treeGridObj.paste(copyContent, rowIndex, cellIndex);
-//     // }
-     
-//   }
- 
-//   saveColumn(args:any) {
-//     console.log("saveColumn:");
-//     if (this.checkNewEdit == 'edit') {
-//       var catched = false;
-// document.createElement('e-column');
-     
-      
-//     console.log("edit:")
-//       this.treeColumns.forEach((r:any) => {
-//         console.log("R:",r);
-//         if (!catched) {
-//           console.log('catched:', catched);
-//           catched = true;
-//           var style = document.createElement('style');
-//           style.type = 'text/css';
-//           style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
-//             color:${this.ColFColor};
-//           }`;
-//           document.body.append(style);
-//         }
-
-//         if (r.field == this.columnField) {
-//           console.log('r.field:', r.field, 'columnField:', this.columnField);
-//           r.headerText = this.ColName;
-//           r.type = this.ColType;
-//           r.textAlign = this.ColAlign;
-//           r['customAttributes'] = { class: 'cssClassaa' };
-//         }
-//       });
-
-   
-//       this.treegrid.refreshColumns();
-//       this.textWrap = this.ColChecked;
-//     }
-
-//     this.showEditColumn = false;
-
-//     this.ejDialog.hide();
-//   }
-//   public changeFontColor(e: ChangeEventArgs): void {
-//     this.ColFColor = <string>e.value;
-//   }
-//   public changeBackground(e: ChangeEventArgs): void {
-//     this.ColBColor = <string>e.value;
-//   }
- 
-
-
-//   getCurrentField() {
-  
-//     if (this.checkNewEdit == "edit") {
-//       this.ColName = this.treegrid.getColumnByField(
-//         this.columnField
-//       ).headerText;
-     
-//       this.ColType = this.treegrid.getColumnByField(this.columnField).type;
-//       console.log("ColType:",this.ColType)
-//     } else {
-//       this.ColName = "";
-//       this.ColType = "";
-//     }
-//   }
   btnclick(args:any){}
 
   //Delete Column
@@ -992,6 +882,12 @@ rowDataBound(args: any){
     args.row.querySelector('td').innerHTML = " ";  //hide the DragIcon(td element)
    
   }
+   
+}
+onRowClicked(event: any) {  setInterval(() => {
+
+  $(event).css("background-color", "red");
+}, 30000)
 }
 rowDragStartHelper(args: any){
   if (args.data[0].taskID == 1) {
@@ -1077,8 +973,12 @@ public openDialog(parentID:any) {
 
 addRow() {
   console.log("add", this.student);
-  // this.student.
-  this.treeGrid.createRow(this.data?.length+1, this.student)
+  this.treegrid.saveCell()
+      // this.treeGridObj.addRecord(this.student, index - 1, 'Above'); 
+  
+  this.treeGrid?.addRow(this.student, this.student.ParentID);
+  console.log("first work")
+
   this.student.ID = this.nextRow++;
   console.log("check add")
 
@@ -1226,6 +1126,9 @@ contextMenuOpen(arg?: any): void {
    }
  }
 
+ ///////////////////////////////////////////////////////////////////////////////////////
+
+
 }
 
 class CustomNumberSummary extends IgxSummaryOperand {
@@ -1247,4 +1150,7 @@ class CustomNumberSummary extends IgxSummaryOperand {
       });
       return result;
   }
+
+  
 }
+

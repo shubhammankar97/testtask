@@ -249,13 +249,7 @@
     "id": 37,
     "parentID": 36
   },
-  {
-    "name": "aashi",
-    "class": 12,
-    "roll_no": 12,
-    "id": 38,
-    "parentID": 36
-  },
+  null,
   {
     "name": "sonakshi",
     "class": 12,
@@ -398,5 +392,17 @@
     "class": 12,
     "roll_no": 12,
     "id": 60
+  },
+  {
+    "name": "akriti",
+    "class": 13,
+    "roll_no": 17,
+    "id": 61
+  },
+  {
+    "name": "aruna",
+    "class": 19,
+    "roll_no": 19,
+    "id": 62
   }
 ]

@@ -1,5 +1,5 @@
 <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="true" [sortSettings]="sortSettings"
-[allowSorting]="true" [pageSettings]='pageSettings' [treeColumnIndex]='1' Save="getVal($event)"  idMapping='id' 
+[allowSorting]="true" [pageSettings]='pageSettings' [treeColumnIndex]='1'  idMapping='id' 
 parentIdMapping='parentID' [height]='check' [editSettings]='editSettings' [toolbar]='toolbar' 
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
  [selectionSettings]='selectionSettings' [allowSelection]='true'
@@ -12,23 +12,19 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     (contextMenuOpen)="contextMenuOpen($event)"
     (contextMenuClick)="contextMenuClick($event)"
     [columns]="treeColumns"
-    [allowReordering]='true' [allowSelection]='false'
+    [allowReordering]='true'
     [allowResizing]='true' 
     (actionComplete)='actionComplete($event)'
     [allowRowDragAndDrop]='true'
     (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
     childMapping='Crew'
-    [selectionSettings]="this.selectionOptions"
-    allowSelection='true' 
-
-
-   
+    (rowClicked)='onRowClicked($event)'
 >
   <e-columns>
-    <e-column field='id' headerText='Student ID' textAlign='Centre' width=70 [isPrimaryKey]="true" type="number"
+    <e-column field='id' headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
     [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
     <e-column field='name' headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
-    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' [isPrimaryKey]="true" type="number" width=90 [validationRules]='studentidrules'></e-column>
+    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
     <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
     <div class="form-group col-md-6">
       <ejs-checkbox #Verified formControlName="Verified" name="Verified" id="Verified" label="Verified" [checked]="data" ></ejs-checkbox>
