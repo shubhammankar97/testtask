@@ -38,6 +38,7 @@ export class AppComponent {
   public toolbar!: ToolbarItems[];
 
   public editOptions!: Object;
+  public editOptions1!: Object;
   public formatOptions!: Object;
   public selectionOptions!: object;
   public contextMenuSettings: any;
