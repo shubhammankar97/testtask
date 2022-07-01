@@ -19,16 +19,21 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
     childMapping='Crew'
     (rowClicked)='onRowClicked($event)'
+    (actionComplete)="dataStateChange($event)"
 >
   <e-columns>
-    <e-column field='id' headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
+    <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
     [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
-    <e-column field='name' headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
-    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
-    <e-column field='class' headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
-    <div class="form-group col-md-6">
-      <ejs-checkbox #Verified formControlName="Verified" name="Verified" id="Verified" label="Verified" [checked]="data" ></ejs-checkbox>
-  </div>
+    <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
+    <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
+    <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
+    
+      <!-- <e-column field='number' headerText='Action' width=70>
+        <div class="form-group col-md-6">
+        <ng-template #template let-details>
+          <button  (click)='rowSelected($event)' class="btn btn-success btn-xs">Select</button>
+        </ng-template></div>
+      </e-column> -->
 </e-columns>
 </ejs-treegrid>
 <ejs-contextmenu
@@ -38,6 +43,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [items]="menuItems"
     (select)="onSelect($event)"
     (beforeItemRender)="itemBeforeEvent($event)"
+    
   ></ejs-contextmenu
   >
   <div>
