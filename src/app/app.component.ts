@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewEncapsulation,
   ViewContainerRef,
+  ElementRef,
 } from "@angular/core";
 import {
   VirtualScrollService,
@@ -59,7 +60,7 @@ import {
 } from "igniteui-angular";
 import { Student } from "./student";
 import { BeforeOpenCloseEventArgs } from "@syncfusion/ej2-angular-inputs";
-
+import { EmitType } from '@syncfusion/ej2-base';
 declare var $: any;
 
 @Component({
@@ -149,6 +150,10 @@ export class AppComponent {
   ColAlign: string = "";
   ColMinWidth!: number;
   public showEditColumn: boolean = false;
+  public showDelColumn: boolean = false;
+  public showViewColumn: boolean = false;
+  public showAddColumn: boolean = false;
+
   public ColType: string = "";
   ColFColor: string = "";
   ColBColor: string = "";
@@ -160,7 +165,9 @@ export class AppComponent {
   private clone: any = null;
 
   @ViewChild("ejDialog") ejDialog!: DialogComponent;
-
+  @ViewChild("ejDialog") ejDialog2!: DialogComponent;
+  @ViewChild("ejDialog") ejDialog3!: DialogComponent;
+  @ViewChild("ejDialog") ejDialog4!: DialogComponent;
   public textWrap: boolean = false;
 
   ColChecked: boolean = false;
@@ -180,6 +187,31 @@ export class AppComponent {
   public j!: number;
   public i!: number;
   public rec!: Object;
+  /////////
+  @ViewChild('application', {read: ViewContainerRef}) applicationRef!: ViewContainerRef;
+
+    public columns!: Array<any>;
+    public rows: Array<any>;
+
+    // Add Remove
+    private columnCount: number = 4;
+    private rowCount: number = 3;
+
+    // Editing
+    private isEditActive: boolean = false;
+    public editCell: any = null;
+    private originalText: string = '';
+    public editorFocused: boolean = false; 
+
+    //dialog
+      // The Dialog shows within the target element.
+  public targetElement!: HTMLElement;
+  public targetElement2! : HTMLElement;
+  public targetElement3! : HTMLElement;
+
+  ////
+    // Create element reference for dialog target element.
+    @ViewChild('container', { read: ElementRef, static: true }) container!: ElementRef;
 
   /////////////////////////////////
 
@@ -192,6 +224,18 @@ export class AppComponent {
       showContextMenu: true,
       toolbar: ["Add", "Edit", "Delete"],
     };
+
+    this.rows = [
+      { 
+          id: 1,
+          text: "Item1",
+          cells: [{ cid: 1, text: "Item11" }, { cid: 2, text: "Item12" }, { cid: 3, text: "Item13" }],
+          rows: [
+              { id: 11, pid: 1, text: "Item11", cells: [{ cid: 1, text: "Item111" }, { cid: 2, text: "Item112" }, { cid: 3, text: "Item113" }] }
+          ]
+      },
+      { id: 2, text: "Row2", cells: [{ cid: 1, text: "Item21" }, { cid: 2, text: "Item22" }, { cid: 3, text: "Item23" }] }
+  ];
   }
   ngOnInit(): void {
     this.api.getAll().subscribe((res: any) => {
@@ -458,6 +502,8 @@ rowSelected(args:any){
       $("unhide").style.display = "";
     }
   }
+  // Set Dialog position
+  public pos: object={ X: 860, Y: 100 };
 
   select(args: any): void {
     //debugger
@@ -471,21 +517,66 @@ rowSelected(args:any){
     }
     if (args.item.text === "Add Column") {
       console.log("add");
-      // this.onOpenDialog()
+      this.showAddColumn = true;
+
     }
     if (args.item.text === "Edit Column") {
       console.log("edit");
-      this.onOpenDialogEdit();
+      this.showEditColumn = true;
+
     }
     if (args.item.text === "View Column") {
       console.log("view");
-      this.onOpenDialogView();
+      this.showViewColumn =true;
     }
     if (args.item.text === "Delete Column") {
       console.log("delete");
-      this.onOpenDialogDelete();
+      this.showDelColumn = true;
+      this.showEditColumn = true;
+
     }
   }
+  //dialog///////////////////////////////
+  
+      // Hide the Dialog when click the footer button.
+      public hideDialog: EmitType<object> = () => {
+    this.ejDialog.hide();
+      }
+    public hideDialog2: EmitType<object> = () => {
+        this.ejDialog2.hide();
+          }
+    public hideDialog3: EmitType<object> = () => {
+            this.ejDialog.hide();
+              }
+      // Enables the footer buttons
+      public buttons: Object = [
+      {
+          'click': this.hideDialog.bind(this),
+          // Accessing button component properties by buttonModel property
+            buttonModel: {
+            content: 'OK',
+            isPrimary: true
+          }
+      },
+      {
+          'click': this.hideDialog.bind(this),
+          buttonModel: {
+            content: 'Cancel'
+          }
+      }
+      ];
+      // Sample level code to handle the button click action
+      public onOpenDialog = (event: any): void => {
+    // Call the show method to open the Dialog
+    this.ejDialog.show();
+      };
+
+       // Sample level code to handle the button click action
+       public onOpenDialog2 = (event: any): void => {
+        // Call the show method to open the Dialog
+        this.ejDialog2.show();
+          };
+/////////////////////////////////////////    
 
   public itemBeforeEvent(args: MenuEventArgs) {
     if (args.item.text !== "Edit") {
@@ -512,6 +603,17 @@ rowSelected(args:any){
       args.element.appendChild(inputEle);
     }
   }
+  /////////////Add Column Event
+  addColumn(args:any)
+  {
+
+let inputEle = document.createElement("e-column");
+// inputEle.type = "string";
+inputEle.setAttribute("subject", "e-columns");
+this.treeColumns.append(inputEle);
+
+  }
+  /////////////
 
   onSelect(args: any) {
 
@@ -587,57 +689,12 @@ delete(): void {
     }
     this.treeGridObj.refresh();
 }
-    ////////////////////
-// public dataSourceChanged(
-//   dataSourceChangedEvent: DataSourceChangedEventArgs
-// ): void {
-//   if (dataSourceChangedEvent.action === "add") {
-//     this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
-//       dataSourceChangedEvent.endEdit;
-//     });
-//   }
-//   if (dataSourceChangedEvent.action === "edit") {
-//     var getId: any = dataSourceChangedEvent.data;
-//     this.api.updateRecord(dataSourceChangedEvent, getId.id).subscribe(() => {
-//       dataSourceChangedEvent.endEdit;
-//     });
-//   }
-//   if (dataSourceChangedEvent.requestType === "delete") {
-//     var getId: any = dataSourceChangedEvent.data;
-//     this.api.deleteRecord(dataSourceChangedEvent, getId.id).subscribe(() => {
-//       dataSourceChangedEvent.endEdit;
-//     });
-//   }
-// }
+
 ///////////////////
 
 //////////////////
   public DialogObj!: { hide: () => void };
-  public onOpenDialog = (): void => {
-    this.DialogObj = DialogUtility.confirm({
-      title: "Add Column Details",
-      content: `
-   
-  <input type="text" id="form12" class="form-control" placeholder="Column Name" />
-  <br><br>
-  <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown button
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-  <a class="dropdown-item" href="#">Number</a>
-  <a class="dropdown-item" href="#">String action</a>
-  <a class="dropdown-item" href="#">Boolean</a>
-  </div>
-</div>
-    `,
-      okButton: { text: "OK", click: this.treeColumns.addCol() },
-      cancelButton: { text: "Cancel", click: this.cancelClick.bind(this) },
-      showCloseIcon: true,
-      closeOnEscape: true,
-      animationSettings: { effect: "Zoom" },
-    });
-  };
+
   private okClick(): void {
     alert("you clicked OK button");
   }
@@ -646,270 +703,7 @@ delete(): void {
     //Hide the dialog
     this.DialogObj.hide();
   }
-  public onOpenDialogEdit = (): void => {
-    this.DialogObj = DialogUtility.confirm({
-      title: "Edit Column Details",
-      content: `
-  <div *ngIf="showEditColumn">
-    <ejs-dialog
-      id="dialog"
-      #ejDialog
-      [animationSettings]="animationSettings"
-      header="Edit Column"
-      [target]="targetElement"
-      width="300px"
-      [showCloseIcon]="showCloseIcon"
-    >
-      <ng-template #content>
-        <form id="template_driven" #userForm="ngForm" novalidate>
-          <div class="form-group" style="padding-top: 11px;">
-            <div class="e-float-input">
-              <input
-                type="text"
-                name="ColName"
-                [(ngModel)]="ColName"
-                #ColumnName="ngModel"
-              />
-              <span class="e-float-line"></span>
-              <label class="e-float-text e-label-top" for="name">Name</label>
-              <div
-                *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
-              >
-                
-              </div>
-            </div>
-          </div>
 
-          <div class="form-group" style="padding-top: 11px;">
-            <div class="e-float-input">
-              <ejs-dropdownlist
-                
-                id="coltypeid"
-                [dataSource]="d2data"
-                [fields]="fields"
-                placeholder="Type"
-                name="ColType"
-                [(ngModel)]="ColType"
-              ></ejs-dropdownlist>
-              </div>
-          </div>
-
-    
-
-          <div class="form-group" style="padding-top: 11px;">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="e-float-text e-label-top"
-                >Choose new Font-color</span
-              >
-
-              <input
-                ejs-colorpicker
-                type="color"
-                id="element"
-                value="#FFFFFF"
-                (change)="changeFontColor($event)"
-                id="colorpicker"
-              />
-            </div>
-          </div>
-          <div class="form-group" style="padding-top: 11px;">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="e-float-text e-label-top"
-                >Choose new Background-color</span
-              >
-
-              <input
-                ejs-colorpicker
-                type="color"
-                id="element"
-                value="#FFFFFF"
-                (change)="changeBackground($event)"
-                id="colorpicker"
-              />
-            </div>
-          </div>
-          <div class="form-group" style="padding-top: 11px;">
-            <div class="e-float-input">
-              <ejs-dropdownlist
-                #dropdown2
-                id="element"
-                [dataSource]="d3data"
-                [fields]="fields"
-                name="ColAlign"
-                [(ngModel)]="ColAlign"
-                placeholder="Alignment"
-              ></ejs-dropdownlist>
-            </div>
-          </div>
-          <div class="form-group" style="padding-top: 11px;">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="e-float-text e-label-top" for="email"
-                >Text-wrap</span
-              >
-
-              <ejs-checkbox
-                labelPosition="Before"
-                [checked]="false"
-                name="ColChecked"
-                [(ngModel)]="ColChecked"
-              ></ejs-checkbox>
-            </div>
-          </div>
-        </form>
-      </ng-template>
-      <ng-template #footerTemplate>
-        <div>
-          <button
-            id="Button1"
-            class="e-control e-btn e-primary e-flat"
-            (click)="saveColumn($event)"
-            data-ripple="true"
-          >
-            <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
-          </button>
-          <button
-            id="Button2"
-            class="e-control e-btn e-flat"
-            (click)="btnclick($event)"
-            data-ripple="true"
-          >
-            <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-            >Cancel
-          </button>
-        </div>
-      </ng-template>
-    </ejs-dialog>
-    </div>
-  `,
-
-      showCloseIcon: true,
-      closeOnEscape: true,
-      animationSettings: { effect: "Zoom" },
-    });
-  };
-  public onOpenDialogView = (): void => {
-    this.DialogObj = DialogUtility.confirm({
-      title: "View Column",
-      content: `
-  <table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Student ID</th>
-      <th scope="col">Student Name</th>
-      <th scope="col">Roll Number</th>
-      <th scope="col">Class</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of data">
-      <td>{{item.id}}</td>
-      <td>{{item.name}}</td>
-      <td>{{item.roll_no}}</td>
-      <td>{{item.class}}</td> 
-    </tr>
-  </tbody>
-</table>
-  `,
-      okButton: { text: "OK" },
-      cancelButton: { text: "Cancel", click: this.cancelClick.bind(this) },
-      showCloseIcon: true,
-      closeOnEscape: true,
-      animationSettings: { effect: "Zoom" },
-    });
-  };
-
-  public onOpenDialogDelete = (): void => {
-    this.DialogObj = DialogUtility.confirm({
-      title: "Delete Column",
-      content: `
-    <div *ngIf="showEditColumn">
-    <ejs-dialog
-      id="dialog"
-      #ejDialog
-      [animationSettings]="animationSettings"
-      header="Edit Column"
-      [target]="targetElement"
-      width="300px"
-      [showCloseIcon]="showCloseIcon"
-    >
-      <ng-template #content>
-        <form id="template_driven" #userForm="ngForm" novalidate>
-          <div class="form-group" style="padding-top: 11px;">
-            <div class="e-float-input">
-              <input
-                type="text"
-                name="ColName"
-                [(ngModel)]="ColName"
-                #ColumnName="ngModel"
-              />
-              <span class="e-float-line"></span>
-              <label class="e-float-text e-label-top" for="name">Name</label>
-              <div
-                *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
-              >
-                
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group" style="padding-top: 11px;">
-            <div class="e-float-input">
-              <ejs-dropdownlist
-                
-                id="coltypeid"
-                [dataSource]="d2data"
-                [fields]="fields"
-                placeholder="Type"
-                name="ColType"
-                [(ngModel)]="ColType"
-              ></ejs-dropdownlist>
-              </div>
-          </div>
-
-          <div class="form-group" style="padding-top: 11px;">
-            <div class="e-float-input">
-              <ejs-dropdownlist
-                #dropdown2
-                id="element"
-                [dataSource]="d3data"
-                [fields]="fields"
-                name="ColAlign"
-                [(ngModel)]="ColAlign"
-                placeholder="Alignment"
-              ></ejs-dropdownlist>
-            </div>
-          </div>
-          
-      <ng-template #footerTemplate>
-        <div>
-          <button
-            id="Button1"
-            class="e-control e-btn e-primary e-flat"
-            (click)="deleteColumn($event)"
-            data-ripple="true"
-          >
-            <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Delete
-          </button>
-          <button
-            id="Button2"
-            class="e-control e-btn e-flat"
-            (click)="btnclick($event)"
-            data-ripple="true"
-          >
-            <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-            >Cancel
-          </button>
-        </div>
-      </ng-template>
-    </ejs-dialog>
-    </div>
-    `,
-
-      showCloseIcon: true,
-      closeOnEscape: true,
-      animationSettings: { effect: "Zoom" },
-    });
-  };
 
   public treeColumns: any = [
     {
@@ -938,7 +732,19 @@ delete(): void {
   ];
   checkNewEdit!: string;
 
-  btnclick(args: any) {}
+  btnclick(args: any) {
+    this.hideDialog.bind(args)
+    this.ejDialog2.hide();
+    this.ejDialog3.hide();
+    this.ejDialog4.hide();
+    this.ejDialog.hide();
+
+  }
+  btnclick3(args: any) {
+    this.ejDialog.hide();
+
+    this.hideDialog3.bind(args)
+  }
 
   //Delete Column
   public deleteColumn(args: any) {
@@ -1158,32 +964,23 @@ delete(): void {
   //edit col
 
   contextMenuOpen(arg?: any): void {
-    console.log("contextMenuOpen:", arg);
-    //  this.rowIndex = arg.rowInfo.rowIndex;
-    //  let elem: Element = arg.event.target as Element;
-    if (arg.item.text == "Hide Column") {
-      console.log("in 1 if");
-      //  this.isShown = false;
-      this.hider(arg);
+    console.log("contextMenuOpen:", arg.column.field);
+    
+    if (arg.column.field == "id") {
+      this.ColName = 'Student ID'
     }
-    if (arg.item.text == "Unhide Column") {
-      this.columnValue = 2;
-      this.columnField = "category";
-    }
-    if (arg.column.headerText == "Order Date") {
-      this.columnValue = 3;
+    if (arg.column.field == "name") {
+      this.ColName = 'Student Name'
 
-      this.columnField = "orderDate";
     }
-    if (arg.column.headerText == "Units") {
-      this.columnValue = 4;
+    if (arg.column.field == "roll_no") {
+      this.ColName = 'Roll Number'
 
-      this.columnField = "units";
     }
+    if (arg.column.field == "class") {
+      this.ColName = 'Class'
 
-    //  else{}
-    //  let row: Element = elem.closest(".e-row")!;
-    //  let uid: string = row && row.getAttribute("data-uid")!;
+    }
   }
   hider(arg: any) {
     if (arg.column.field == "id") {
@@ -1271,7 +1068,7 @@ delete(): void {
 
   }
 
-  public saveColumn() {
+  public saveColumn(args:any) {
     console.log("saveColumn:");
     if (this.checkNewEdit == "edit") {
       var catched = false;
@@ -1327,6 +1124,55 @@ delete(): void {
       this.ColType = "";
     }
   }
+ 
+// Add Remove Columns ----------------------------------------------------------------
+            
+createNewColumn(){
+    this.columnCount++;
+    // this.treegrid.createElement('e-column','e-column',true)
+
+    return { id: this.columnCount, headerText: "Header" + this.columnCount };
+}
+
+// Add Remove Rows ----------------------------------------------------------------
+            
+createNewRow(){
+    this.rowCount++;
+
+    let newRow: any = {
+        text: "Row" + this.rowCount,
+        cells: []
+    }
+
+    for (let j = 1; j <= this.columns.length; j++){
+        let colId: any = this.columns[j-1].id;
+
+        newRow.cells.push({ cid: colId, text: "Item" + this.rowCount + colId });
+    }
+
+    return newRow;
+}
+
+
+// Editing ---------------------------------------------------------------------------
+
+showEditor(cell: any){
+    // A timeout is required in this case, because when edit option from context menu is selected
+    // there is a small delay prior context menu closes and focus is transfered from context menu to the cell
+    // In other cases (when context menu is not used), the timout is not needed
+    
+    let self = this;
+
+    let editTimeout = setTimeout(function(){
+        self.originalText = cell.text;
+        self.isEditActive = true;
+        self.editCell = cell;
+        self.editorFocused = true;
+
+        clearTimeout(editTimeout);
+    }, 150);
+}
+
 
   ///////////////////////////////////////////////////////////////////////////////////////
 }
