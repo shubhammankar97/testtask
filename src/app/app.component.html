@@ -11,7 +11,6 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 [contextMenuItems]="contextMenuItems"
     (contextMenuOpen)="contextMenuOpen($event)"
     (contextMenuClick)="contextMenuClick($event)"
-    [columns]="treeColumns"
     [allowReordering]='true'
     [allowResizing]='true' 
     (actionComplete)='actionComplete($event)'
@@ -21,20 +20,23 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     (rowClicked)='onRowClicked($event)'
     (actionComplete)="dataStateChange($event)"
 >
-  <e-columns>
+   <e-columns>
     <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
     [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
     <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
     <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
     <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
-    
-      <!-- <e-column field='number' headerText='Action' width=70>
+<!--     
+      <e-column field='number' headerText='Action' width=70 *ngIf="showChooseColumn">
         <div class="form-group col-md-6">
         <ng-template #template let-details>
           <button  (click)='rowSelected($event)' class="btn btn-success btn-xs">Select</button>
         </ng-template></div>
-      </e-column> -->
-</e-columns>
+      </e-column>  -->
+
+      <e-column type='checkbox' width='50' *ngIf="showChooseColumn" [columns]="columns"></e-column>
+
+</e-columns> 
 </ejs-treegrid>
 <ejs-contextmenu
     id="contextmenu"
@@ -89,7 +91,6 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           name="ColName"
           [(ngModel)]="ColName"
           #ColumnName="ngModel"
-          [value]=""
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Column Name</label>
@@ -103,8 +104,8 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           id="element"
           [dataSource]="d2data"
           [fields]="fields"
-          name="ColAlign"
-          [(ngModel)]="ColAlign"
+          name="ColType"
+          [(ngModel)]="ColType"
           placeholder="Alignment"
         ></ejs-dropdownlist>
       </div>
@@ -135,7 +136,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 </ejs-dialog>
 
 <!--edit dialog -->
-<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column' content='This is a Dialog with drag enabled'
+<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column'
 [target]='targetElement' width='300px' [height]="450" *ngIf="showEditColumn"  [position]="pos" showCloseIcon="true"> 
 
 <ng-template #content>
@@ -168,7 +169,6 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           id="coltypeid"
           [dataSource]="d2data"
           [fields]="fields"
-          placeholder="Type"
           name="ColType"
           [(ngModel)]="ColType"
         ></ejs-dropdownlist>
@@ -243,7 +243,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="saveColumn($event)"
+      (click)="saveColEdit($event)"
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
@@ -263,9 +263,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 </ejs-dialog>
 <!--view dialog -->
 <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='View Column' content='This is a Dialog with drag enabled'
-[target]='targetElement' width='300px' [height]="450" *ngIf="showViewColumn"  [position]="pos" showCloseIcon="true"> 
+[target]='targetElement' width='300px' [height]="450" *ngIf="showViewColumn"  [position]="pos" showCloseIcon="true"
+[animationSettings]='animationSettings' width='400px' showCloseIcon='true' [target]='targetElement' [animationSettings]='dialogAnimation'> 
 
-<ng-template #content>
+<!-- <ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
@@ -282,9 +283,9 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
         <div
           *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
         >
-          <!-- <div class="e-error" *ngIf="ColumnName.errors?.required">
+           <div class="e-error" *ngIf="ColumnName.errors?.required">
             * Enter Column name
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
@@ -296,7 +297,6 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           id="coltypeid"
           [dataSource]="d2data"
           [fields]="fields"
-          placeholder="Type"
           name="ColType"
           [(ngModel)]="ColType"
           readonly
@@ -320,6 +320,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           (change)="changeFontColor($event)"
           id="colorpicker"
           readonly
+          disabled="true"
         />
       </div>
     </div>
@@ -337,6 +338,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           (change)="changeBackground($event)"
           id="colorpicker"
           readonly
+          disabled="true"
         />
       </div>
     </div>
@@ -349,8 +351,9 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           [fields]="fields"
           name="ColAlign"
           [(ngModel)]="ColAlign"
-          placeholder="Alignment"
           readonly
+          [disabled]="true"
+          disabled="true"
         ></ejs-dropdownlist>
       </div>
     </div>
@@ -366,6 +369,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           name="ColChecked"
           [(ngModel)]="ColChecked"
           aria-readonly="true"
+          disabled="true"
         ></ejs-checkbox>
       </div>
     </div>
@@ -381,10 +385,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-      >OK
+      >Back
     </button>
   </div>
-</ng-template>
+</ng-template> -->
 
 </ejs-dialog>
 
@@ -422,9 +426,8 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           id="element"
           [dataSource]="d2data"
           [fields]="fields"
-          name="ColAlign"
-          [(ngModel)]="ColAlign"
-          placeholder="Alignment"
+          name="ColType"
+          [(ngModel)]="ColType"
         ></ejs-dropdownlist>
       </div>
     </div>

@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewEncapsulation,
   ViewContainerRef,
-  ElementRef,
+  ElementRef
 } from "@angular/core";
 import {
   VirtualScrollService,
@@ -61,6 +61,7 @@ import {
 import { Student } from "./student";
 import { BeforeOpenCloseEventArgs } from "@syncfusion/ej2-angular-inputs";
 import { EmitType } from '@syncfusion/ej2-base';
+import { Query } from '@syncfusion/ej2-data';
 declare var $: any;
 
 @Component({
@@ -153,6 +154,7 @@ export class AppComponent {
   public showDelColumn: boolean = false;
   public showViewColumn: boolean = false;
   public showAddColumn: boolean = false;
+  public showChooseColumn:boolean =false;
 
   public ColType: string = "";
   ColFColor: string = "";
@@ -209,9 +211,12 @@ export class AppComponent {
   public targetElement2! : HTMLElement;
   public targetElement3! : HTMLElement;
 
-  ////
+  
     // Create element reference for dialog target element.
     @ViewChild('container', { read: ElementRef, static: true }) container!: ElementRef;
+    // Dialog animation
+    public dialogAnimation: Object= { effect: 'Zoom', duration: 400, delay: 0 };
+    public animationSettings: Object = { effect: 'Zoom', duration: 400, delay: 0 };
 
   /////////////////////////////////
 
@@ -247,12 +252,12 @@ export class AppComponent {
     this.contextMenuItems = [
       { text: "Edit ", target: ".e-headercontent", id: "editCol" },
     ];
-    this.sortSettings = {
-      columns: [
-        { field: "name", direction: "Ascending" },
-        { field: "name", direction: "Descending" },
-      ],
-    };
+    // this.sortSettings = {
+    //   columns: [
+    //     { field: "name", direction: "Ascending" },
+    //     { field: "name", direction: "Descending" },
+    //   ],
+    // };
     this.pageSettings = { pageSize: 6 };
     this.editOptions = { params: { format: "y/M/d" } };
     this.editSettings = {
@@ -273,8 +278,6 @@ export class AppComponent {
     };
     this.studentidrules = { required: true, max: 150000 };
     this.studentnamerules = { required: true };
-    // this.contextMenuItems = ['AutoFit', 'AutoFitAll', 'SortAscending', 'SortDescending','Edit', 'Delete', 'Save',
-    //  'Cancel', 'PdfExport', 'ExcelExport', 'CsvExport', 'FirstPage', 'PrevPage', 'LastPage', 'NextPage',{ text: "EditCol ", target: ".e-headercontent", id: "editCol" },];
     this.customAttributes = { class: "customcss" };
     this.selectionSettings = { type: "Multiple" };
     this.socketService.setupSocketConnection();
@@ -348,25 +351,39 @@ export class AppComponent {
     //close of ngOninit
     this.student = new Student();
     this.nextRow = this.data?.length + 1;
+
+this.columns = [
+  {
+    field: 'id',
+    headerText: 'Student ID',
+    isPrimaryKey: true
+  },
+  {
+    field: 'name',
+    headerText: 'Student Name'
+  },
+  {
+    field: 'roll_no',
+    format: 'N2',
+    editType: 'numericedit'
+  },
+  {
+    field: 'class',
+    editType: 'dropdownedit',
+    edit: {
+      params: {
+        query: new Query(),
+        dataSource: [{ text: 13 }, { text: 11 }, { text: 12 }],
+        fields: { text: 'text', value: 'text' }
+      }
+    }
+  }
+];
     /////////////////////////////////////////////////////////
     this.contextMenuItems = [
       { text: "Edit ", target: ".e-headercontent", id: "editCol" },
     ];
-    this.d2data = [
-      { id: "string", type: "string" },
-      { id: "number", type: "number" },
-      { id: "boolean", type: "boolean" },
-      { id: "datetime", type: "datetime" },
-      { id: "date", type: "date" },
-    ];
 
-    this.d3data = [
-      { id: "right", type: "Right" },
-      { id: "left", type: "Left" },
-      { id: "Center", type: "Center" },
-    ];
-
-    this.fields = { text: "type", value: "id" };
   }
 
   actionComplete(args: DialogEditEventArgs) {
@@ -517,23 +534,39 @@ rowSelected(args:any){
     }
     if (args.item.text === "Add Column") {
       console.log("add");
-      this.showAddColumn = true;
+      this.showAddColumn = !this.showAddColumn;
 
     }
     if (args.item.text === "Edit Column") {
       console.log("edit");
-      this.showEditColumn = true;
+      this.showEditColumn = !this.showEditColumn;
 
     }
     if (args.item.text === "View Column") {
       console.log("view");
-      this.showViewColumn =true;
+      this.showViewColumn =!this.showViewColumn;
+      this.ejDialog.content = this.getDynamicContent();
+      this.getDynamicContent()
     }
     if (args.item.text === "Delete Column") {
       console.log("delete");
-      this.showDelColumn = true;
-      this.showEditColumn = true;
+      this.showDelColumn = !this.showDelColumn;
 
+    }
+    if (args.item.text === "Choose Column") {
+      console.log("Choose");
+      this.showChooseColumn = !this.showChooseColumn;
+
+    }
+    if (args.item.text === "Freeze Column") {
+      console.log("Freeze");
+    }
+    if (args.item.text === "Filter Column") {
+      console.log("Filter");
+
+    }
+    if (args.item.text === "Multisort Column") {
+      console.log("Multisort");
     }
   }
   //dialog///////////////////////////////
@@ -606,11 +639,11 @@ rowSelected(args:any){
   /////////////Add Column Event
   addColumn(args:any)
   {
-
-let inputEle = document.createElement("e-column");
-// inputEle.type = "string";
-inputEle.setAttribute("subject", "e-columns");
-this.treeColumns.append(inputEle);
+    console.log("adding column")
+ 
+    var obj = { field: "priority", headerText: 'NewColumn', width: 80 };
+    this.treegrid.columns.push(obj as any);   //you can add the columns by using the treeGrid columns method
+    this.treegrid.refreshColumns();
 
   }
   /////////////
@@ -704,32 +737,6 @@ delete(): void {
     this.DialogObj.hide();
   }
 
-
-  public treeColumns: any = [
-    {
-      field: "orderName",
-      headerText: "Order Name",
-    },
-    {
-      field: "category",
-      headerText: "Category",
-      editType: "stringedit",
-      type: "string",
-    },
-    {
-      field: "orderDate",
-      headerText: "Order Date",
-      textAlign: "Right",
-      editType: "stringedit",
-      type: "string",
-    },
-    {
-      field: "units",
-      headerText: "Units",
-      editType: "stringedit",
-      type: "string",
-    },
-  ];
   checkNewEdit!: string;
 
   btnclick(args: any) {
@@ -757,7 +764,7 @@ delete(): void {
       var catched = false;
 
       console.log("edit:");
-      this.treeColumns.forEach((r: any) => {
+      this.columns.forEach((r: any) => {
         console.log("R:", r);
         if (!catched) {
           console.log("catched:", catched);
@@ -786,6 +793,14 @@ delete(): void {
     this.showEditColumn = false;
 
     this.ejDialog.hide();
+   
+      this.treegrid.columns.filter?((i:any,x:any) => {  
+          if(i.field == 'duration') { 
+          this.treegrid.columns.splice(x,1); //you can simply remove based on field name or an index of a column 
+      } 
+      }):
+      this.treegrid.refreshColumns(); 
+        
   }
   //show and hide column method
   show() {
@@ -963,72 +978,65 @@ delete(): void {
 
   //edit col
 
-  contextMenuOpen(arg?: any): void {
-    console.log("contextMenuOpen:", arg.column.field);
+  contextMenuOpen(arg: any): void {
     
+    console.log("contextMenuOpen:", arg.column.field);
+
     if (arg.column.field == "id") {
-      this.ColName = 'Student ID'
+      this.ColName = 'Student ID';
+      this.ColType = 'number';
+      this.ColAlign = 'Left';
     }
     if (arg.column.field == "name") {
-      this.ColName = 'Student Name'
-
+      this.ColName = 'Student Name';
+      this.ColType = 'Left';
     }
     if (arg.column.field == "roll_no") {
       this.ColName = 'Roll Number'
-
+      this.ColType = 'Left';
     }
     if (arg.column.field == "class") {
       this.ColName = 'Class'
+      this.ColType = 'Left';
+    }
+    /////////////
+    this.rowIndex = arg.rowInfo.rowIndex;
+    let elem: Element = arg.event.target as Element;
 
+    if (arg.column.headerText == "Student ID") {
+      this.columnValue = 1;
+      this.columnField = "id";
     }
-  }
-  hider(arg: any) {
-    if (arg.column.field == "id") {
-      console.log("in 1 if");
-      this.isShown = false;
+    if (arg.column.headerText == "Student Name") {
+      this.columnValue = 2;
+      this.columnField = "name";
     }
-    if (arg.column.field == "name") {
-      console.log("in 2 if");
-      this.isShown = false;
-    }
-    if (arg.column.field == "roll_no") {
-      console.log("in 3 if");
-      this.isShown = false;
-    }
-    if (arg.column.field == "class") {
-      console.log("in 4 if");
-      this.isShown = false;
-    }
-  }
+    if (arg.column.headerText == "Roll Number") {
+      this.columnValue = 3;
 
-  shower(arg: any) {
-    if (arg.column.field == "id") {
-      console.log("in 1 if");
-      this.isShown = true;
+      this.columnField = "roll_no";
     }
-    if (arg.column.field == "name") {
-      console.log("in 2 if");
-      this.isShown = true;
+    if (arg.column.headerText == "Class") {
+      this.columnValue = 4;
+
+      this.columnField = "class";
     }
-    if (arg.column.field == "roll_no") {
-      console.log("in 3 if");
-      this.isShown = true;
-    }
-    if (arg.column.field == "class") {
-      console.log("in 4 if");
-      this.isShown = true;
-    }
+
+    else{}
+    let row: Element = elem.closest(".e-column")!;
+    let uid: string = row && row.getAttribute("data-uid")!;
   }
 
   contextMenuClick(args: any): void {
     if (args.item.id === "addnext") {
       console.log("addnext");
       this.treegrid.editModule.addRecord();
-      // this.checkNewEdit = "edit";
-      // this.showEditColumn = true;
-      // this.getCurrentField();
-
     }
+    if (args.item.id === "editCol") {
+      this.checkNewEdit = "edit";
+      this.showEditColumn = true;
+      this.getCurrentField();
+    } 
 //////////////////
     // if (this.flag == false) {
     //    this.i = this.treeGridObj.flatData.length;
@@ -1074,7 +1082,7 @@ delete(): void {
       var catched = false;
 
       console.log("edit:");
-      this.treeColumns.forEach((r: any) => {
+      this.columns.forEach((r: any) => {
         console.log("R:", r);
         if (!catched) {
           console.log("catched:", catched);
@@ -1104,21 +1112,60 @@ delete(): void {
 
     this.ejDialog.hide();
   }
-  public changeFontColor(e: ChangeEventArgs): void {
-    this.ColFColor = <string>e.value;
+ 
+
+  saveColEdit(args:any){
+    console.log("saveColumn:", args);
+    if (this.checkNewEdit == 'edit') {
+      var catched = false;
+ 
+    console.log("edit:",this.columns)
+      this.columns.forEach((r:any) => {
+        console.log("R:",r);
+        if (!catched) {
+          console.log('catched:', catched);
+          catched = true;
+          var style = document.createElement('style');
+          style.type = 'text/css';
+          style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
+            color:${this.ColFColor};
+          }`;
+          document.body.append(style);
+        }
+
+        if (r.field == this.columnField) {
+          console.log('r.field:', r.field, 'columnField:', this.columnField);
+          r.headerText = this.ColName;
+          r.type = this.ColType;
+          r.textAlign = this.ColAlign;
+          r['customAttributes'] = { class: 'cssClassaa' };
+        }
+      });
+
+   
+      this.treegrid.refreshColumns();
+      this.textWrap = this.ColChecked;
   }
-  public changeBackground(e: ChangeEventArgs): void {
-    this.ColBColor = <string>e.value;
-  }
+  this.showEditColumn = false;
+
+  this.ejDialog.hide();
+}
+public changeFontColor(e: ChangeEventArgs): void {
+  this.ColFColor = <string>e.value;
+}
+public changeBackground(e: ChangeEventArgs): void {
+  this.ColBColor = <string>e.value;
+}
 
   getCurrentField() {
+ 
     if (this.checkNewEdit == "edit") {
       this.ColName = this.treegrid.getColumnByField(
         this.columnField
       ).headerText;
-
+     
       this.ColType = this.treegrid.getColumnByField(this.columnField).type;
-      console.log("ColType:", this.ColType);
+      console.log("ColType:",this.ColType)
     } else {
       this.ColName = "";
       this.ColType = "";
@@ -1172,7 +1219,15 @@ showEditor(cell: any){
         clearTimeout(editTimeout);
     }, 150);
 }
-
+////////////////// view Column
+public getDynamicContent: EmitType<object> = () => {
+  let input: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#name')!;
+  
+  let template: string = "<div class='row'><div class='col-xs-6 col-sm-6 col-lg-6 col-md-6'><b>Confirm your details</b></div>" +
+  "</div><div class='row'><div class='col-xs-6 col-sm-6 col-lg-6 col-md-6'><span id='name'> Name: </span>" +
+  "</div><div class='col-xs-6 col-sm-6 col-lg-6 col-md-6'><span id='nameValue'>"+ input.value + "</span> </div></div>" 
+  return template;
+}
 
   ///////////////////////////////////////////////////////////////////////////////////////
 }
