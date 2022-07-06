@@ -19,6 +19,9 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     childMapping='Crew'
     (rowClicked)='onRowClicked($event)'
     (actionComplete)="dataStateChange($event)"
+    [showColumnChooser]='true' 
+   
+    [editSettings]="editSetting1"
 >
    <e-columns>
     <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
@@ -32,9 +35,13 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
         <ng-template #template let-details>
           <button  (click)='rowSelected($event)' class="btn btn-success btn-xs">Select</button>
         </ng-template></div>
-      </e-column>  -->
+      </e-column>  
+    
+     [toolbar]='toolbar1'-->
+      <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
 
-      <e-column type='checkbox' width='50' *ngIf="showChooseColumn"></e-column>
+     <!-- <e-column type='checkbox' width='50' *ngIf="showNewColumn" [columns]="columns"></e-column> -->
+   
 
 </e-columns> 
 </ejs-treegrid>

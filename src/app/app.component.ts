@@ -21,6 +21,7 @@ import {
   SelectionService,
   PageService,
   DataStateChangeEventArgs,
+  ColumnChooserService
 } from "@syncfusion/ej2-angular-treegrid";
 import { ApiService } from "./services/api.service";
 import {
@@ -33,6 +34,7 @@ import {
   DialogEditEventArgs,
   GridComponent,
   RowSelectEventArgs,
+  parentsUntil
 } from "@syncfusion/ej2-angular-grids";
 import { Dialog } from "@syncfusion/ej2-popups";
 import { SocketioService } from "./socketio.service";
@@ -62,6 +64,7 @@ import { Student } from "./student";
 import { BeforeOpenCloseEventArgs } from "@syncfusion/ej2-angular-inputs";
 import { EmitType } from '@syncfusion/ej2-base';
 import { Query } from '@syncfusion/ej2-data';
+import { Internationalization, isNullOrUndefined } from '@syncfusion/ej2-base';
 declare var $: any;
 
 @Component({
@@ -77,6 +80,7 @@ declare var $: any;
     RowDDService,
     SelectionService,
     PageService,
+    ColumnChooserService      
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -155,6 +159,7 @@ export class AppComponent {
   public showViewColumn: boolean = false;
   public showAddColumn: boolean = false;
   public showChooseColumn:boolean =false;
+  public showNewColumn:boolean = false;
 
   public ColType: string = "";
   ColFColor: string = "";
@@ -218,6 +223,10 @@ export class AppComponent {
     public dialogAnimation: Object= { effect: 'Zoom', duration: 400, delay: 0 };
     public animationSettings: Object = { effect: 'Zoom', duration: 400, delay: 0 };
 
+    count:number = 0;
+
+  public toolbar1!:string[];
+  public editSetting1!:string[];
   /////////////////////////////////
 
   constructor(
@@ -261,9 +270,7 @@ export class AppComponent {
     this.pageSettings = { pageSize: 6 };
     this.editOptions = { params: { format: "y/M/d" } };
     this.editSettings = {
-      allowEditing: true,
       allowAdding: true,
-      allowDeleting: true,
       mode: "Dialog",
       newRowPosition: "Child",
       showDeleteConfirmDialog: true,
@@ -354,35 +361,51 @@ export class AppComponent {
 
 this.columns = [
   {
-    field: 'id',
-    headerText: 'Student ID',
-    isPrimaryKey: true
-  },
-  {
-    field: 'name',
-    headerText: 'Student Name'
-  },
-  {
-    field: 'roll_no',
-    format: 'N2',
-    editType: 'numericedit'
-  },
-  {
-    field: 'class',
-    editType: 'dropdownedit',
-    edit: {
-      params: {
-        query: new Query(),
-        dataSource: [{ text: 13 }, { text: 11 }, { text: 12 }],
-        fields: { text: 'text', value: 'text' }
-      }
-    }
+    field: 'new',
+    headerText: 'New Column',
+    width: 80
   }
+  // ,
+  // {
+  //   field: 'name',
+  //   headerText: 'Student Name'
+  // },
+  // {
+  //   field: 'roll_no',
+  //   format: 'N2',
+  //   editType: 'numericedit'
+  // },
+  // {
+  //   field: 'new column',
+  //   editType: 'dropdownedit',
+  //   edit: {
+  //     params: {
+  //       query: new Query(),
+  //       dataSource: [{ text: 13 }, { text: 11 }, { text: 12 }],
+  //       fields: { text: 'text', value: 'text' }
+  //     }
+  //   }
+  // }
 ];
     /////////////////////////////////////////////////////////
     this.contextMenuItems = [
       { text: "Edit ", target: ".e-headercontent", id: "editCol" },
     ];
+
+
+    ///////////////////////////color row selected
+    let gridInstance = this.grid;
+this.grid.element.addEventListener('click', function(e){
+  let element = e.target;
+  let row = parentsUntil((element as Element), 'parenttr');
+  if(!isNullOrUndefined(row)) {
+  let prevSelectedRows = gridInstance.getContent().querySelectorAll('.bgcolor');
+  for( let i = 0; i < prevSelectedRows.length; i++){
+    prevSelectedRows[i].classList.remove('bgcolor');
+  }
+  row.classList.add('bgcolor');
+  }
+})
 
   }
 
@@ -501,12 +524,6 @@ this.columns = [
       id: "msortCol",
     },
   ];
-/////////////////////////
-rowSelected(args:any){
-  let selectedrecords: Object[] = this.treeGridObj.getSelectedRecords(); 
-  console.log("row selected working",this.treeGridObj.getSelectedRecords());
- }
-
 
 ////////////////////////
   beforeOpen(args: any): void {
@@ -555,7 +572,7 @@ rowSelected(args:any){
     }
     if (args.item.text === "Choose Column") {
       console.log("Choose");
-      this.showChooseColumn = !this.showChooseColumn;
+      this.toolbar1 = [ "ColumnChooser"];
 
     }
     if (args.item.text === "Freeze Column") {
@@ -639,12 +656,16 @@ rowSelected(args:any){
   /////////////Add Column Event
   addColumn(args:any)
   {
-    console.log("adding column")
- 
-    var obj = { field: "priority", headerText: 'NewColumn', width: 80 };
-    this.treegrid.columns.push(obj as any);   //you can add the columns by using the treeGrid columns method
+    console.log("adding column", this.treegrid);
+    // this.showNewColumn = true;
+    this.count++;
+    
+    let obj = { field: "priority", headerText: 'NewColumn', width: 80 };
+    this.grid.columns.push(obj as any);   //you can add the columns by using the treeGrid columns method
+    console.log("worked adding col")
     this.treegrid.refreshColumns();
-
+    this.treegrid.endEdit;
+    
   }
   /////////////
 
@@ -674,15 +695,17 @@ rowSelected(args:any){
     }
     if (args.item.text === "Edit Row") {
       console.log("edit row")
+      this.editSetting1=[ "Edit"];
       this.dataStateChange(args)
       this.grid.startEdit();
     }
     if (args.item.text === "Select Rows") {
-      
+      this.rowSelected(args)
     }
 
     if (args.item.text === "Delete Rows") {
       console.log("delete",args?.getSelectedRowIndexes)
+      this.editSettings = {allowDeleting:true}
       this.delete();
       // this.selectedIndex = this.treeGridObj.getSelectedRowIndexes()[0]; // select the records on perform Copy action
       // this.selectedRecord = this.treeGridObj.getSelectedRecords()[0];
@@ -1229,7 +1252,20 @@ public getDynamicContent: EmitType<object> = () => {
   return template;
 }
 
-  ///////////////////////////////////////////////////////////////////////////////////////
+///////////////row select
+
+rowSelected(args: any) {
+  var grid = (document.getElementsByClassName("e-grid")[0] as any)
+    .ej2_instances[0];
+  console.log(grid.getSelectedRecords());
+  $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
+    
+  }, 3000);
+  console.log("timer");
+alert
+}
+
+////////////////////////////////////////////////////////////////////
 }
 
 class CustomNumberSummary extends IgxSummaryOperand {
