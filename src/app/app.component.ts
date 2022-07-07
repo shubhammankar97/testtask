@@ -91,7 +91,7 @@ export class AppComponent {
   public pageSettings!: PageSettingsModel;
   public editSettings!: EditSettingsModel;
   public selectionSettings!: SelectionSettingsModel;
-  public toolbar!: ToolbarItems[];
+  public toolbar!: string[];
 
   public editOptions!: Object;
   public editOptions1!: Object;
@@ -160,6 +160,8 @@ export class AppComponent {
   public showAddColumn: boolean = false;
   public showChooseColumn:boolean =false;
   public showNewColumn:boolean = false;
+  public showAddNext:boolean = false;
+
 
   public ColType: string = "";
   ColFColor: string = "";
@@ -175,6 +177,8 @@ export class AppComponent {
   @ViewChild("ejDialog") ejDialog2!: DialogComponent;
   @ViewChild("ejDialog") ejDialog3!: DialogComponent;
   @ViewChild("ejDialog") ejDialog4!: DialogComponent;
+  @ViewChild("ejDialog") ejDialog5!: DialogComponent;
+
   public textWrap: boolean = false;
 
   ColChecked: boolean = false;
@@ -197,7 +201,7 @@ export class AppComponent {
   /////////
   @ViewChild('application', {read: ViewContainerRef}) applicationRef!: ViewContainerRef;
 
-    public columns!: Array<any>;
+    public column!: Array<any>;
     public rows: Array<any>;
 
     // Add Remove
@@ -215,7 +219,8 @@ export class AppComponent {
   public targetElement!: HTMLElement;
   public targetElement2! : HTMLElement;
   public targetElement3! : HTMLElement;
-
+  public targetElement5! : HTMLElement;
+  
   
     // Create element reference for dialog target element.
     @ViewChild('container', { read: ElementRef, static: true }) container!: ElementRef;
@@ -227,6 +232,9 @@ export class AppComponent {
 
   public toolbar1!:string[];
   public editSetting1!:string[];
+
+  public freezeCol!:number;
+  public columnNumber!: number;
   /////////////////////////////////
 
   constructor(
@@ -236,7 +244,7 @@ export class AppComponent {
   ) {
     this.contextMenuSettings = {
       showContextMenu: true,
-      toolbar: ["Add", "Edit", "Delete"],
+      toolbar: ["Add", "Edit", "Delete", "ColumnChooser"],
     };
 
     this.rows = [
@@ -257,7 +265,8 @@ export class AppComponent {
       console.log("data", this.data);
     });
     // this.selectionSettings = { type: 'Multiple', enableToggle:true,  checkboxMode: 'ResetOnRowClick',persistSelection: true};
-    this.selectionSettings = { persistSelection: true };
+
+  this.selectionSettings = { persistSelection: true };
     this.contextMenuItems = [
       { text: "Edit ", target: ".e-headercontent", id: "editCol" },
     ];
@@ -271,6 +280,10 @@ export class AppComponent {
     this.editOptions = { params: { format: "y/M/d" } };
     this.editSettings = {
       allowAdding: true,
+      allowEditing: true,
+      allowDeleting: true,
+      allowEditOnDblClick: false,
+      allowNextRowEdit: true,
       mode: "Dialog",
       newRowPosition: "Child",
       showDeleteConfirmDialog: true,
@@ -282,6 +295,7 @@ export class AppComponent {
       type: "Multiple",
       mode: "dialog",
       rowSelecting: true,
+      allowColumnSelection:true
     };
     this.studentidrules = { required: true, max: 150000 };
     this.studentnamerules = { required: true };
@@ -347,8 +361,6 @@ export class AppComponent {
     };
     this.taskidrules = { required: true, number: true };
     this.tasknamerules = { required: true };
-    this.startdaterules = { date: true };
-    this.durationrules = { number: true, min: 0 };
     this.edit = { params: { format: "n" } };
     this.ddlfields = { text: "name", value: "id" };
     this.d1data = [
@@ -359,12 +371,8 @@ export class AppComponent {
     this.student = new Student();
     this.nextRow = this.data?.length + 1;
 
-this.columns = [
-  {
-    field: 'new',
-    headerText: 'New Column',
-    width: 80
-  }
+this.column = [
+  
   // ,
   // {
   //   field: 'name',
@@ -372,19 +380,11 @@ this.columns = [
   // },
   // {
   //   field: 'roll_no',
-  //   format: 'N2',
-  //   editType: 'numericedit'
+  //   headerText: 'Roll Number'
   // },
   // {
-  //   field: 'new column',
-  //   editType: 'dropdownedit',
-  //   edit: {
-  //     params: {
-  //       query: new Query(),
-  //       dataSource: [{ text: 13 }, { text: 11 }, { text: 12 }],
-  //       fields: { text: 'text', value: 'text' }
-  //     }
-  //   }
+  //   field: 'class',
+  //   headerText: 'Class'
   // }
 ];
     /////////////////////////////////////////////////////////
@@ -466,7 +466,7 @@ this.grid.element.addEventListener('click', function(e){
   getVal(asdasd: any) {
     alert(asdasd);
   }
-
+// //////////cruds
   public dataSourceChanged(
     dataSourceChangedEvent: DataSourceChangedEventArgs
   ): void {
@@ -572,19 +572,44 @@ this.grid.element.addEventListener('click', function(e){
     }
     if (args.item.text === "Choose Column") {
       console.log("Choose");
-      this.toolbar1 = [ "ColumnChooser"];
+      this.toolbar = [ "ColumnChooser"];
 
     }
     if (args.item.text === "Freeze Column") {
-      console.log("Freeze");
+      console.log("Freeze", args);
+      this.context;
     }
     if (args.item.text === "Filter Column") {
       console.log("Filter");
+      // this.onColumnClicked(args)
 
     }
     if (args.item.text === "Multisort Column") {
       console.log("Multisort");
     }
+  }
+  /////////////////
+  context(arg:any){
+    if (arg.column.headerText == "Student ID") {
+      arg.column.Freeze(1);
+      this.columnValue = 1;
+      this.columnField = "id";
+    }
+    if (arg.column.headerText == "Student Name") {
+      this.columnValue = 2;
+      this.columnField = "name";
+    }
+    if (arg.column.headerText == "Roll Number") {
+      this.columnValue = 3;
+
+      this.columnField = "roll_no";
+    }
+    if (arg.column.headerText == "Class") {
+      this.columnValue = 4;
+
+      this.columnField = "class";
+    }
+
   }
   //dialog///////////////////////////////
   
@@ -656,22 +681,23 @@ this.grid.element.addEventListener('click', function(e){
   /////////////Add Column Event
   addColumn(args:any)
   {
-    console.log("adding column", this.treegrid);
+    console.log("adding column");
     // this.showNewColumn = true;
-    this.count++;
+    var obj1 = $("#TreeGridContainer").ejTreeGrid("instance");
+    var col = $.extend(true, [], obj1.model.columns);  
+    col.push({field: "custom", headerText: "custom"});
+    obj1.setModel({ "columns": col });
     
-    let obj = { field: "priority", headerText: 'NewColumn', width: 80 };
-    this.grid.columns.push(obj as any);   //you can add the columns by using the treeGrid columns method
-    console.log("worked adding col")
-    this.treegrid.refreshColumns();
-    this.treegrid.endEdit;
+    // let obj = { field: "new", headerText: 'New Column', width: 80 };
+    // this.column.push(obj as any);   //you can add the columns by using the treeGrid columns method
+    console.log("worked adding col");
     
   }
-  /////////////
+  
+  /////////////////////
 
   onSelect(args: any) {
 
-    ////////////////////////
     var selectedRecord = this.selectedRecord;
     if (
       !args.event.target.classList.contains("e-checkbox") &&
@@ -684,9 +710,12 @@ this.grid.element.addEventListener('click', function(e){
     if (args.item.text === "Add Next") {
       
       console.log("checked");
+      this.showAddNext= true;
+      this.dataSource(args)
       this.add();
       this.treegrid.editModule.addRecord(); 
 
+      // addRecord(data?: Object, index?: number, position?: RowPosition): void;
     }
     if (args.item.text === "Add Child") {
       var index = this.treeGridObj['getSelectedRowIndexes']()[0];
@@ -723,6 +752,28 @@ this.grid.element.addEventListener('click', function(e){
     if (args.item.text === "Move As Child") {
     }
     if (args.item.text === "MoveAsChild") {
+    }
+  }
+  ///////////method
+  public dataSourceChanged1(
+    dataSourceChangedEvent: DataSourceChangedEventArgs
+  ): void {
+    if (dataSourceChangedEvent.action === "add") {
+      this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
+        dataSourceChangedEvent.endEdit;
+      });
+    }
+    if (dataSourceChangedEvent.action === "edit") {
+      var getId: any = dataSourceChangedEvent.data;
+      this.api.updateRecord(dataSourceChangedEvent, getId.id).subscribe(() => {
+        dataSourceChangedEvent.endEdit;
+      });
+    }
+    if (dataSourceChangedEvent.requestType === "delete") {
+      var getId: any = dataSourceChangedEvent.data;
+      this.api.deleteRecord(dataSourceChangedEvent, getId.id).subscribe(() => {
+        dataSourceChangedEvent.endEdit;
+      });
     }
   }
   ////////////Edit
@@ -768,6 +819,7 @@ delete(): void {
     this.ejDialog3.hide();
     this.ejDialog4.hide();
     this.ejDialog.hide();
+    this.ejDialog5.hide();
 
   }
   btnclick3(args: any) {
@@ -787,7 +839,7 @@ delete(): void {
       var catched = false;
 
       console.log("edit:");
-      this.columns.forEach((r: any) => {
+      this.column.forEach((r: any) => {
         console.log("R:", r);
         if (!catched) {
           console.log("catched:", catched);
@@ -1013,41 +1065,44 @@ delete(): void {
     if (arg.column.field == "name") {
       this.ColName = 'Student Name';
       this.ColType = 'Left';
+
     }
     if (arg.column.field == "roll_no") {
-      this.ColName = 'Roll Number'
+      this.ColName = 'Roll Number';
       this.ColType = 'Left';
+
     }
     if (arg.column.field == "class") {
-      this.ColName = 'Class'
+      this.ColName = 'Class';
       this.ColType = 'Left';
+
     }
     /////////////
-    this.rowIndex = arg.rowInfo.rowIndex;
-    let elem: Element = arg.event.target as Element;
+    // this.rowIndex = arg.rowInfo.rowIndex;
+    // let elem: Element = arg.event.target as Element;
 
-    if (arg.column.headerText == "Student ID") {
-      this.columnValue = 1;
-      this.columnField = "id";
-    }
-    if (arg.column.headerText == "Student Name") {
-      this.columnValue = 2;
-      this.columnField = "name";
-    }
-    if (arg.column.headerText == "Roll Number") {
-      this.columnValue = 3;
+    // // if (arg.column.headerText == "Student ID") {
+    // //   this.columnValue = 1;
+    // //   this.columnField = "id";
+    // // }
+    // // if (arg.column.headerText == "Student Name") {
+    // //   this.columnValue = 2;
+    // //   this.columnField = "name";
+    // // }
+    // // if (arg.column.headerText == "Roll Number") {
+    // //   this.columnValue = 3;
 
-      this.columnField = "roll_no";
-    }
-    if (arg.column.headerText == "Class") {
-      this.columnValue = 4;
+    // //   this.columnField = "roll_no";
+    // // }
+    // // if (arg.column.headerText == "Class") {
+    // //   this.columnValue = 4;
 
-      this.columnField = "class";
-    }
+    // //   this.columnField = "class";
+    // // }
 
-    else{}
-    let row: Element = elem.closest(".e-column")!;
-    let uid: string = row && row.getAttribute("data-uid")!;
+    // else{}
+    // let row: Element = elem.closest(".e-column")!;
+    // let uid: string = row && row.getAttribute("data-uid")!;
   }
 
   contextMenuClick(args: any): void {
@@ -1093,10 +1148,6 @@ delete(): void {
     //   this.treeGridObj.addRecord(data, index - 1, 'Above'); // paste as Child
     // }
   
-
-
-
-
   }
 
   public saveColumn(args:any) {
@@ -1105,7 +1156,7 @@ delete(): void {
       var catched = false;
 
       console.log("edit:");
-      this.columns.forEach((r: any) => {
+      this.column.forEach((r: any) => {
         console.log("R:", r);
         if (!catched) {
           console.log("catched:", catched);
@@ -1142,8 +1193,8 @@ delete(): void {
     if (this.checkNewEdit == 'edit') {
       var catched = false;
  
-    console.log("edit:",this.columns)
-      this.columns.forEach((r:any) => {
+    console.log("edit:",this.column)
+      this.column.forEach((r:any) => {
         console.log("R:",r);
         if (!catched) {
           console.log('catched:', catched);
@@ -1214,8 +1265,8 @@ createNewRow(){
         cells: []
     }
 
-    for (let j = 1; j <= this.columns.length; j++){
-        let colId: any = this.columns[j-1].id;
+    for (let j = 1; j <= this.column.length; j++){
+        let colId: any = this.column[j-1].id;
 
         newRow.cells.push({ cid: colId, text: "Item" + this.rowCount + colId });
     }
@@ -1264,7 +1315,17 @@ rowSelected(args: any) {
   console.log("timer");
 alert
 }
+/////////////////column selected
 
+onColumnClicked(args: any) {
+  var grid = (document.getElementsByClassName("e-grid")[0] as any)
+    .ej2_instances[0];
+  console.log("column clicked",grid);
+}
+/////////////////////data
+dataSource(args:any){
+  this.dataSourceChanged1(args)
+}
 ////////////////////////////////////////////////////////////////////
 }
 
