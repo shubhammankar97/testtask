@@ -1,4 +1,4 @@
-<ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="true" [sortSettings]="sortSettings" #TreeGridContainer
+<ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="true" [sortSettings]="sortSettings" id='TreeGridContainer'
 [allowSorting]="true" [pageSettings]='pageSettings' [treeColumnIndex]='1'  idMapping='id' 
 parentIdMapping='parentID' [height]='check' [editSettings]='editSettings' [toolbar]='toolbar' 
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
@@ -32,22 +32,12 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
     <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
     <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
-<!--     
-      <e-column field='number' headerText='Action' width=70 *ngIf="showChooseColumn">
-        <div class="form-group col-md-6">
-        <ng-template #template let-details>
-          <button  (click)='rowSelected($event)' class="btn btn-success btn-xs">Select</button>
-        </ng-template></div>
-      </e-column>  
-    
-        [toolbar]='toolbar1'-->
       <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
-
-     <!-- <e-column headerText="New Column" width='50'></e-column> -->
-   
 
 </e-columns> 
 </ejs-treegrid>
+
+
 <!-- row contextmenu2 -->
 <ejs-contextmenu
     id="contextmenu"
@@ -66,29 +56,6 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   (beforeItemRender)="itemBeforeEvent($event)"
    (select)='select($event)'></ejs-contextmenu>
   </div>
-
-  <igx-dialog #dialogAdd title="New Employee" [rightButtonLabel]="'Add'" [leftButtonLabel]="'Cancel'"
-        (leftButtonSelect)="cancel()" (rightButtonSelect)="addRow()">
-        <div class="dialogNewRecord">
-          <igx-input-group>
-            <label igxLabel for="employeeAge">Student ID</label>
-            <input igxInput id="employeeAge" type="number" [(ngModel)]="student.ID" />
-        </igx-input-group>
-            <igx-input-group>
-                <label igxLabel for="employeeName">Student Name</label>
-                <input igxInput id="employeeName" type="text" [(ngModel)]="student.StudentName" />
-            </igx-input-group>
-            <igx-input-group>
-                <label igxLabel for="employeeTitle">Roll Number</label>
-                <input igxInput id="employeeTitle" type="number" [(ngModel)]="student.RollNumber" />
-            </igx-input-group>
-            <igx-input-group>
-                <label igxLabel for="employeeAge">Class</label>
-                <input igxInput id="employeeAge" type="number" [(ngModel)]="student.Class" />
-            </igx-input-group>
-        </div>
-    </igx-dialog>
-
 
 <!-- add col -->
 <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Column' content='This is a Dialog with drag enabled'
@@ -147,7 +114,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 </ng-template>
 </ejs-dialog>
 
-<!--edit dialog -->
+<!--edit Column -->
 <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column'
 [target]='targetElement' width='300px' [height]="450" *ngIf="showEditColumn"  [position]="pos" showCloseIcon="true"> 
 
@@ -167,9 +134,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
         <div
           *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
         >
-          <!-- <div class="e-error" *ngIf="ColumnName.errors?.required">
-            * Enter Column name
-          </div> -->
+       
         </div>
       </div>
     </div>
@@ -274,11 +239,11 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 
 </ejs-dialog>
 <!--view dialog -->
-<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='View Column' content='This is a Dialog with drag enabled'
+<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='View Column'
 [target]='targetElement' width='300px' [height]="450" *ngIf="showViewColumn"  [position]="pos" showCloseIcon="true"
-[animationSettings]='animationSettings' width='400px' showCloseIcon='true' [target]='targetElement' [animationSettings]='dialogAnimation'> 
+ width='400px' showCloseIcon='true' [target]='targetElement'> 
 
-<!-- <ng-template #content>
+<ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
@@ -292,13 +257,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Name</label>
-        <div
-          *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
-        >
-           <div class="e-error" *ngIf="ColumnName.errors?.required">
-            * Enter Column name
-          </div>
-        </div>
+       
       </div>
     </div>
 
@@ -318,7 +277,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 
 
 
-    <div class="form-group" style="padding-top: 11px;">
+    <!-- <div class="form-group" style="padding-top: 11px;">
       <div style="display: flex; justify-content: space-between;">
         <span class="e-float-text e-label-top"
           >Choose new Font-color</span
@@ -384,7 +343,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           disabled="true"
         ></ejs-checkbox>
       </div>
-    </div>
+    </div> -->
   </form>
 </ng-template>
 <ng-template #footerTemplate>
@@ -400,7 +359,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
       >Back
     </button>
   </div>
-</ng-template> -->
+</ng-template>
 
 </ejs-dialog>
 
@@ -467,7 +426,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   </div>
 </ng-template>
   </ejs-dialog>
-  <!-- add Next -->
+  <!-- Add Next -->
   <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Next'
 width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAddNext"> 
 
@@ -476,8 +435,12 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
         <input
-          type="text"
-          name="ColName"
+        type="text"
+        name="stuId"
+        required
+        [ngModel]="stuId"
+        class='form-control' 
+        id="sid"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Student ID</label>
@@ -487,8 +450,12 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
         <input
-          type="text"
-          name="ColName"
+        type="text"
+        name="stuName"
+        required
+        [ngModel]="stuName"
+        class='form-control' 
+        id="sname"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Student Name</label>
@@ -497,8 +464,12 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
         <input
-          type="text"
-          name="ColName"
+        type="text"
+        name="stuRoll"
+        required
+        [ngModel]="stuRoll"
+        class='form-control'
+        id="sroll" 
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Roll Number</label>
@@ -507,8 +478,12 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
         <input
-          type="text"
-          name="ColName"
+        type="text"
+        name="stuClass"
+        required
+        [ngModel]="stuClass"
+        class='form-control'
+        id="sclass" 
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Class</label>
@@ -522,7 +497,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="dataSource($event)"
+      (click)="addNext()"
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
@@ -543,3 +518,154 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
           [(ngModel)]="ColName"
           #ColumnName="ngModel"
  -->
+
+<!-- Delete Row dialog -->
+ <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Delete Column' content='This is a Dialog with drag enabled'
+[target]='targetElement' width='300px' [height]="400" *ngIf="showDeleteRow" [position]="pos" showCloseIcon="true"> 
+
+<ng-template #content>
+  <form id="template_driven" #userForm="ngForm" novalidate>
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="stuName"
+          required
+          [ngModel]="stuName"
+          readonly
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Student Name</label>
+        
+        </div>
+      </div>
+    
+
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="stuRoll"
+          required
+          [ngModel]="stuRoll"
+          readonly
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Roll Number</label>
+       
+      </div>
+    </div>
+  </form>
+</ng-template>
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="delete()"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>OK
+    </button>
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick3($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+  </div>
+</ng-template>
+  </ejs-dialog>
+
+
+  <!-- Edit Row -->
+  <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Row'
+width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showEditRow"> 
+
+<ng-template #content>
+  <form id="template_driven" #userForm="ngForm" novalidate>
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuId"
+        required
+        [ngModel]="stuId"
+        class='form-control' 
+        id="sid"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Student ID</label>
+      </div>
+    </div>
+
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuName"
+        required
+        [ngModel]="stuName"
+        class='form-control' 
+        id="sname"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Student Name</label>
+      </div>
+    </div>
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuRoll"
+        required
+        [ngModel]="stuRoll"
+        class='form-control'
+        id="sroll" 
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Roll Number</label>
+      </div>
+    </div>
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuClass"
+        required
+        [ngModel]="stuClass"
+        class='form-control'
+        id="sclass" 
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Class</label>
+      </div>
+    </div>
+
+  </form>
+</ng-template>
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="editRow()"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
+    </button>
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick3($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+  </div>
+</ng-template>
+</ejs-dialog>

@@ -161,11 +161,14 @@ export class AppComponent {
   public showChooseColumn:boolean =false;
   public showNewColumn:boolean = false;
   public showAddNext:boolean = false;
+  public showDeleteRow:boolean = false;
+  public showEditRow:boolean = false;
 
 
   public ColType: string = "";
   ColFColor: string = "";
   ColBColor: string = "";
+
   @ViewChild("treegrid")
   public treegrid!: TreeGridComponent;
   public copiedRecord: any;
@@ -202,7 +205,7 @@ export class AppComponent {
   @ViewChild('application', {read: ViewContainerRef}) applicationRef!: ViewContainerRef;
 
     public column!: Array<any>;
-    public rows: Array<any>;
+    public rows!: Array<any>;
 
     // Add Remove
     private columnCount: number = 4;
@@ -235,6 +238,10 @@ export class AppComponent {
 
   public freezeCol!:number;
   public columnNumber!: number;
+  public stuName!:string[];
+  public stuRoll!:number[];
+  public stuId!:number[];
+  public stuClass!:number[];
   /////////////////////////////////
 
   constructor(
@@ -247,24 +254,23 @@ export class AppComponent {
       toolbar: ["Add", "Edit", "Delete", "ColumnChooser"],
     };
 
-    this.rows = [
-      { 
-          id: 1,
-          text: "Item1",
-          cells: [{ cid: 1, text: "Item11" }, { cid: 2, text: "Item12" }, { cid: 3, text: "Item13" }],
-          rows: [
-              { id: 11, pid: 1, text: "Item11", cells: [{ cid: 1, text: "Item111" }, { cid: 2, text: "Item112" }, { cid: 3, text: "Item113" }] }
-          ]
-      },
-      { id: 2, text: "Row2", cells: [{ cid: 1, text: "Item21" }, { cid: 2, text: "Item22" }, { cid: 3, text: "Item23" }] }
-  ];
+  //   this.rows = [
+  //     { 
+  //         id: 1,
+  //         text: "Item1",
+  //         cells: [{ cid: 1, text: "Item11" }, { cid: 2, text: "Item12" }, { cid: 3, text: "Item13" }],
+  //         rows: [
+  //             { id: 11, pid: 1, text: "Item11", cells: [{ cid: 1, text: "Item111" }, { cid: 2, text: "Item112" }, { cid: 3, text: "Item113" }] }
+  //         ]
+  //     },
+  //     { id: 2, text: "Row2", cells: [{ cid: 1, text: "Item21" }, { cid: 2, text: "Item22" }, { cid: 3, text: "Item23" }] }
+  // ];
   }
   ngOnInit(): void {
     this.api.getAll().subscribe((res: any) => {
       this.data = res.filter((item: any) => item);
       console.log("data", this.data);
     });
-    // this.selectionSettings = { type: 'Multiple', enableToggle:true,  checkboxMode: 'ResetOnRowClick',persistSelection: true};
 
   this.selectionSettings = { persistSelection: true };
     this.contextMenuItems = [
@@ -527,14 +533,7 @@ this.grid.element.addEventListener('click', function(e){
 
 ////////////////////////
   beforeOpen(args: any): void {
-    if (this.grid.getColumnByField("roll_no").visible == true) {
-      debugger;
-      $("unhide").css.display = "none";
-      $("hide").css.display = "";
-    } else {
-      $("hide").style.display = "none";
-      $("unhide").style.display = "";
-    }
+   console.log("beforeOpen ", args)
   }
   // Set Dialog position
   public pos: object={ X: 860, Y: 100 };
@@ -542,13 +541,7 @@ this.grid.element.addEventListener('click', function(e){
   select(args: any): void {
     //debugger
     this.selectitem = args.item.text;
-    if (args.item.text === "Hide Column") {
-      console.log("select hide", args);
-      // this.isShown = false;
-    }
-    if (args.item.text === "UnHide Column") {
-      this.isShown = true;
-    }
+    
     if (args.item.text === "Add Column") {
       console.log("add");
       this.showAddColumn = !this.showAddColumn;
@@ -562,8 +555,7 @@ this.grid.element.addEventListener('click', function(e){
     if (args.item.text === "View Column") {
       console.log("view");
       this.showViewColumn =!this.showViewColumn;
-      this.ejDialog.content = this.getDynamicContent();
-      this.getDynamicContent()
+     
     }
     if (args.item.text === "Delete Column") {
       console.log("delete");
@@ -586,6 +578,7 @@ this.grid.element.addEventListener('click', function(e){
     }
     if (args.item.text === "Multisort Column") {
       console.log("Multisort");
+      
     }
   }
   /////////////////
@@ -654,6 +647,7 @@ this.grid.element.addEventListener('click', function(e){
 /////////////////////////////////////////    
 
   public itemBeforeEvent(args: MenuEventArgs) {
+    console.log("itemBeforeEvent", args)
     if (args.item.text !== "Edit") {
       let shortCutSpan: HTMLElement = document.createElement("span");
       let text: string = args.item.text!;
@@ -682,15 +676,17 @@ this.grid.element.addEventListener('click', function(e){
   addColumn(args:any)
   {
     console.log("adding column");
-    // this.showNewColumn = true;
-    var obj1 = $("#TreeGridContainer").ejTreeGrid("instance");
-    var col = $.extend(true, [], obj1.model.columns);  
-    col.push({field: "custom", headerText: "custom"});
-    obj1.setModel({ "columns": col });
-    
-    // let obj = { field: "new", headerText: 'New Column', width: 80 };
-    // this.column.push(obj as any);   //you can add the columns by using the treeGrid columns method
+  //   var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
+  // console.log("delete function ", grid.getSelectedRecords()[0]);
+  let si: HTMLInputElement =  document.getElementById('TreeGridContainer')?.querySelector('ejs-treegrid')!;
+ console.log("addCol check", si.value)
+
     console.log("worked adding col");
+
+    var obj = $(".ejs-treegrid").ejTreeGrid("instance");
+  var col = $.extend(true, [], obj.model.columns);  
+  col.push({field: "custom", headerText: "custom"});
+  obj.setModel({ "columns": col });
     
   }
   
@@ -711,11 +707,6 @@ this.grid.element.addEventListener('click', function(e){
       
       console.log("checked");
       this.showAddNext= true;
-      this.dataSource(args)
-      this.add();
-      this.treegrid.editModule.addRecord(); 
-
-      // addRecord(data?: Object, index?: number, position?: RowPosition): void;
     }
     if (args.item.text === "Add Child") {
       var index = this.treeGridObj['getSelectedRowIndexes']()[0];
@@ -724,22 +715,16 @@ this.grid.element.addEventListener('click', function(e){
     }
     if (args.item.text === "Edit Row") {
       console.log("edit row")
-      this.editSetting1=[ "Edit"];
-      this.dataStateChange(args)
-      this.grid.startEdit();
+      this.showEditRow = true
     }
     if (args.item.text === "Select Rows") {
       this.rowSelected(args)
     }
 
     if (args.item.text === "Delete Rows") {
-      console.log("delete",args?.getSelectedRowIndexes)
-      this.editSettings = {allowDeleting:true}
+      console.log("delete",args);
+      this.showDeleteRow = true;
       this.delete();
-      // this.selectedIndex = this.treeGridObj.getSelectedRowIndexes()[0]; // select the records on perform Copy action
-      // this.selectedRecord = this.treeGridObj.getSelectedRecords()[0];
-      
-      this.treeGridObj.deleteRecord('taskID', this.selectedRecord); //delete the copied record
     }
 
     if (args.item.text === "Copy As Next") {
@@ -781,23 +766,64 @@ this.grid.element.addEventListener('click', function(e){
     this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
       dataSourceChangedEvent.endEdit;})
     }
-  ////////AddNext
-  add(){
-  const rdata: object = { id: 10, name: 'Alias', roll_no: 40, class: 14 };
-    (this.treeGridObj.dataSource as object[]).unshift(rdata);
-    this.treeGridObj.refresh();
+  ////////Add Next
+  addNext(){
+
+    let si: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sid')!;
+    let sn: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sname')!;
+    let sr: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sroll')!;
+    let sc: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sclass')!;
+  console.log("sn val",sn.value)
+    var data = [{
+      id:si.value,
+      name: sn.value,
+      roll_no:sr.value,
+      class: sc.value
+    }]
+
+
+    var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
+    console.log("add next function ", grid.getSelectedRecords()[0].id);
+    this.api.addData(data).subscribe(()=>{
+  console.log("add Data api")
+    });
+    console.log(this.stuClass.values);
+      this.ejDialog.hide();
 }
+///////////////edit Row
+editRow(){
+
+  let si: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sid')!;
+  let sn: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sname')!;
+  let sr: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sroll')!;
+  let sc: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sclass')!;
+console.log("sn val",sn.value)
+  var data = [{
+    id:si.value,
+    name: sn.value,
+    roll_no:sr.value,
+    class: sc.value
+  }]
+
+
+  var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
+  console.log("add next function ", grid.getSelectedRecords()[0].id);
+  this.api.updateData(si.value,data).subscribe(()=>{
+console.log("edit Data api")
+  });
+    this.ejDialog.hide();
+}
+/////////////delete Row
 delete(): void {
-    const selectedRow: number = this.grid.getSelectedRowIndexes()[0];
-    if (this.grid.getSelectedRowIndexes().length) {
-        (this.treeGridObj.dataSource as object[]).splice(selectedRow, 1);
-    } else {
-        alert('No records selected for delete operation');
-    }
-    this.treeGridObj.refresh();
+
+  var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
+  console.log("delete function ", grid.getSelectedRecords()[0].id);
+  this.api.deleteData(grid.getSelectedRecords()[0].id).subscribe(()=>{
+console.log("deleteData api")
+  })
+    this.ejDialog.hide();
 }
 
-///////////////////
 
 //////////////////
   public DialogObj!: { hide: () => void };
@@ -814,7 +840,7 @@ delete(): void {
   checkNewEdit!: string;
 
   btnclick(args: any) {
-    this.hideDialog.bind(args)
+    this.hideDialog.bind(args);
     this.ejDialog2.hide();
     this.ejDialog3.hide();
     this.ejDialog4.hide();
@@ -877,32 +903,28 @@ delete(): void {
       this.treegrid.refreshColumns(); 
         
   }
-  //show and hide column method
-  show() {
-    this.treeGridObj.showColumns(["Student Name", "Roll Number"]); //show by HeaderText
-  }
 
-  hide(): void {
-    this.treeGridObj.hideColumns(["Class", "Roll Number"]); //hide by HeaderText
+  // hide(): void {
+  //   this.treeGridObj.hideColumns(["Class", "Roll Number"]); //hide by HeaderText
 
-    //hide column
-    let columnName: string = <string>this.dropdown1.value;
-    let column = this.treegrid.getColumnByField(columnName);
-    let hiddenColumns: HTMLTextAreaElement = document.getElementById(
-      "hiddencolumns"
-    ) as HTMLTextAreaElement;
+  //   //hide column
+  //   let columnName: string = <string>this.dropdown1.value;
+  //   let column = this.treegrid.getColumnByField(columnName);
+  //   let hiddenColumns: HTMLTextAreaElement = document.getElementById(
+  //     "hiddencolumns"
+  //   ) as HTMLTextAreaElement;
 
-    if (
-      this.treegrid.getHeaderTable().querySelectorAll("th.e-hide").length === 3
-    ) {
-      alert("Atleast one Column should be visible");
-    } else {
-      this.treegrid.grid.hideColumns(column.headerText, "headerText");
-      this.button1.disabled = true;
-      this.button2.disabled = false;
-      hiddenColumns.value = hiddenColumns.value + column.headerText + "\n";
-    }
-  }
+  //   if (
+  //     this.treegrid.getHeaderTable().querySelectorAll("th.e-hide").length === 3
+  //   ) {
+  //     alert("Atleast one Column should be visible");
+  //   } else {
+  //     this.treegrid.grid.hideColumns(column.headerText, "headerText");
+  //     this.button1.disabled = true;
+  //     this.button2.disabled = false;
+  //     hiddenColumns.value = hiddenColumns.value + column.headerText + "\n";
+  //   }
+  // }
 
   //row drag and drop
   rowDataBound(args: any) {
@@ -1027,10 +1049,6 @@ delete(): void {
     this.student = new Student();
   }
 
-  public deleteRow(id: any) {
-    this.treeGrid.deleteRow(id);
-  }
-
   rowSelecting(): void {
     console.log("row select");
     this.appendElement(
@@ -1056,6 +1074,14 @@ delete(): void {
   contextMenuOpen(arg: any): void {
     
     console.log("contextMenuOpen:", arg.column.field);
+    var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
+  console.log("delete function ", grid.getSelectedRecords()[0].id);
+
+  this.stuName = grid.getSelectedRecords()[0].name;
+  this.stuRoll = grid.getSelectedRecords()[0].roll_no;
+  this.stuId = grid.getSelectedRecords()[0].id;
+  this.stuClass = grid.getSelectedRecords()[0].class;
+
 
     if (arg.column.field == "id") {
       this.ColName = 'Student ID';
@@ -1292,15 +1318,6 @@ showEditor(cell: any){
 
         clearTimeout(editTimeout);
     }, 150);
-}
-////////////////// view Column
-public getDynamicContent: EmitType<object> = () => {
-  let input: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#name')!;
-  
-  let template: string = "<div class='row'><div class='col-xs-6 col-sm-6 col-lg-6 col-md-6'><b>Confirm your details</b></div>" +
-  "</div><div class='row'><div class='col-xs-6 col-sm-6 col-lg-6 col-md-6'><span id='name'> Name: </span>" +
-  "</div><div class='col-xs-6 col-sm-6 col-lg-6 col-md-6'><span id='nameValue'>"+ input.value + "</span> </div></div>" 
-  return template;
 }
 
 ///////////////row select

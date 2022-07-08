@@ -41,33 +41,10 @@
     "id": 7,
     "parentID": 6
   },
-  {
-    "name": "mann",
-    "class": 12,
-    "roll_no": 12,
-    "id": 8,
-    "parentID": 6
-  },
-  {
-    "name": "rai",
-    "class": 12,
-    "roll_no": 12,
-    "id": 9,
-    "parentID": 6
-  },
-  {
-    "name": "ram",
-    "class": 11,
-    "roll_no": 121,
-    "id": 10,
-    "parentID": 6
-  },
-  {
-    "name": "sonam",
-    "class": 12,
-    "roll_no": 12,
-    "id": 11
-  },
+  null,
+  null,
+  null,
+  null,
   {
     "name": "manisha",
     "class": 12,
@@ -96,19 +73,8 @@
     "id": 15,
     "parentID": 11
   },
-  {
-    "name": "mannat",
-    "class": 12,
-    "roll_no": 12,
-    "id": 16
-  },
-  {
-    "name": "lokesh",
-    "class": 12,
-    "roll_no": 12,
-    "id": 17,
-    "parentID": 16
-  },
+  null,
+  null,
   {
     "name": "sanya",
     "class": 11,
@@ -123,38 +89,20 @@
     "id": 19,
     "parentID": 16
   },
-  {
-    "name": "meenakshi",
-    "class": 12,
-    "roll_no": 12,
-    "id": "20"
-  },
+  null,
   {
     "name": "rajesh",
     "class": 12,
     "roll_no": 12,
     "id": 21
   },
+  null,
+  null,
   {
-    "name": "arpana",
-    "class": 11,
-    "roll_no": 121,
-    "id": 22,
-    "parentID": 21
-  },
-  {
-    "name": "tez",
-    "class": 12,
-    "roll_no": 12,
-    "id": 23,
-    "parentID": 21
-  },
-  {
-    "name": "hanumat",
-    "class": 12,
-    "roll_no": 12,
-    "id": 24,
-    "parentID": 21
+    "name": "akshay",
+    "class": "12",
+    "roll_no": "1211",
+    "id": "24"
   },
   {
     "name": "rajua",
@@ -358,12 +306,7 @@
     "roll_no": 456,
     "id": 55
   },
-  {
-    "name": "kela nayak  ram",
-    "class": 123,
-    "roll_no": 15554,
-    "id": "56"
-  },
+  null,
   {
     "name": "Shubham Mankar",
     "class": 12,
@@ -383,28 +326,21 @@
     "id": 59
   },
   {
-    "name": "mann",
-    "class": 12,
-    "roll_no": 12,
     "id": 60
   },
   {
-    "name": "akriti",
-    "class": 13,
-    "roll_no": 17,
     "id": 61
   },
   {
-    "name": "aruna",
-    "class": 19,
-    "roll_no": 19,
     "id": 62
   },
-  null,
-  null,
-  null,
-  null,
   {
-    "id": 67
+    "id": 63
+  },
+  {
+    "name": "test",
+    "class": "11",
+    "roll_no": "100",
+    "id": 64
   }
 ]

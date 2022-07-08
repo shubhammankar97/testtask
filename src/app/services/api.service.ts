@@ -20,11 +20,22 @@ export class ApiService {
   }
 
   deleteData(item:any){
-    return this.http.delete(this.API_URL+'/delete-Student/',item)
+    return this.http.delete(this.API_URL+'/delete-Student/'+item, httpOptions)
   }
   addData(addNew:any){
-    return this.http.post(this.API_URL+'/add-Student',addNew)
+    console.log("service data",addNew)
+    return this.http.post(this.API_URL+'/add-Student',addNew[1], httpOptions)
   }
+
+  // Update
+  updateData(id: any, data: any){
+    return this.http
+      .put(this.API_URL+'/update-Student/'+id, data[0], httpOptions)
+      
+  }
+
+
+
 
   addRecord(dataSourceChangedEvent: DataSourceChangedEventArgs){
 return this.http.post(this.API_URL+'/add-Student',dataSourceChangedEvent.data, httpOptions);
