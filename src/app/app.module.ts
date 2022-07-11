@@ -25,6 +25,7 @@ import { NumericTextBoxAllModule } from '@syncfusion/ej2-angular-inputs';
 import { TreeGridAllModule } from '@syncfusion/ej2-angular-treegrid';
 import { ColorPickerModule } from '@syncfusion/ej2-angular-inputs';
 import { IgxButtonModule,	IgxDialogModule, IgxRippleModule } from "igniteui-angular";
+import { FreezeService } from '@syncfusion/ej2-angular-treegrid';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,7 @@ import { IgxButtonModule,	IgxDialogModule, IgxRippleModule } from "igniteui-angu
     MultiSelectAllModule,
     IgxButtonModule,	IgxDialogModule, IgxRippleModule
   ],
-  providers: [ApiService, PageService, SortService, FilterService, SocketioService],
+  providers: [ApiService, PageService, SortService, FilterService, SocketioService, FreezeService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

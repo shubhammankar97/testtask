@@ -1,13 +1,13 @@
-<ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="true" [sortSettings]="sortSettings" id='TreeGridContainer'
-[allowSorting]="true" [pageSettings]='pageSettings' [treeColumnIndex]='1'  idMapping='id' 
-parentIdMapping='parentID' [height]='check' [editSettings]='editSettings' [toolbar]='toolbar' 
+<ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='TreeGridContainer'
+[allowSorting]="allowMultSort" [pageSettings]='pageSettings' [treeColumnIndex]='1'  idMapping='id' 
+parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
  [selectionSettings]='selectionSettings' [allowSelection]='true'
 (dataSourceChanged)="dataSourceChanged($event)"
 (beforeOpen)='beforeOpen($event)'
 itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 (select)="onSelect($event)" 
-[allowFiltering]='true' [filterSettings]="filterSettings"
+[filterSettings]="filterSettings"
 [contextMenuItems]="contextMenuItems"
     (contextMenuOpen)="contextMenuOpen($event)"
     (contextMenuClick)="contextMenuClick($event)"
@@ -23,8 +23,9 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [editSettings]="editSetting1"
     [columns]="column"
     (contextMenuOpen)="context($event)"
-    
-
+    [frozenColumns]='freezeColumn'
+    [enableVirtualization]=true
+    [height]="60000"
 >
    <e-columns>
     <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
@@ -32,7 +33,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
     <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
     <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
-      <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
+    <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
 
 </e-columns> 
 </ejs-treegrid>
@@ -115,129 +116,151 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 </ejs-dialog>
 
 <!--edit Column -->
-<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column'
+
+<div *ngIf="showEditColumn">
+  <!-- <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column'
+[target]='targetElement' width='300px' [height]="450" *ngIf="showEditColumn"  [position]="pos" showCloseIcon="true"> -->
+  <ejs-dialog
+    id="dialog"
+    #ejDialog
+    [animationSettings]="animationSettings"
+    header="Edit Column"
+    [target]="targetElement"
+    width="300px"
+    showCloseIcon="true"
+    [height]="450"
+    allowDragging='true'
+  >
+    <ng-template #content>
+      <form id="template_driven" #userForm="ngForm" novalidate>
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <input
+              type="text"
+              name="ColName"
+              required
+              [(ngModel)]="ColName"
+              #ColumnName="ngModel"
+            />
+            <span class="e-float-line"></span>
+            <label class="e-float-text e-label-top" for="name">Name</label>
+            <!-- <div
+              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
+            >
+              <div class="e-error" *ngIf="ColumnName.errors.required">
+                * Enter Column name
+              </div>
+            </div> -->
+          </div>
+        </div>
+
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <ejs-dropdownlist
+              
+              id="coltypeid"
+              [dataSource]="d2data"
+              [fields]="fields"
+              placeholder="Type"
+              name="ColType"
+              [(ngModel)]="ColType"
+            ></ejs-dropdownlist>
+            </div>
+        </div>
+
+  
+
+        <div class="form-group" style="padding-top: 11px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="e-float-text e-label-top"
+              >Choose new Font-color</span
+            >
+
+            <input
+              ejs-colorpicker
+              type="color"
+              id="element"
+              value="#FFFFFF"
+              (change)="changeFontColor($event)"
+              id="colorpicker"
+            />
+          </div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="e-float-text e-label-top"
+              >Choose new Background-color</span
+            >
+
+            <input
+              ejs-colorpicker
+              type="color"
+              id="element"
+              value="#FFFFFF"
+              (change)="changeBackground($event)"
+              id="colorpicker"
+            />
+          </div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <ejs-dropdownlist
+              #dropdown2
+              id="element"
+              [dataSource]="d3data"
+              [fields]="fields"
+              name="ColAlign"
+              [(ngModel)]="ColAlign"
+              placeholder="Alignment"
+            ></ejs-dropdownlist>
+          </div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="e-float-text e-label-top" for="email"
+              >Text-wrap</span
+            >
+
+            <ejs-checkbox
+              labelPosition="Before"
+              [checked]="false"
+              name="ColChecked"
+              [(ngModel)]="ColChecked"
+            ></ejs-checkbox>
+          </div>
+        </div>
+      </form>
+    </ng-template>
+    <ng-template #footerTemplate>
+      <div>
+        <button
+          id="Button1"
+          class="e-control e-btn e-primary e-flat"
+          (click)="saveColEdit($event)"
+          data-ripple="true"
+        >
+          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
+        </button>
+        <button
+          id="Button2"
+          class="e-control e-btn e-flat"
+          (click)="btnclick($event)"
+          data-ripple="true"
+        >
+          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+          >Cancel
+        </button>
+      </div>
+    </ng-template>
+  </ejs-dialog>
+</div>
+
+
+<!-- .................. -->
+<!-- <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column'
 [target]='targetElement' width='300px' [height]="450" *ngIf="showEditColumn"  [position]="pos" showCloseIcon="true"> 
 
-<ng-template #content>
-  <form id="template_driven" #userForm="ngForm" novalidate>
-    <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <input
-          type="text"
-          name="ColName"
-          required
-          [(ngModel)]="ColName"
-          #ColumnName="ngModel"
-        />
-        <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Name</label>
-        <div
-          *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
-        >
-       
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <ejs-dropdownlist
-          
-          id="coltypeid"
-          [dataSource]="d2data"
-          [fields]="fields"
-          name="ColType"
-          [(ngModel)]="ColType"
-        ></ejs-dropdownlist>
-        </div>
-    </div>
-
-
-
-    <div class="form-group" style="padding-top: 11px;">
-      <div style="display: flex; justify-content: space-between;">
-        <span class="e-float-text e-label-top"
-          >Choose new Font-color</span
-        >
-
-        <input
-          ejs-colorpicker
-          type="color"
-          id="element"
-          value="#FFFFFF"
-          (change)="changeFontColor($event)"
-          id="colorpicker"
-        />
-      </div>
-    </div>
-    <div class="form-group" style="padding-top: 11px;">
-      <div style="display: flex; justify-content: space-between;">
-        <span class="e-float-text e-label-top"
-          >Choose new Background-color</span
-        >
-
-        <input
-          ejs-colorpicker
-          type="color"
-          id="element"
-          value="#FFFFFF"
-          (change)="changeBackground($event)"
-          id="colorpicker"
-        />
-      </div>
-    </div>
-    <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <ejs-dropdownlist
-          #dropdown2
-          id="element"
-          [dataSource]="d3data"
-          [fields]="fields"
-          name="ColAlign"
-          [(ngModel)]="ColAlign"
-          placeholder="Alignment"
-        ></ejs-dropdownlist>
-      </div>
-    </div>
-    <div class="form-group" style="padding-top: 11px;">
-      <div style="display: flex; justify-content: space-between;">
-        <span class="e-float-text e-label-top" for="email"
-          >Text-wrap</span
-        >
-
-        <ejs-checkbox
-          labelPosition="Before"
-          [checked]="false"
-          name="ColChecked"
-          [(ngModel)]="ColChecked"
-        ></ejs-checkbox>
-      </div>
-    </div>
-  </form>
-</ng-template>
-<ng-template #footerTemplate>
-  <div>
-    <button
-      id="Button1"
-      class="e-control e-btn e-primary e-flat"
-      (click)="saveColEdit($event)"
-      data-ripple="true"
-    >
-      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
-    </button>
-    <button
-      id="Button2"
-      class="e-control e-btn e-flat"
-      (click)="btnclick($event)"
-      data-ripple="true"
-    >
-      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-      >Cancel
-    </button>
-  </div>
-</ng-template>
-
-</ejs-dialog>
+ -->
 <!--view dialog -->
 <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='View Column'
 [target]='targetElement' width='300px' [height]="450" *ngIf="showViewColumn"  [position]="pos" showCloseIcon="true"
@@ -275,75 +298,6 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
         </div>
     </div>
 
-
-
-    <!-- <div class="form-group" style="padding-top: 11px;">
-      <div style="display: flex; justify-content: space-between;">
-        <span class="e-float-text e-label-top"
-          >Choose new Font-color</span
-        >
-
-        <input
-          ejs-colorpicker
-          type="color"
-          id="element"
-          value="#FFFFFF"
-          (change)="changeFontColor($event)"
-          id="colorpicker"
-          readonly
-          disabled="true"
-        />
-      </div>
-    </div>
-    <div class="form-group" style="padding-top: 11px;">
-      <div style="display: flex; justify-content: space-between;">
-        <span class="e-float-text e-label-top"
-          >Choose new Background-color</span
-        >
-
-        <input
-          ejs-colorpicker
-          type="color"
-          id="element"
-          value="#FFFFFF"
-          (change)="changeBackground($event)"
-          id="colorpicker"
-          readonly
-          disabled="true"
-        />
-      </div>
-    </div>
-    <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <ejs-dropdownlist
-          #dropdown2
-          id="element"
-          [dataSource]="d3data"
-          [fields]="fields"
-          name="ColAlign"
-          [(ngModel)]="ColAlign"
-          readonly
-          [disabled]="true"
-          disabled="true"
-        ></ejs-dropdownlist>
-      </div>
-    </div>
-    <div class="form-group" style="padding-top: 11px;">
-      <div style="display: flex; justify-content: space-between;">
-        <span class="e-float-text e-label-top" for="email"
-          >Text-wrap</span
-        >
-
-        <ejs-checkbox
-          labelPosition="Before"
-          [checked]="false"
-          name="ColChecked"
-          [(ngModel)]="ColChecked"
-          aria-readonly="true"
-          disabled="true"
-        ></ejs-checkbox>
-      </div>
-    </div> -->
   </form>
 </ng-template>
 <ng-template #footerTemplate>
@@ -377,9 +331,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
           required
           [(ngModel)]="ColName"
           #ColumnName="ngModel"
+          readonly
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Name</label>
+        <label class="e-float-text e-label-top" for="name">Column Name</label>
         <div
           *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
         >
@@ -390,18 +345,6 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
       </div>
     </div>
 
-    <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <ejs-dropdownlist
-          #dropdown2
-          id="element"
-          [dataSource]="d2data"
-          [fields]="fields"
-          name="ColType"
-          [(ngModel)]="ColType"
-        ></ejs-dropdownlist>
-      </div>
-    </div>
   </form>
 </ng-template>
 <ng-template #footerTemplate>
@@ -409,10 +352,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="addColumn($event)"
+      (click)="deleteColumn($event)"
       data-ripple="true"
     >
-      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Delete
     </button>
     <button
       id="Button2"
@@ -669,3 +612,92 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showEd
   </div>
 </ng-template>
 </ejs-dialog>
+
+ <!-- Add Child -->
+ <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Child'
+ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAddchild"> 
+ 
+ <ng-template #content>
+   <form id="template_driven" #userForm="ngForm" novalidate>
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCId"
+         required
+         [ngModel]="stuCId"
+         class='form-control' 
+         id="scid"
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top" for="name">Student ID</label>
+       </div>
+     </div>
+ 
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCName"
+         required
+         [ngModel]="stuCName"
+         class='form-control' 
+         id="scname"
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top" for="name">Student Name</label>
+       </div>
+     </div>
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCRoll"
+         required
+         [ngModel]="stuCRoll"
+         class='form-control'
+         id="scroll" 
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top" for="name">Roll Number</label>
+       </div>
+     </div>
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCClass"
+         required
+         [ngModel]="stuCClass"
+         class='form-control'
+         id="scclass" 
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top" for="name">Class</label>
+       </div>
+     </div>
+ 
+   </form>
+ </ng-template>
+ <ng-template #footerTemplate>
+   <div>
+     <button
+       id="Button1"
+       class="e-control e-btn e-primary e-flat"
+       (click)="onAddRecord($event)"
+       data-ripple="true"
+     >
+       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
+     </button>
+     <button
+       id="Button2"
+       class="e-control e-btn e-flat"
+       (click)="btnclick3($event)"
+       data-ripple="true"
+     >
+       <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+       >Cancel
+     </button>
+   </div>
+ </ng-template>
+ </ejs-dialog>
