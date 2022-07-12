@@ -26,7 +26,9 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [frozenColumns]='freezeColumn'
     [enableVirtualization]=true
     [height]="60000"
+     
 >
+<!-- (rowSelected)='rowSelected1($event)' -->
    <e-columns>
     <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
     [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
@@ -59,8 +61,9 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   </div>
 
 <!-- add col -->
+<div *ngIf="showAddColumn">
 <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Column' content='This is a Dialog with drag enabled'
-    [target]='targetElement3' width='300px' [height]="400" *ngIf="showAddColumn" [position]="pos" showCloseIcon="true" > 
+    [target]='targetElement3' width='300px' [height]="400" [position]="pos" showCloseIcon="true" > 
 
 <ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
@@ -97,7 +100,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="addColumn($event)"
+      (click)="addColumn()"
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
@@ -114,12 +117,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   </div>
 </ng-template>
 </ejs-dialog>
-
+</div>
 <!--edit Column -->
 
 <div *ngIf="showEditColumn">
-  <!-- <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column'
-[target]='targetElement' width='300px' [height]="450" *ngIf="showEditColumn"  [position]="pos" showCloseIcon="true"> -->
   <ejs-dialog
     id="dialog"
     #ejDialog
@@ -130,6 +131,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     showCloseIcon="true"
     [height]="450"
     allowDragging='true'
+    [position]="pos" 
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
@@ -256,50 +258,124 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 </div>
 
 
-<!-- .................. -->
-<!-- <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Column'
-[target]='targetElement' width='300px' [height]="450" *ngIf="showEditColumn"  [position]="pos" showCloseIcon="true"> 
-
- -->
 <!--view dialog -->
-<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='View Column'
-[target]='targetElement' width='300px' [height]="450" *ngIf="showViewColumn"  [position]="pos" showCloseIcon="true"
- width='400px' showCloseIcon='true' [target]='targetElement'> 
-
-<ng-template #content>
-  <form id="template_driven" #userForm="ngForm" novalidate>
-    <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <input
-          type="text"
-          name="ColName"
-          required
-          [(ngModel)]="ColName"
-          #ColumnName="ngModel"
-          readonly
-        />
-        <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Name</label>
-       
-      </div>
-    </div>
-
-    <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <ejs-dropdownlist
-          
-          id="coltypeid"
-          [dataSource]="d2data"
-          [fields]="fields"
-          name="ColType"
-          [(ngModel)]="ColType"
-          readonly
-        ></ejs-dropdownlist>
+<div *ngIf="showViewColumn">
+<ejs-dialog
+    id="dialog"
+    #ejDialog
+    [animationSettings]="animationSettings"
+    header="View Column"
+    [target]="targetElement"
+    width="300px"
+    showCloseIcon="true"
+    [height]="450"
+    allowDragging='true'
+    [position]="pos" 
+  >
+    <ng-template #content>
+      <form id="template_driven" #userForm="ngForm" novalidate>
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <input
+              type="text"
+              name="ColName"
+              required
+              [(ngModel)]="ColName"
+              #ColumnName="ngModel"
+              readonly
+            />
+            <span class="e-float-line"></span>
+            <label class="e-float-text e-label-top" for="name">Name</label>
+            <!-- <div
+              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
+            >
+              <div class="e-error" *ngIf="ColumnName.errors.required">
+                * Enter Column name
+              </div>
+            </div> -->
+          </div>
         </div>
-    </div>
 
-  </form>
-</ng-template>
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <input
+              type="text"
+              name="ColType"
+              required
+              [(ngModel)]="ColType"
+              #ColumnName="ngModel"
+              readonly
+            />
+            </div>
+        </div>
+
+  
+
+        <div class="form-group" style="padding-top: 11px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="e-float-text e-label-top"
+              >Choose new Font-color</span
+            >
+
+            <input
+              ejs-colorpicker
+              type="color"
+              id="element"
+              value="#FFFFFF"
+              (change)="changeFontColor($event)"
+              id="colorpicker"
+              aria-readonly="true"
+            />
+          </div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="e-float-text e-label-top"
+              >Choose new Background-color</span
+            >
+
+            <input
+              ejs-colorpicker
+              type="color"
+              id="element"
+              value="#FFFFFF"
+              (change)="changeBackground($event)"
+              id="colorpicker"
+              aria-readonly="true"
+            />
+          </div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <input
+              type="text"
+              id="element"
+              name="ColAlign"
+              required
+              [(ngModel)]="ColAlign"
+              #ColumnName="ngModel"
+              readonly
+            />
+            
+          </div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span class="e-float-text e-label-top" for="email"
+              >Text-wrap</span
+            >
+
+            <ejs-checkbox
+              labelPosition="Before"
+              [checked]="false"
+              name="ColChecked"
+              [(ngModel)]="ColChecked"
+              aria-readonly="true"
+            ></ejs-checkbox>
+          </div>
+        </div>
+      </form>
+    </ng-template>
 <ng-template #footerTemplate>
   <div>
     
@@ -316,10 +392,11 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
 </ng-template>
 
 </ejs-dialog>
-
+</div>
 <!-- delete col -->
+<div *ngIf="showDelColumn"> 
 <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Delete Column' content='This is a Dialog with drag enabled'
-[target]='targetElement' width='300px' [height]="400" *ngIf="showDelColumn" [position]="pos" showCloseIcon="true"> 
+[target]='targetElement' width='300px' [height]="400" [position]="pos" showCloseIcon="true"> 
 
 <ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
@@ -369,9 +446,12 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   </div>
 </ng-template>
   </ejs-dialog>
+</div>
+
   <!-- Add Next -->
+  <div *ngIf="showAddNext"> 
   <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Next'
-width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAddNext"> 
+width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
 
 <ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
@@ -457,14 +537,13 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
   </div>
 </ng-template>
 </ejs-dialog>
-<!-- 
-          [(ngModel)]="ColName"
-          #ColumnName="ngModel"
- -->
+</div>
+
 
 <!-- Delete Row dialog -->
+<div *ngIf="showDeleteRow"> 
  <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Delete Column' content='This is a Dialog with drag enabled'
-[target]='targetElement' width='300px' [height]="400" *ngIf="showDeleteRow" [position]="pos" showCloseIcon="true"> 
+[target]='targetElement' width='300px' [height]="400" [position]="pos" showCloseIcon="true"> 
 
 <ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
@@ -522,11 +601,12 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAd
   </div>
 </ng-template>
   </ejs-dialog>
-
+</div>
 
   <!-- Edit Row -->
+  <div *ngIf="showEditRow"> 
   <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Row'
-width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showEditRow"> 
+width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
 
 <ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
@@ -612,10 +692,12 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showEd
   </div>
 </ng-template>
 </ejs-dialog>
+</div>
 
  <!-- Add Child -->
+ <div *ngIf="showAddchild"> 
  <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Child'
- width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showAddchild"> 
+ width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
  
  <ng-template #content>
    <form id="template_driven" #userForm="ngForm" novalidate>
@@ -684,7 +766,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showEd
      <button
        id="Button1"
        class="e-control e-btn e-primary e-flat"
-       (click)="onAddRecord($event)"
+       (click)="addChild($event)"
        data-ripple="true"
      >
        <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
@@ -701,3 +783,4 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400" *ngIf="showEd
    </div>
  </ng-template>
  </ejs-dialog>
+</div>
