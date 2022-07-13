@@ -26,7 +26,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [frozenColumns]='freezeColumn'
     [enableVirtualization]=true
     [height]="60000"
-     
+    enableStickyHeader="true"
 >
 <!-- (rowSelected)='rowSelected1($event)' -->
    <e-columns>
@@ -34,7 +34,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
     <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
     <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
-    <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules'></e-column>
+    <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"></e-column>
     <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
 
 </e-columns> 
@@ -766,7 +766,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
      <button
        id="Button1"
        class="e-control e-btn e-primary e-flat"
-       (click)="addChild($event)"
+       (click)="onAddRecord($event)"
        data-ripple="true"
      >
        <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
