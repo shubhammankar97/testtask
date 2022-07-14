@@ -22,7 +22,8 @@ import {
   PageService,
   DataStateChangeEventArgs,
   ColumnChooserService,
-  FreezeService
+  FreezeService,
+  ContextMenuService
 } from "@syncfusion/ej2-angular-treegrid";
 import { ApiService } from "./services/api.service";
 import {
@@ -66,6 +67,7 @@ import { BeforeOpenCloseEventArgs } from "@syncfusion/ej2-angular-inputs";
 import { EmitType } from '@syncfusion/ej2-base';
 import { Query } from '@syncfusion/ej2-data';
 import { Internationalization, isNullOrUndefined } from '@syncfusion/ej2-base';
+import { TreeClipboard } from '@syncfusion/ej2-angular-treegrid';
 declare var $: any;
 
 @Component({
@@ -83,7 +85,9 @@ declare var $: any;
     PageService,
     ColumnChooserService,
     FreezeService,
-    VirtualScrollService      
+    VirtualScrollService,
+    ContextMenuService,
+    RowDDService      
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -274,9 +278,6 @@ export class AppComponent {
     });
 
   this.selectionSettings = { persistSelection: true };
-    this.contextMenuItems = [
-      { text: "Edit ", target: ".e-headercontent", id: "editCol" },
-    ];
 
     this.pageSettings = { pageSize: 6 };
     this.editOptions = { params: { format: "y/M/d" } };
@@ -288,6 +289,8 @@ export class AppComponent {
       allowNextRowEdit: true,
       mode: "Dialog",
       showDeleteConfirmDialog: true,
+      newRowPosition:"Top",
+      showConfirmDialog:true
     };
     //////////////editsetting
     this.editSetting1 = {
@@ -311,6 +314,65 @@ export class AppComponent {
     this.customAttributes = { class: "customcss" };
     this.selectionSettings = { type: "Multiple" };
     this.socketService.setupSocketConnection();
+
+
+    //contextmenu 2
+this.contextMenuItems = [
+  {
+    text: 'Add Next',
+    target: '.e-content',
+    id: 'addnextrow',
+    cssClass: 'e-flat',
+  },
+  {
+    text: 'Add Child',
+    target: '.e-content',
+    id: 'addchildrow',
+    cssClass: 'e-flat',
+  },
+  {
+    text: 'Edit Row',
+    target: '.e-content',
+    id: 'editrow',
+    cssClass: 'e-flat',
+  },
+  {
+    text: 'Select Row',
+    target: '.e-content',
+    id: 'multiselectrow',
+    cssClass: 'e-flat',
+  },
+  {
+    text: 'Delete Row',
+    target: '.e-content',
+    id: 'deleterow',
+    cssClass: 'e-flat',
+  },
+  { 
+    text: 'Copy As Next',
+   target: '.e-content',
+    id: 'customCopy' 
+  },
+  { 
+    text: 'Copy As Child',
+   target: '.e-content',
+    id: 'customCopy' 
+  },
+  {
+    text: 'Move As Next',
+    target: '.e-content',
+    id: 'pastenextrow',
+    cssClass: 'e-flat',
+  },
+  {
+    text: 'Move As Child',
+    target: '.e-content',
+    id: 'pastechildrow',
+    cssClass: 'e-flat',
+  },
+];
+
+
     this.d2data = [
       { id: "string", type: "string" },
       { id: "number", type: "number" },
@@ -398,33 +460,19 @@ this.column = [
     headerText: 'Class'
   }
 ];
-    /////////////////////////////////////////////////////////
-    this.contextMenuItems = [
-      { text: "Edit ", target: ".e-headercontent", id: "editCol" },
-    ];
 
 
     ///////////////////////////color row selected
     let gridInstance = this.grid;
-this.grid.element.addEventListener('click', function(e){
-  let element = e.target;
-  let row = parentsUntil((element as Element), 'parenttr');
-  if(!isNullOrUndefined(row)) {
-  let prevSelectedRows = gridInstance.getContent().querySelectorAll('.bgcolor');
-  for( let i = 0; i < prevSelectedRows.length; i++){
-    prevSelectedRows[i].classList.remove('bgcolor');
-  }
-  row.classList.add('bgcolor');
-  }
-})
 
   }
 
   actionComplete(args: any) {
-
+    console.log("action complete 1", this.treegrid.selectRows(index))
     if (args.requestType == "save") {
       var index = args.index;
       this.treegrid.selectRow(index); // select the newly added row to scroll to it
+      console.log("action complete 2", this.treegrid.selectRows(index))
 }
 
     if (args.requestType === "beginEdit" || args.requestType === "add") {
@@ -439,45 +487,6 @@ this.grid.element.addEventListener('click', function(e){
   }
 
   public selectitem!: string[];
-
-  public menuItems: MenuItemModel[] = [
-    {
-      text: "Add Next",
-      id: 'addnext'
-    },
-    {
-      text: "Add Child",
-      id: 'addchild'
-    },
-    {
-      text: "Edit Row",
-      id: 'edit'
-    },
-    {
-      text: "Select Rows",
-      id: 'select'
-    },
-    {
-      text: "Delete Rows",
-      id: 'del'
-    },
-    {
-      text: "Copy As Next",
-      id: 'copynext'
-    },
-    {
-      text: "Copy As Child",
-      id: 'copychild'
-    },
-    {
-      text: "Move As Next",
-      id: 'movenext'
-    },
-    {
-      text: "Move As Child",
-      id: 'movechild'
-    },
-  ];
 
   public editing!: EditSettingsModel;
   getVal(asdasd: any) {
@@ -550,12 +559,12 @@ this.grid.element.addEventListener('click', function(e){
   public pos: object={ X: 860, Y: 100 };
 
   select(args: any): void {
-    //debugger
     this.selectitem = args.item.text;
     
     if (args.item.text === "Add Column") {
       console.log("add");
       this.showAddColumn = !this.showAddColumn;
+
 
     }
     if (args.item.text === "Edit Column") {
@@ -687,22 +696,17 @@ this.grid.element.addEventListener('click', function(e){
     }
   }
   /////////////Add Column Event
-  addColumn():void {
-    // let obj = { field: "Freight", headerText: 'Freight', width: 120 };
-    // this.treegrid?.columns.splice(2, 0, obj); //Add the columns
-
-    // this.grid.columns.push(obj as any); //you can add the columns by using the Grid columns method
-    // let columnName = { field: 'priority', width: 100 };
-    // this.treegrid.columns.splice(2, 0, columnName); //Add the columns
-    // this.grid.refreshColumns();
-
-    let obj = { field: "Freight", headerText: 'Freight', width: 120 }
-    this.treeGridObj.columns.push(obj as any); //you can add the columns by using the Grid columns method
-    this.treeGridObj.refreshColumns();
+  clicked(): void {
+    let columnName = { field: this.ColName, width: 100,type: this.ColType };
+    this.treegrid.columns.splice(4, 0, columnName); //Add the columns
+    this.treegrid.refreshColumns();
+    this.ejDialog.hide();
   }
+
+///////
   removeColumn() {
-    this.treeGridObj.columns.pop();
-    this.treeGridObj.refreshColumns();
+    this.treegrid.columns.pop();
+    this.treegrid.refreshColumns();
 }
   /////////////////////
 
@@ -741,13 +745,13 @@ this.grid.element.addEventListener('click', function(e){
 
     if (args.item.text === "Copy As Next") {
       console.log("copy as Next");
-      this.copy();
+      this.treeGridObj.copy();
       console.log(" copy may work check");
     }
 
     if (args.item.text === "Copy As Child") {
       console.log("copy as child");
-      this.copy();
+      this.treeGridObj.copy();
     }
     if (args.item.text === "Move As Next") {
     }
@@ -852,7 +856,6 @@ addChild(args:any){
     //   this.selectedRecord = this.treeGridObj['getSelectedRecords']()[0];
     //   this.treeGridObj.deleteRecord('id', this.selectedRecord); //delete the copied record
     // } else 
-      // debugger;
       // this.treeGridObj.deleteRecord('taskID', this.selectedRecord); //delete the copied record
       var index = this.treeGridObj['getSelectedRowIndexes']()[0];
       console.log("context new add child");
@@ -1247,23 +1250,9 @@ alert("TaskID 1 with child has been added");
   }
 
   contextMenuClick(args: any): void {
-    console.log("contextMClick",args.item.text)
-    var i;
-    var rec:any=[]
-    ///////
-    if (this.flag == false) {
-      i = this.treeGridObj.flatData.length;
+    console.log("contextMClick",args);
 
-      this.flag = true;
-    } else {
-      rec = this.treeGridObj.getBatchChanges();
-      if (rec.addedRecords) {
-        i = rec.addedRecords[0].id;
-      }
-
-      this.j++;
-    }
-
+    var i = 100;
     var data = {
       id: i + 1,
       name: 'test',
@@ -1271,62 +1260,32 @@ alert("TaskID 1 with child has been added");
 
     var treegridInst = this.treeGridObj;
     var selectedRecord = this.selectedRecord;
-    // if (args.item.id === 'addChild') {
-    //   this.selectedIndex = this.treeGridObj['getSelectedRowIndexes']()[0]; // select the records on perform Copy action
-    //   this.selectedRecord = this.treeGridObj['getSelectedRecords']()[0];
-    //   this.treeGridObj.deleteRecord('id', this.selectedRecord); //delete the copied record
-    // } else 
-    if (args.item.id === 'addChild') {
-      // debugger;
-      // this.treeGridObj.deleteRecord('taskID', this.selectedRecord); //delete the copied record
+    if (args.item.id === 'addnextrow') {
+      this.treeGridObj.addRecord(data, this.rowIndex, 'Top'); //aadd record use can add row top orbelow using new row position
+    } else if (args.item.id === 'addchildrow') {
+      this.treeGridObj.addRecord(data, this.rowIndex, 'Child'); //add child row
+    } else if (args.item.id === 'deleterow') {
+      this.treeGridObj.deleteRecord('id', selectedRecord); // delete the selected row
+    } else if (args.item.id === 'editrow') {
+      this.treeGridObj.startEdit(); // edit the selected row
+    } else if (args.item.id === 'multiselectrow') {
+      this.treeGridObj.selectionSettings.type = 'Multiple'; //enable multiselection
+    } else if (args.item.id === 'customCopy') {
+      this.selectedIndex = this.treeGridObj['getSelectedRowIndexes']()[0]; // select the records on perform Copy action
+      this.selectedRecord = this.treeGridObj['getSelectedRecords']()[0];
+    } else if (args.item.id === 'pastenextrow') {
+      
+      var index = this.treeGridObj['getSelectedRowIndexes']()[0]; //delete the copied record
+      var record = this.treeGridObj['getSelectedRecords']()[0];
+      this.treeGridObj.deleteRecord('id', this.selectedRecord);
+      this.treeGridObj.addRecord(this.selectedRecord, index, 'Top'); //Paste as Sibling or another separate row using Below, Above or Top newRowPosition
+    } else if (args.item.id === 'pastechildrow') {
+      this.treeGridObj.deleteRecord('id', this.selectedRecord); //delete the copied record
       var index = this.treeGridObj['getSelectedRowIndexes']()[0];
-      console.log("context new add child");
 
-      this.treeGridObj.addRecord(data, index - 1, 'Above'); // paste as Child
+      this.treeGridObj.addRecord(this.selectedRecord, index - 1, 'Child'); // paste as Child
     }
-    ///////
-    if (args.item.text === "Edit Column") {
-      this.checkNewEdit = "edit";
-      this.showEditColumn = true;
-      this.getCurrentField();
-    } 
-    if (args.item.id === "addnext") {
-      console.log("addnext");
-      this.treegrid.editModule.addRecord();
-    }
-    
-//////////////////
-    // if (this.flag == false) {
-    //    this.i = this.treeGridObj.flatData.length;
-
-    //   this.flag = true;
-    // } else {
-    //   var rec = this.treeGridObj.getBatchChanges();
-    //   if (rec.addedRecords) {
-    //     this.i = rec.addedRecords[0].taskID;
-    //   }
-
-    //   this.j++;
-    // }
-
-    // var data = {
-    //   taskID: this.i + 1,
-    //   taskName: 'test',
-    // };
-
-    // var treegridInst = this.treeGridObj;
-    // var selectedRecord = this.selectedRecord;
-    // if (args.item.id === 'deletion') {
-    //   this.selectedIndex = this.treeGridObj['getSelectedRowIndexes']()[0]; // select the records on perform Copy action
-    //   this.selectedRecord = this.treeGridObj['getSelectedRecords']()[0];
-    //   this.treeGridObj.deleteRecord('taskID', this.selectedRecord); //delete the copied record
-    // } else if (args.item.id === 'addition') {
-    //   debugger;
-    //   // this.treeGridObj.deleteRecord('taskID', this.selectedRecord); //delete the copied record
-    //   var index = this.treeGridObj['getSelectedRowIndexes']()[0];
-
-    //   this.treeGridObj.addRecord(data, index - 1, 'Above'); // paste as Child
-    // }
+   
   
   }
 

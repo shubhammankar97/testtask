@@ -1,4 +1,4 @@
-<ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='TreeGridContainer'
+<ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
 [allowSorting]="allowMultSort" [pageSettings]='pageSettings' [treeColumnIndex]='1'  idMapping='id' 
 parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
@@ -27,33 +27,24 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [enableVirtualization]=true
     [height]="60000"
     enableStickyHeader="true"
+    [contextMenuItems]="contextMenuItems"
 >
 <!-- (rowSelected)='rowSelected1($event)' -->
    <e-columns>
     <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
-    [lockColumn]= 'true' [customAttributes]='customAttributes'></e-column>
-    <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules'></e-column>
-    <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules'></e-column>
-    <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"></e-column>
+    [lockColumn]= 'true' [customAttributes]='customAttributes' [edit]="editparams"></e-column>
+    <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules' [edit]="editparams"></e-column>
+    <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules' [edit]="editparams"></e-column>
+    <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"
+    [edit]="editparams"></e-column>
     <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
 
 </e-columns> 
 </ejs-treegrid>
 
 
-<!-- row contextmenu2 -->
-<ejs-contextmenu
-    id="contextmenu"
-    #contextmenu
-    target=".e-content"
-    [items]="menuItems"
-    (select)="onSelect($event)"
-    (beforeItemRender)="itemBeforeEvent($event)"
-    
-  ></ejs-contextmenu
-  >
-  <div>
     <!-- row contextmenu1 -->
+  <div>
   <ejs-contextmenu #headercontextmenu target='.e-gridheader'
   [items]='headermenuItems' 
   (beforeItemRender)="itemBeforeEvent($event)"
@@ -100,7 +91,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="addColumn()"
+      (click)="clicked()"
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
@@ -429,7 +420,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="deleteColumn($event)"
+      (click)="removeColumn()"
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Delete
