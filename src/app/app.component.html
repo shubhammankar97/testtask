@@ -420,7 +420,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="removeColumn()"
+      (click)="removeColumn($event)"
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Delete
@@ -467,7 +467,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         type="text"
         name="stuName"
         required
-        [ngModel]="stuName"
+        [(ngModel)]="stuName"
         class='form-control' 
         id="sname"
         />
@@ -481,7 +481,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         type="text"
         name="stuRoll"
         required
-        [ngModel]="stuRoll"
+        [(ngModel)]="stuRoll"
         class='form-control'
         id="sroll" 
         />
@@ -495,7 +495,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         type="text"
         name="stuClass"
         required
-        [ngModel]="stuClass"
+        [(ngModel)]="stuClass"
         class='form-control'
         id="sclass" 
         />
@@ -544,7 +544,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
           type="text"
           name="stuName"
           required
-          [ngModel]="stuName"
+          [(ngModel)]="stuName"
           readonly
         />
         <span class="e-float-line"></span>
@@ -560,7 +560,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
           type="text"
           name="stuRoll"
           required
-          [ngModel]="stuRoll"
+          [(ngModel)]="stuRoll"
           readonly
         />
         <span class="e-float-line"></span>
@@ -607,7 +607,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         type="text"
         name="stuId"
         required
-        [ngModel]="stuId"
+        [(ngModel)]="stuId"
         class='form-control' 
         id="sid"
         />
@@ -622,7 +622,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         type="text"
         name="stuName"
         required
-        [ngModel]="stuName"
+        [(ngModel)]="stuName"
         class='form-control' 
         id="sname"
         />
@@ -636,7 +636,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         type="text"
         name="stuRoll"
         required
-        [ngModel]="stuRoll"
+        [(ngModel)]="stuRoll"
         class='form-control'
         id="sroll" 
         />
@@ -650,7 +650,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         type="text"
         name="stuClass"
         required
-        [ngModel]="stuClass"
+        [(ngModel)]="stuClass"
         class='form-control'
         id="sclass" 
         />
@@ -698,7 +698,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
          type="text"
          name="stuCId"
          required
-         [ngModel]="stuCId"
+         [(ngModel)]="stuCId"
          class='form-control' 
          id="scid"
          />
@@ -713,7 +713,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
          type="text"
          name="stuCName"
          required
-         [ngModel]="stuCName"
+         [(ngModel)]="stuCName"
          class='form-control' 
          id="scname"
          />
@@ -727,7 +727,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
          type="text"
          name="stuCRoll"
          required
-         [ngModel]="stuCRoll"
+         [(ngModel)]="stuCRoll"
          class='form-control'
          id="scroll" 
          />
@@ -741,7 +741,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
          type="text"
          name="stuCClass"
          required
-         [ngModel]="stuCClass"
+         [(ngModel)]="stuCClass"
          class='form-control'
          id="scclass" 
          />

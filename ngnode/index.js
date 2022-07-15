@@ -3,6 +3,8 @@ var app=express();
 const http = require('http').createServer(app);
 StudentController = require('./Controller/StudentController');
 var bodyParser=require('body-parser');
+ColumnController = require('./Controller/ColumnController');
+
 app.use(bodyParser.urlencoded({extended:true}));
 var cors=require('cors');
 app.use(cors());
@@ -17,6 +19,10 @@ const io = require('socket.io')(http, {
     origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001', 'http://192.168.7.136:4001','https://pdptappsensor.elb.cisinlive.com']
   }
 });
+app.get('/all-Column', ColumnController.index);
+app.post('/add-Column', ColumnController.store);
+app.delete('/delete-Column/:id', ColumnController.delete);
+
 
 io.on('connection', (socket) => {
   console.log('a user connected');

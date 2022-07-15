@@ -48,5 +48,19 @@ return this.http.post(this.API_URL+'/add-Student',dataSourceChangedEvent.data, h
   
         return this.http.delete(this.API_URL+'/delete-Student/'+state.data[0].id, httpOptions);
           }
+  
+  getAllCol(){
+    return this.http.get(this.API_URL+'/all-Column');
+  }
+
+  addColumn(addNew:any){
+    return this.http.post(this.API_URL+'/add-Column',addNew.data, httpOptions);
+      }
+
+  deleteColumn(state:any,id:any){
+
+    return this.http.delete(this.API_URL+'/delete-Column/'+state.data[0].id, httpOptions);
+      }
+            
 }
 
