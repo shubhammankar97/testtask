@@ -1,27 +1,32 @@
 [
   {
-    "columnname": "id",
-    "id": "1"
+    "field": "id",
+    "id": 1,
+    "type": "number"
   },
   {
-    "columnname": "name",
-    "id": "2"
+    "field": "name",
+    "id": 2,
+    "type": "string"
   },
   {
-    "columnname": "roll_no",
-    "id": "3"
+    "field": "roll_no",
+    "id": 3,
+    "type": "number"
   },
   {
-    "columnname": "class",
-    "id": "4"
+    "field": "class",
+    "id": 4,
+    "type": "number"
   },
   {
-    "id": 5
+    "field": "Branch",
+    "id": 5,
+    "type": "string"
   },
   {
+    "field": "Contact Number",
+    "type": "number",
     "id": 6
-  },
-  {
-    "id": 7
   }
 ]

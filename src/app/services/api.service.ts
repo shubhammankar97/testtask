@@ -10,7 +10,7 @@ const httpOptions ={headers:new HttpHeaders({
 })
 
 export class ApiService {
-  API_URL =  'https://pdptappsensor.elb.cisinlive.com'
+  API_URL =  'https://pdptappsensor.elb.cisinlive.com';
   // API_URL =  'http://localhost:4001'
 
   constructor(private http:HttpClient) { }
@@ -54,7 +54,7 @@ return this.http.post(this.API_URL+'/add-Student',dataSourceChangedEvent.data, h
   }
 
   addColumn(addNew:any){
-    return this.http.post(this.API_URL+'/add-Column',addNew.data, httpOptions);
+    return this.http.post(this.API_URL+'/add-Column',addNew, httpOptions);
       }
 
   deleteColumn(state:any,id:any){

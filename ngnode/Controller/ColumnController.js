@@ -13,7 +13,8 @@ exports.index = (req, res) => {
 exports.store = (req, res) => {
     console.log(req.body);
     var user = {
-        columnname: req.body.columnname,
+        field: req.body.field,
+        type: req.body.type
     }
 
     var data = fs.readFileSync("column.json")

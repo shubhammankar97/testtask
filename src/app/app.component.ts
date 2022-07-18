@@ -259,6 +259,7 @@ export class AppComponent {
   public stuCRoll!:number[];
   public stuCId!:number[];
   public stuCClass!:number[];
+  public coldata!: string[];
   /////////////////////////////////
 
   constructor(
@@ -276,6 +277,11 @@ export class AppComponent {
       this.data = res.filter((item: any) => item);
       console.log("data", this.data);
     });
+
+    this.api.getAllCol().subscribe((res:any)=>{
+      this.coldata=res;
+      console.log("column data:", this.coldata)
+    })
 
   this.selectionSettings = { persistSelection: true };
 
@@ -701,7 +707,16 @@ this.column = [
   /////////////Add Column Event
   clicked(): void {
     let columnName = { field: this.ColName, width: 100,type: this.ColType };
-    this.treegrid.columns.splice(4, 0, columnName); //Add the columns
+    this.treegrid.columns.splice(this.coldata.length+1, 0, columnName); //Add the columns
+    this.api.addColumn(columnName).subscribe((res:any)=>{
+      console.log("column appended", columnName.field);
+  
+        // this.api.updateData(this.data,columnName.field).subscribe(()=>{
+        //   console.log("updatecolumn to all records",)
+        // })
+      
+      
+    })
     this.treegrid.refreshColumns();
     this.treegrid.endEdit;
     this.ejDialog.hide();
@@ -1220,7 +1235,7 @@ console.log("data child",dataC)
       this.treeGridObj.deleteRecord('id', selectedRecord); // delete the selected row
       this.treeGridObj.endEdit();
     } else if (args.item.id === 'editrow') {
-      setTimeout(() => { this.treeGridObj.startEdit(); // edit the selected row
+      setInterval(() => { this.treeGridObj.startEdit(); // edit the selected row
        }, 30000)
       this.treeGridObj.endEdit();
     } else if (args.item.id === 'multiselectrow') {
@@ -1275,6 +1290,7 @@ console.log("data child",dataC)
           r.type = this.ColType;
           r.textAlign = this.ColAlign;
           r['customAttributes'] = { class: 'cssClassaa' };
+          this.treegrid.dataSourceChanged.endEdit;
         }
       });
 
@@ -1284,7 +1300,7 @@ console.log("data child",dataC)
     }
 
     this.showEditColumn = false;
-    this.treegrid.endEdit;
+    this.treegrid.endEdit();
     this.ejDialog.hide();
 }
 public changeFontColor(e: ChangeEventArgs): void {
