@@ -1,13 +1,18 @@
 var fs = require('fs');
 exports.index = (req, res) => {
     var data = fs.readFileSync("column.json")
+    console.log(data);
     data = data.toString();
 
     for (i = 0; i < data.length; i++) {
         data.id = i;
     }
-    console.log(data);
-    return res.json(data);
+    var Data = JSON.parse( data );
+    console.log(Data);
+    return res.json(Data);
+    // 
+    
+    return res.json(Data);
 }
 
 exports.store = (req, res) => {

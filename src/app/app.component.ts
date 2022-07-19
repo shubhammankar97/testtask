@@ -93,7 +93,7 @@ declare var $: any;
 })
 export class AppComponent {
   title = "testaskk";
-  public data!: Object[];
+  public data: Object[]=[];
   public sortSettings!: SortSettingsModel;
   public pageSettings!: PageSettingsModel;
   public editSettings!: EditSettingsModel;
@@ -212,7 +212,7 @@ export class AppComponent {
   /////////
   @ViewChild('application', {read: ViewContainerRef}) applicationRef!: ViewContainerRef;
 
-    public column!: Array<any>;
+    public column:any=[];
     public rows!: Array<any>;
 
     // Add Remove
@@ -259,7 +259,8 @@ export class AppComponent {
   public stuCRoll!:number[];
   public stuCId!:number[];
   public stuCClass!:number[];
-  public coldata!: string[];
+
+  public rowColdata:any;
   /////////////////////////////////
 
   constructor(
@@ -278,11 +279,12 @@ export class AppComponent {
       console.log("data", this.data);
     });
 
-    this.api.getAllCol().subscribe((res:any)=>{
-      this.coldata=res;
-      console.log("column data:", this.coldata)
-    })
 
+    this.api.getAllCol().subscribe((res:any)=>{
+      console.log("column data",res);
+    this.column = res
+    })
+  console.log("column", this.column.field);
   this.selectionSettings = { persistSelection: true };
 
     this.pageSettings = { pageSize: 6 };
@@ -451,24 +453,25 @@ this.contextMenuItems = [
     this.student = new Student();
     this.nextRow = this.data?.length + 1;
 
-this.column = [
-  {
-    field: 'id',
-    headerText: 'Student ID'
-  },
-  {
-    field: 'name',
-    headerText: 'Student Name'
-  },
-  {
-    field: 'roll_no',
-    headerText: 'Roll Number'
-  },
-  {
-    field: 'class',
-    headerText: 'Class'
-  }
-];
+
+// this.column=[
+//   {
+//     field: 'id',
+//     headerText: 'Student ID'
+//   },
+//   {
+//     field: 'name',
+//     headerText: 'Student Name'
+//   },
+//   {
+//     field: 'roll_no',
+//     headerText: 'Roll Number'
+//   },
+//   {
+//     field: 'class',
+//     headerText: 'Class'
+//   }
+// ];
 
 
     ///////////////////////////color row selected
@@ -477,11 +480,11 @@ this.column = [
   }
 
   actionComplete(args: any) {
-    console.log("action complete 1", this.treegrid.selectRows(index))
+    console.log("action complete 1")
     if (args.requestType == "save") {
       var index = args.index;
       this.treegrid.selectRow(index); // select the newly added row to scroll to it
-      console.log("action complete 2", this.treegrid.selectRows(index))
+      console.log("action complete 2")
 }
 
     if (args.requestType === "beginEdit" || args.requestType === "add") {
@@ -572,10 +575,10 @@ this.column = [
     
     if (args.item.text === "Add Column") {
       console.log("add");
+      console.log("col",this.column);
+
       this.showAddColumn = !this.showAddColumn;
-
-
-    }
+   }
     if (args.item.text === "Edit Column") {
       console.log("edit");
       this.showEditColumn = !this.showEditColumn;
@@ -707,14 +710,9 @@ this.column = [
   /////////////Add Column Event
   clicked(): void {
     let columnName = { field: this.ColName, width: 100,type: this.ColType };
-    this.treegrid.columns.splice(this.coldata.length+1, 0, columnName); //Add the columns
+    this.treegrid.columns.splice(this.column.length+1, 0, columnName); //Add the columns
     this.api.addColumn(columnName).subscribe((res:any)=>{
-      console.log("column appended", columnName.field);
-  
-        // this.api.updateData(this.data,columnName.field).subscribe(()=>{
-        //   console.log("updatecolumn to all records",)
-        // })
-      
+      console.log("column appended", columnName.field);  
       
     })
     this.treegrid.refreshColumns();
@@ -724,7 +722,13 @@ this.column = [
 
 ///////
   removeColumn(args:any) {
-    console.log("removecol", args);
+    console.log("removecol");
+  //   var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
+  // console.log("delete function ", grid.getCurrentField[0].id);
+
+    this.api.deleteColumn(args).subscribe(()=>{
+      console.log("delete column");
+    })
     this.treegrid.columns.pop();
     this.treegrid.refreshColumns();
     this.treegrid.endEdit;
@@ -1155,46 +1159,30 @@ console.log("data child",dataC)
     this.rowIndex = arg.rowInfo.rowIndex;
     let elem: Element = arg.event.target as Element;
 
-    if (arg.column.field == "id") {
-      this.columnValue = 1;
-      this.columnField = "id";
-      this.ColName = 'Student ID';
-      this.ColType = 'number';
-      this.ColAlign = 'Left';
-    }
-    if (arg.column.field == "name") {
-      this.columnValue = 2;
-      this.columnField = "name";
-      this.ColName = 'Student Name';
-      this.ColType = 'Left';
-
-    }
-    if (arg.column.field == "roll_no") {
-      this.columnValue = 3;
-      this.columnField = "roll_no";
-      this.ColName = 'Roll Number';
-      this.ColType = 'Left';
-
-    }
-    if (arg.column.field == "class") {
-      this.columnValue = 4;
-      this.columnField = "class";
-      this.ColName = 'Class';
-      this.ColType = 'Left';
-
+    for(let item of this.column){
+      if(arg.column.field === item.field)
+      {
+        this.columnValue = item.id;
+        this.columnField = item.field;
+        this.ColName = item.field.substr(0,1).toUpperCase() + item.field.substr(1);
+        this.ColType =  item.type;
+        this.ColAlign = item.align;
+      }
+      else{}
     }
 
-    else{}
+    
     let row: Element = elem.closest(".e-row")!;
     let uid: string = row && row.getAttribute("data-uid")!;
 
     var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
-  console.log("delete function ", grid.getSelectedRecords()[0].id);
+    console.log("delete function ", grid.getSelectedRecords()[0].id);
+     grid.getCurrentField
 
-  this.stuName = grid.getSelectedRecords()[0].name;
-  this.stuRoll = grid.getSelectedRecords()[0].roll_no;
-  this.stuId = grid.getSelectedRecords()[0].id;
-  this.stuClass = grid.getSelectedRecords()[0].class;
+    for(let i of this.column)
+    {
+      this.rowColdata = grid.getSelectedRecords()[0].i.field;
+    }
 
   }
 

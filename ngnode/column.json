@@ -18,15 +18,5 @@
     "field": "class",
     "id": 4,
     "type": "number"
-  },
-  {
-    "field": "Branch",
-    "id": 5,
-    "type": "string"
-  },
-  {
-    "field": "Contact Number",
-    "type": "number",
-    "id": 6
   }
 ]
