@@ -22,14 +22,16 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     (columnMenuClick)="onColumnClicked($event)"
     [editSettings]="editSetting1"
     [columns]="column"
-    (contextMenuOpen)="context($event)"
-    [frozenColumns]='freezeColumn'
+    (contextMenuOpen)="context($event)" 
+   
     [enableVirtualization]=true
     [height]="60000"
     enableStickyHeader="true"
     [contextMenuItems]="contextMenuItems"
 >
-<!-- (rowSelected)='rowSelected1($event)' -->
+<!-- (rowSelected)='rowSelected1($event)'
+    [frozenColumns]="col2Freeze"
+ -->
    <!-- <e-columns>
     <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
     [lockColumn]= 'true' [customAttributes]='customAttributes' [edit]="editparams"></e-column>
@@ -40,7 +42,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
    </e-columns>  -->
    <e-columns>
-     <e-column *ngFor="let item of column" [field]="item.field" [headerText]="item.field.substr(0,1).toUpperCase() + item.field.substr(1)" [type]="item.type"></e-column>
+     
+     <e-column *ngFor="let item of column" [field]="item.field" [headerText]="item.field.substr(0,1).toUpperCase() + item.field.substr(1)"
+      [type]="item.type" [edit]="editparams" textAlign="Left"></e-column>
+    
    </e-columns>
 
 </ejs-treegrid>

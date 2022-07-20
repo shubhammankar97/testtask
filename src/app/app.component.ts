@@ -244,7 +244,7 @@ export class AppComponent {
   public toolbar1!:string[];
   public editSetting1!:any;
 
-  public freezeCol!:number;
+  public freezeColId!:any;
   public columnNumber!: number;
   public stuName!:string[];
   public stuRoll!:number[];
@@ -253,7 +253,6 @@ export class AppComponent {
   public sortSetting1!:string[];
   public allowMultSort: boolean=false;
   public allowFilter: boolean = false;
-  public freezeColumn: boolean = false;
 
   public stuCName!:string[];
   public stuCRoll!:number[];
@@ -261,6 +260,7 @@ export class AppComponent {
   public stuCClass!:number[];
 
   public rowColdata:any;
+  public col2Freeze!:number;
   /////////////////////////////////
 
   constructor(
@@ -276,7 +276,7 @@ export class AppComponent {
   ngOnInit(): void {
     this.api.getAll().subscribe((res: any) => {
       this.data = res.filter((item: any) => item);
-      console.log("data", this.data);
+      console.log("data 50k:", this.data);
     });
 
 
@@ -494,7 +494,7 @@ this.contextMenuItems = [
       dialog.height = 400;
       console.log("dialog args val", getVal);
       // dialog.header = args.requestType === 'beginEdit' ? 'Record of ' + args.rowData[TaskName] : 'New Customer';
-      args.frozenRightForm;
+      
     }
   }
 
@@ -603,7 +603,10 @@ this.contextMenuItems = [
     }
     if (args.item.text === "Freeze Column") {
       console.log("Freeze", args);
-      // this.freezeColumn = true;
+      console.log("ID freeze", this.freezeColId);
+    //   this.column.freeze = 'Left';
+    // this.col2Freeze = this.freezeColId
+      
     }
     if (args.item.text === "Filter Column") {
       console.log("Filter");
@@ -616,6 +619,7 @@ this.contextMenuItems = [
       
     }
   }
+
   /////////////////
   context(arg:any){
     if (arg.column.headerText == "Student ID") {
@@ -709,7 +713,7 @@ this.contextMenuItems = [
   }
   /////////////Add Column Event
   clicked(): void {
-    let columnName = { field: this.ColName, width: 100,type: this.ColType };
+    let columnName = { field: this.ColName,type: this.ColType };
     this.treegrid.columns.splice(this.column.length+1, 0, columnName); //Add the columns
     this.api.addColumn(columnName).subscribe((res:any)=>{
       console.log("column appended", columnName.field);  
@@ -722,19 +726,31 @@ this.contextMenuItems = [
 
 ///////
   removeColumn(args:any) {
-    console.log("removecol");
-  //   var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
-  // console.log("delete function ", grid.getCurrentField[0].id);
+    console.log("removecol",args);
 
-    this.api.deleteColumn(args).subscribe(()=>{
-      console.log("delete column");
-    })
-    this.treegrid.columns.pop();
+    for(let i of this.column)
+    {
+      console.log("yess")
+      if(i.field == args)
+      {
+        console.log("ID:",i.id);
+        this.api.deleteColumn(i.id).subscribe((res:any)=>{
+          console.log("delete column", res);
+        });
+      }
+    }
+    
+    
+    // this.treegrid.columns.pop();
     this.treegrid.refreshColumns();
     this.treegrid.endEdit;
     this.ejDialog.hide();
 }
   /////////////////////
+  remPass(){
+
+  }
+  //////////////////
 
   onSelect(args: any) {
 
@@ -1153,6 +1169,7 @@ console.log("data child",dataC)
   contextMenuOpen(arg: any): void {
     
     console.log("contextMenuOpen:", arg.column.field);
+    this.freezeColId = arg.column.id;
     this.rowIndex = arg.rowInfo.rowIndex;
     this.cellIndex = arg.rowInfo.cellIndex;
 
@@ -1270,6 +1287,8 @@ console.log("data child",dataC)
             color:${this.ColFColor};
           }`;
           document.body.append(style);
+          this.treegrid.refreshColumns(true);
+          this.treegrid.endEdit;
         }
 
         if (r.field == this.columnField) {
@@ -1279,11 +1298,13 @@ console.log("data child",dataC)
           r.textAlign = this.ColAlign;
           r['customAttributes'] = { class: 'cssClassaa' };
           this.treegrid.dataSourceChanged.endEdit;
+          this.treegrid.refreshColumns(true);
+          this.treegrid.endEdit;
         }
       });
 
    
-      this.treegrid.refreshColumns();
+      this.treegrid.refreshColumns(true);
       this.textWrap = this.ColChecked;
     }
 

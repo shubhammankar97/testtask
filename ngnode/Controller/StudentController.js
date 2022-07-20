@@ -35,15 +35,15 @@ exports.delete=(req,res)=>{
     data=fs.readFileSync("student.json")
     var Data=JSON.parse(data);
     for (var i in Data){
-    console.log(Data);
+        console.log(Data);
         if(Data[i] != null){
-        if(Data[i]["id"]==id){
-            delete Data[i]
-            fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
-            console.log(Data)
-            res.json(Data)
-        };
-    }
+            if(Data[i]["id"]==id){
+                delete Data[i]
+                fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
+                console.log(Data)
+                res.json(Data)
+            };
+        }
     };
 };
 
