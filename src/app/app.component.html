@@ -23,14 +23,14 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [editSettings]="editSetting1"
     [columns]="column"
     (contextMenuOpen)="context($event)" 
-   
+    [frozenColumns]="col2Freeze"
     [enableVirtualization]=true
     [height]="60000"
     enableStickyHeader="true"
     [contextMenuItems]="contextMenuItems"
 >
 <!-- (rowSelected)='rowSelected1($event)'
-    [frozenColumns]="col2Freeze"
+    
  -->
    <!-- <e-columns>
     <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
@@ -40,14 +40,13 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"
     [edit]="editparams"></e-column>
     <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
-   </e-columns>  -->
-   <e-columns>
-     
-     <e-column *ngFor="let item of column" [field]="item.field" [headerText]="item.field.substr(0,1).toUpperCase() + item.field.substr(1)"
-      [type]="item.type" [edit]="editparams" textAlign="Left"></e-column>
-    
-   </e-columns>
-
+   </e-columns>  
+  item.field.substr(0,1).toUpperCase() + item.field.substr(1)-->
+   <e-columns>    
+    <!-- <e-column type='checkbox' width='10' *ngIf="showChooseRow"></e-column> -->
+     <e-column *ngFor="let item of column" [field]="item.field" [headerText]="(item.field).substr(0,1).toUpperCase() + item.field.substr(1)"
+      [type]="item.type" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [lockColumn]="true"></e-column>
+      </e-columns>
 </ejs-treegrid>
 
 
@@ -129,12 +128,14 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [target]="targetElement"
     width="300px"
     showCloseIcon="true"
-    [height]="450"
+    [height]="650"
     allowDragging='true'
     [position]="pos" 
   >
+  
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
+        <p>(Timer: {{timeLeft}})</p> 
         <div class="form-group" style="padding-top: 11px;">
           <div class="e-float-input">
             <input
@@ -143,9 +144,10 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
               required
               [(ngModel)]="ColName"
               #ColumnName="ngModel"
+              disabled="true"
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">Name</label>
+            <label class="e-float-text e-label-top" for="name">Column Name  </label>
             <!-- <div
               *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
             >
@@ -157,6 +159,7 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
         </div>
 
         <div class="form-group" style="padding-top: 11px;">
+          
           <div class="e-float-input">
             <ejs-dropdownlist
               
@@ -166,10 +169,42 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
               placeholder="Type"
               name="ColType"
               [(ngModel)]="ColType"
+              disabled="true"
             ></ejs-dropdownlist>
+          
             </div>
         </div>
 
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <input
+              type="text"
+              name="ColName"
+              required
+              [(ngModel)]="ColName"
+              #ColumnName="ngModel"
+              disabled="true"
+            />
+            <span class="e-float-line"></span>
+            <label class="e-float-text e-label-top" for="name">Default Value</label>
+           
+          </div>
+        </div>
+        <div class="form-group" style="padding-top: 11px;">
+          <div class="e-float-input">
+            <input
+              type="number"
+              min="40"
+              name="ColMinWidth"
+              required
+              [(ngModel)]="ColMinWidth"
+              #ColumnName="ngModel"
+            />
+            <span class="e-float-line"></span>
+            <label class="e-float-text e-label-top" for="name">Minimum-Column-Width</label>
+            
+          </div>
+        </div>
   
 
         <div class="form-group" style="padding-top: 11px;">
@@ -564,10 +599,11 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
   <!-- Edit Row -->
   <div *ngIf="showEditRow"> 
   <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Row'
-width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
+width='300px' [position]="pos" showCloseIcon="true" [height]="500"> 
 
 <ng-template #content>
   <form id="template_driven" #userForm="ngForm" novalidate>
+    <p>(Timer: {{timeLeft}})</p> 
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
         <input

@@ -2,21 +2,36 @@
   {
     "field": "id",
     "id": 1,
-    "type": "number"
+    "type": "number",
+    "validation": {
+      "required": true,
+      "number": true
+    }
   },
   {
     "field": "name",
     "id": 2,
-    "type": "string"
+    "type": "string",
+    "validation": {
+      "required": true
+    }
   },
   {
     "field": "roll_no",
     "id": 3,
-    "type": "number"
+    "type": "number",
+    "validation": {
+      "required": true,
+      "number": true
+    }
   },
   {
     "field": "class",
     "id": 4,
-    "type": "number"
+    "type": "number",
+    "validation": {
+      "required": true,
+      "number": true
+    }
   }
 ]

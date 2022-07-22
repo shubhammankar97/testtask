@@ -148,7 +148,6 @@ export class AppComponent {
   public dialog!: IgxDialogComponent;
   public student!: Student;
   private nextRow!: number;
-  public numberSummaries = CustomNumberSummary;
 
   /////////////////////////////////////////////
   public dropDownFilter!: DropDownList;
@@ -165,7 +164,7 @@ export class AppComponent {
   public showDelColumn: boolean = false;
   public showViewColumn: boolean = false;
   public showAddColumn: boolean = false;
-  public showChooseColumn:boolean =false;
+  public showChooseRow:boolean =false;
   public showNewColumn:boolean = false;
   public showAddNext:boolean = false;
   public showDeleteRow:boolean = false;
@@ -199,7 +198,6 @@ export class AppComponent {
   public d4data: any = [];
 
   public d3data: any = [];
-  isShown: boolean = true;
   ////////////////////////////////
   public editparams!: Object;
   public deletedRecord!: object;
@@ -261,6 +259,12 @@ export class AppComponent {
 
   public rowColdata:any;
   public col2Freeze!:number;
+  public lock:boolean = false;
+
+  public timeLeft:number =30;
+  public timerId:any;
+  public elem:any;
+  public interval:any;
   /////////////////////////////////
 
   constructor(
@@ -277,6 +281,10 @@ export class AppComponent {
     this.api.getAll().subscribe((res: any) => {
       this.data = res.filter((item: any) => item);
       console.log("data 50k:", this.data);
+      if(this.column.field === 'id')
+  {
+    this.lock = true;
+  }
     });
 
 
@@ -285,6 +293,7 @@ export class AppComponent {
     this.column = res
     })
   console.log("column", this.column.field);
+  
   this.selectionSettings = { persistSelection: true };
 
     this.pageSettings = { pageSize: 6 };
@@ -386,7 +395,7 @@ this.contextMenuItems = [
       { id: "number", type: "number" },
       { id: "boolean", type: "boolean" },
       { id: "datetime", type: "datetime" },
-      { id: "date", type: "date" },
+      { id: "dropdownlist", type: "dropdownlist" },
     ];
 
     this.d3data = [
@@ -527,39 +536,53 @@ this.contextMenuItems = [
     }
   }
 
-  public headermenuItems: MenuItemModel[] = [
+  public headermenuItems = [
     
     {
       text: "Add Column",
       id: "addCol",
+      target: '.e-content',
     },
     {
       text: "Edit Column",
       id: "editCol",
+      target: '.e-content',
     },
     {
       text: "View Column",
       id: "viewCol",
+      target: '.e-content',
     },
     {
       text: "Delete Column",
       id: "delCol",
+      target: '.e-content',
     },
     {
       text: "Choose Column",
       id: "chooseCol",
+      target: '.e-content',
     },
     {
       text: "Freeze Column",
       id: "freezeCol",
+      iconCss: 'c-custom',
+      cssClass: 'e-flat',
+      target: '.e-content',
     },
     {
       text: "Filter Column",
       id: "filterCol",
+      iconCss: 'c-custom',
+      cssClass: 'e-flat',
+      target: '.e-content',
     },
     {
       text: "Multisort Column",
       id: "msortCol",
+      iconCss: 'c-custom',
+      cssClass: 'e-flat',
+      target: '.e-content',
     },
   ];
 
@@ -582,6 +605,7 @@ this.contextMenuItems = [
     if (args.item.text === "Edit Column") {
       console.log("edit");
       this.showEditColumn = !this.showEditColumn;
+      this.startTimer();
       this.checkNewEdit = "edit";
       this.getCurrentField();
 
@@ -604,21 +628,36 @@ this.contextMenuItems = [
     if (args.item.text === "Freeze Column") {
       console.log("Freeze", args);
       console.log("ID freeze", this.freezeColId);
+      if(this.column.id==this.freezeColId)
+      {
+        this.column.allowFreezing = true;
+      };
     //   this.column.freeze = 'Left';
-    // this.col2Freeze = this.freezeColId
+    this.col2Freeze = this.freezeColId
       
     }
     if (args.item.text === "Filter Column") {
       console.log("Filter");
-      this.allowFilter = true;
+      this.allowFilter = !this.allowFilter;
 
     }
     if (args.item.text === "Multisort Column") {
       console.log("Multisort");
-      this.allowMultSort = true;
+      this.allowMultSort = !this.allowMultSort;
       
     }
   }
+////countdown
+startTimer() {
+  this.interval = setInterval(() => {
+    if(this.timeLeft > 0) {
+      this.timeLeft--;
+    } else {
+      this.ejDialog.hide();
+      // this.timeLeft = 30;
+    }
+  },1000)
+}
 
   /////////////////
   context(arg:any){
@@ -776,7 +815,9 @@ this.contextMenuItems = [
       this.showEditRow = true
     }
     if (args.item.text === "Select Rows") {
-      this.rowSelected(args)
+      console.log("choose row");
+      this.showChooseRow = true;
+      // this.rowSelected(args)
     }
 
     if (args.item.text === "Delete Rows") {
@@ -902,12 +943,7 @@ addChild(args:any){
 
     var treegridInst = this.treeGridObj;
     var selectedRecord = this.selectedRecord;
-    // if (args.item.id === 'addChild') {
-    //   this.selectedIndex = this.treeGridObj['getSelectedRowIndexes']()[0]; // select the records on perform Copy action
-    //   this.selectedRecord = this.treeGridObj['getSelectedRecords']()[0];
-    //   this.treeGridObj.deleteRecord('id', this.selectedRecord); //delete the copied record
-    // } else 
-      // this.treeGridObj.deleteRecord('taskID', this.selectedRecord); //delete the copied record
+   
       var index = this.treeGridObj['getSelectedRowIndexes']()[0];
       console.log("context new add child");
 
@@ -1211,6 +1247,14 @@ console.log("data child",dataC)
       this.showEditColumn = true;
       this.getCurrentField();
     } 
+    if (args.event.target.classList.contains('e-checkboxspan')) {
+      var checkbox = args.element.querySelector('.e-checkbox');
+      checkbox.checked = !checkbox.checked;
+    }
+    if(args.item.id === "multiselectrow")
+    {
+      this.showChooseRow = true;
+    }
 
     var i = 50001;
     var data = {
@@ -1230,24 +1274,23 @@ console.log("data child",dataC)
     var selectedRecord = this.selectedRecord;
     if (args.item.id === 'addnextrow') {
       this.showAddNext =true;
-      // this.treeGridObj.addRecord(data, this.rowIndex, 'Top'); //aadd record use can add row top orbelow using new row position
-      // this.treeGridObj.endEdit;
     } else if (args.item.id === 'addchildrow') {
       this.showAddchild = true;
-      // this.treeGridObj.addRecord(dataC, this.rowIndex, 'Child'); //add child row
-      // this.treeGridObj.endEdit;
     } else if (args.item.id === 'deleterow') {
       this.treeGridObj.deleteRecord('id', selectedRecord); // delete the selected row
       this.treeGridObj.endEdit();
     } else if (args.item.id === 'editrow') {
-      setInterval(() => { this.treeGridObj.startEdit(); // edit the selected row
-       }, 30000)
-      this.treeGridObj.endEdit();
+      console.log("edit row");
+      this.showEditRow = true;
+      this.startTimer();
     } else if (args.item.id === 'multiselectrow') {
-      $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
-        this.treeGridObj.selectionSettings.type = 'Multiple'; //enable multiselection
+      this.showChooseRow =true;
+      this.startTimer(); 
+      this.treeGridObj.endEdit();
+      // $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
+      //   this.treeGridObj.selectionSettings.type = 'Multiple'; //enable multiselection
     
-      }, 3000);
+      // }, 3000);
     } else if (args.item.id === 'customCopy') {
       this.selectedIndex = this.treeGridObj['getSelectedRowIndexes']()[0]; // select the records on perform Copy action
       this.selectedRecord = this.treeGridObj['getSelectedRecords']()[0];
@@ -1287,6 +1330,7 @@ console.log("data child",dataC)
             color:${this.ColFColor};
           }`;
           document.body.append(style);
+          this.treegrid.refreshColumns();
           this.treegrid.refreshColumns(true);
           this.treegrid.endEdit;
         }
@@ -1384,16 +1428,16 @@ showEditor(cell: any){
 
 ///////////////row select
 
-rowSelected(args: any) {
-  var grid = (document.getElementsByClassName("e-grid")[0] as any)
-    .ej2_instances[0];
-  console.log(grid.getSelectedRecords());
-  $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
+// rowSelected(args: any) {
+// //   var grid = (document.getElementsByClassName("e-grid")[0] as any)
+// //     .ej2_instances[0];
+// //   console.log(grid.getSelectedRecords());
+// //   $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
     
-  }, 3000);
-  console.log("timer");
-alert
-}
+// //   }, 3000);
+// //   console.log("timer");
+// // alert
+// }
 /////////////////column selected
 
 onColumnClicked(args: any) {
@@ -1415,24 +1459,11 @@ dataSource(args:any){
 // }
 
 ////////////////////////////////////////////////////////////////////
+doSomething() {
+  this.ejDialog.hide();
+  // throw new Error("Function not implemented.");
+}
 }
 
-class CustomNumberSummary extends IgxSummaryOperand {
-  constructor() {
-    super();
-  }
-  public override operate(data?: any[]): IgxSummaryResult[] {
-    const result = super.operate(data);
-    result.push({
-      key: "Min",
-      label: "Min",
-      summaryResult: IgxNumberSummaryOperand.min([data]),
-    });
-    result.push({
-      key: "max",
-      label: "Max",
-      summaryResult: IgxNumberSummaryOperand.max([data]),
-    });
-    return result;
-  }
-}
+
+
