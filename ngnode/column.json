@@ -1,9 +1,18 @@
 [
   {
+    "field": "checkbox",
+    "type": "checkbox",
+    "id": 0,
+    "validation": {
+      "required": false
+    }
+  },
+  {
     "field": "id",
     "id": 1,
     "type": "number",
     "validation": {
+      "isPrimaryKey": true,
       "required": true,
       "number": true
     }
@@ -15,6 +24,7 @@
     "validation": {
       "required": true
     }
+
   },
   {
     "field": "roll_no",

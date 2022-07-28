@@ -5,6 +5,7 @@ exports.index=(req,res)=>{
     data = data.toString();
     var Data = JSON.parse( data );
     return res.json(Data);
+
 }
 
 exports.store=(req,res)=>{

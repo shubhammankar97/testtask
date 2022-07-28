@@ -1,5 +1,9 @@
-<ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
-[allowSorting]="allowMultSort" [pageSettings]='pageSettings' [treeColumnIndex]='1'  idMapping='id' 
+<!-- <pre>{{sourceData.length | json}}</pre> -->
+<div class="image-loader" *ngIf="imageLoader">
+  <img src="../assets/img/loader.gif" />
+</div>
+<ejs-treegrid [dataSource]='sourceData' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
+[allowSorting]="allowMultSort" [pageSettings]='pageSettings'  idMapping='id' 
 parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
 (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
  [selectionSettings]='selectionSettings' [allowSelection]='true'
@@ -28,6 +32,8 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     [height]="60000"
     enableStickyHeader="true"
     [contextMenuItems]="contextMenuItems"
+    autoCheckHierarchy='true'
+    (toolbarClick)='toolbarClick($event)'
 >
 <!-- (rowSelected)='rowSelected1($event)'
     
@@ -42,11 +48,15 @@ itemBeforeEvent={this.itemBeforeEvent.bind(this)}
     <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
    </e-columns>  
   item.field.substr(0,1).toUpperCase() + item.field.substr(1)-->
-   <e-columns>    
-    <!-- <e-column type='checkbox' width='10' *ngIf="showChooseRow"></e-column> -->
-     <e-column *ngFor="let item of column" [field]="item.field" [headerText]="(item.field).substr(0,1).toUpperCase() + item.field.substr(1)"
-      [type]="item.type" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [lockColumn]="true"></e-column>
-      </e-columns>
+   <e-columns>
+  
+
+    <div *ngFor="let item of column">
+      
+     <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
+      [type]="item.type" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [lockColumn]="lock" [showCheckbox]="true"></e-column>
+  </div>
+  </e-columns>
 </ejs-treegrid>
 
 
@@ -496,8 +506,8 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         <input
           type="text"
           name="rowColdata"
-          [(ngModel)]="rowColdata"
-          #ColumnName="ngModel"
+          
+          
           class='form-control'
           id="sclass"
         />
@@ -505,7 +515,8 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
         <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
       </div>
     </div>
-
+<!-- #ColumnName="ngModel"
+  [(ngModel)]="rowColdata" -->
   </form>
 </ng-template>
 <ng-template #footerTemplate>
