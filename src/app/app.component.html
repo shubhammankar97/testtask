@@ -1,63 +1,71 @@
 <!-- <pre>{{sourceData.length | json}}</pre> -->
-<div class="image-loader" *ngIf="imageLoader">
+<!-- <div class="image-loader" *ngIf="imageLoader">
   <img src="../assets/img/loader.gif" />
+</div> -->
+<div id="loader-container">
 </div>
-<ejs-treegrid [dataSource]='sourceData' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
-[allowSorting]="allowMultSort" [pageSettings]='pageSettings'  idMapping='id' 
-parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
-(actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
- [selectionSettings]='selectionSettings' [allowSelection]='true'
-(dataSourceChanged)="dataSourceChanged($event)"
-(beforeOpen)='beforeOpen($event)'
-itemBeforeEvent={this.itemBeforeEvent.bind(this)}
-(select)="onSelect($event)" 
-[filterSettings]="filterSettings"
-[contextMenuItems]="contextMenuItems"
-    (contextMenuOpen)="contextMenuOpen($event)"
-    (contextMenuClick)="contextMenuClick($event)"
-    [allowReordering]='true'
-    [allowResizing]='true' 
-    (actionComplete)='actionComplete($event)'
-    [allowRowDragAndDrop]='true'
-    (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
-    childMapping='Crew'
-    (rowClicked)='onRowClicked($event)'
-    [showColumnChooser]='true' 
-    (columnMenuClick)="onColumnClicked($event)"
-    [editSettings]="editSetting1"
-    [columns]="column"
-    (contextMenuOpen)="context($event)" 
-    [frozenColumns]="col2Freeze"
-    [enableVirtualization]=true
-    [height]="60000"
-    enableStickyHeader="true"
-    [contextMenuItems]="contextMenuItems"
-    autoCheckHierarchy='true'
-    (toolbarClick)='toolbarClick($event)'
->
-<!-- (rowSelected)='rowSelected1($event)'
-    
- -->
-   <!-- <e-columns>
-    <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
-    [lockColumn]= 'true' [customAttributes]='customAttributes' [edit]="editparams"></e-column>
-    <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules' [edit]="editparams"></e-column>
-    <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules' [edit]="editparams"></e-column>
-    <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"
-    [edit]="editparams"></e-column>
-    <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
-   </e-columns>  
-  item.field.substr(0,1).toUpperCase() + item.field.substr(1)-->
-   <e-columns>
-  
 
-    <div *ngFor="let item of column">
+
+  <ejs-treegrid [dataSource]='sourceData' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
+  [allowSorting]="allowMultSort" [pageSettings]='pageSettings'  idMapping='id' 
+  parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
+  (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
+   [selectionSettings]='selectionSettings' [allowSelection]='true'
+  (dataSourceChanged)="dataSourceChanged($event)"
+  (beforeOpen)='beforeOpen($event)'
+  itemBeforeEvent={this.itemBeforeEvent.bind(this)}
+  (select)="onSelect($event)" 
+  [filterSettings]="filterSettings"
+  [contextMenuItems]="contextMenuItems"
+      (contextMenuOpen)="contextMenuOpen($event)"
+      (contextMenuClick)="contextMenuClick($event)"
+      [allowReordering]='true'
+      [allowResizing]='true' 
+      (actionComplete)='actionComplete($event)'
+      [allowRowDragAndDrop]='true'
+      (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
+      childMapping='Crew'
+      (rowClicked)='onRowClicked($event)'
+      [showColumnChooser]='true' 
+      (columnMenuClick)="onColumnClicked($event)"
+      [editSettings]="editSetting1"
+      [columns]="column"
+      (contextMenuOpen)="context($event)" 
+      [frozenColumns]="col2Freeze"
+      [enableVirtualization]=true
+      [height]="60000"
+      enableStickyHeader="true"
+      autoCheckHierarchy='true'
+      (toolbarClick)='toolbarClick($event)'
+  >
+  <!-- (rowSelected)='rowSelected1($event)'
       
-     <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
-      [type]="item.type" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [lockColumn]="lock" [showCheckbox]="true"></e-column>
-  </div>
-  </e-columns>
-</ejs-treegrid>
+   -->
+     <!-- <e-columns>
+      <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
+      [lockColumn]= 'true' [customAttributes]='customAttributes' [edit]="editparams"></e-column>
+      <e-column field='name' id="name" *ngIf="isShown" headerText='Student Name' textAlign='Left' width=200 [validationRules]='studentnamerules' [edit]="editparams"></e-column>
+      <e-column field='roll_no' *ngIf="isShown" headerText='Roll Number' textAlign='Left' type="number" width=90 [validationRules]='studentidrules' [edit]="editparams"></e-column>
+      <e-column field='class' *ngIf="isShown" headerText='Class' textAlign='Left' width=80 [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"
+      [edit]="editparams"></e-column>
+      <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
+     </e-columns>  
+    item.field.substr(0,1).toUpperCase() + item.field.substr(1)-->
+     <e-columns>
+    
+  
+      <div *ngFor="let item of column">
+        
+       <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
+        [type]="item.type" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [showCheckbox]="true" [customAttributes]='customAttributes'></e-column>
+    </div>
+    </e-columns>
+  </ejs-treegrid>
+
+
+
+
+  
 
 
     <!-- row contextmenu1 -->

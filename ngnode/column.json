@@ -14,7 +14,8 @@
     "validation": {
       "isPrimaryKey": true,
       "required": true,
-      "number": true
+      "number": true,
+      "lockColumn": true
     }
   },
   {

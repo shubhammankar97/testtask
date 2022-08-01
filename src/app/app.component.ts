@@ -69,6 +69,7 @@ import { Query } from '@syncfusion/ej2-data';
 import { Internationalization, isNullOrUndefined } from '@syncfusion/ej2-base';
 import { TreeClipboard } from '@syncfusion/ej2-angular-treegrid';
 import { ClickEventArgs } from '@syncfusion/ej2-angular-navigations';
+import { createSpinner, showSpinner, hideSpinner } from '@syncfusion/ej2-angular-popups';
 declare var $: any;
 
 @Component({
@@ -269,6 +270,11 @@ export class AppComponent {
   public interval:any;
   public checRow:boolean=false;
   sourceData: any
+  /////////////
+  numberOfClicks = 1;
+  number:any
+  store:any;
+  getValue:any;
   /////////////////////////////////
   abc =  null;
   constructor(
@@ -277,38 +283,29 @@ export class AppComponent {
     private socketService: SocketioService
   ) {
     this.sourceData = JSON.parse(localStorage.getItem('dataSource') || '{}');
-    try {
-      this.imageLoader = true
+  //  this.imageLoader = true;
+  showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.api.getAll().subscribe((res: any) => {
-        this.imageLoader = false
+    // this.imageLoader = false
         this.data = res.filter((item: any) => item);
         localStorage.setItem('dataSource', JSON.stringify(this.data));
-      })
-      console.log(this.sourceData, "-----------------------------");
-    } catch (error) {
-      console.log(error, "error");
-    }
+  hideSpinner(document.getElementById("loader-container") as HTMLElement);
 
- 
-    
+      })
+      hideSpinner(document.getElementById("loader-container") as HTMLElement);
+      console.log(this.sourceData, "-----------------------------");
+
     this.contextMenuSettings = {
       showContextMenu: true,
       toolbar: ["Add", "Edit", "Delete", "ColumnChooser"],
     };
   }
-
-
   ngOnInit(): void {
 
-      // setTimeout(() => {
-      //   this.data
-      // }, 1000) 
-      console.log("data 50k:", this.data);
-  //     if(this.column.field === 'id')
-  // {
-  //   this.lock = true;
-  // }
 
+//     ///////////////////////
+
+      console.log("data 50k:", this.data);
     this.api.getAllCol().subscribe((res:any)=>{
       console.log("column data",res);
       
@@ -516,20 +513,20 @@ this.contextMenuItems = [
 
 
   actionComplete(args: any) {
-    this.imageLoader = false
-    console.log("action complete 1")
+    // this.imageLoader = false
+    console.log("action complete 1-------------")
     if (args.requestType == "save") {
       var index = args.index;
       this.treegrid.selectRow(index); // select the newly added row to scroll to it
       console.log("action complete 2")
 }
-
     if (args.requestType === "beginEdit" || args.requestType === "add") {
       const dialog = args.dialog as Dialog;
       let getVal = args;
       const TaskName = "TaskName";
       dialog.height = 400;
       console.log("dialog args val", getVal);
+      hideSpinner(document.getElementById('loader-container') as HTMLElement)
       // dialog.header = args.requestType === 'beginEdit' ? 'Record of ' + args.rowData[TaskName] : 'New Customer';
       
     }
@@ -590,25 +587,25 @@ this.contextMenuItems = [
       text: "Choose Column",
       id: "chooseCol",
       target: '.e-content',
-      iconCss:'e-checkbox'
+      cssClass:'e-checkbox'
     },
     {
       text: "Freeze Column",
       id: "freezeCol",
       target: '.e-content', 
-      iconCss: ' e-icons e-select-all',
+      cssClass: 'e-select',
     },
     {
       text: "Filter Column",
       id: "filterCol",
       target: '.e-content',
-      iconCss: ' e-icons e-select-all',
+      cssClass: 'e-select',
     },
     {
       text: "Multisort Column",
       id: "msortCol",
       target: '.e-content',
-      iconCss: ' e-icons e-select-all',
+      cssClass: 'e-select',
     },
   ];
 
@@ -752,7 +749,7 @@ startTimer() {
 
   public itemBeforeEvent(args: MenuEventArgs) {
     
-    if (args.item.text !== "Add Column" && args.item.text !== "Edit Column" && args.item.text !== "Delete Column" && args.item.text !== "View Column") {
+    if (args.item.text !== "Filter Column" && args.item.text !== "Edit Column" && args.item.text !== "Delete Column" && args.item.text !== "View Column") {
       let shortCutSpan: HTMLElement = document.createElement("span");
       let text: string = args.item.text!;
       args.element.textContent = "";
@@ -923,26 +920,7 @@ startTimer() {
     $(data.id).style.backgroundColor = "blue";
     this.treeGridObj.endEdit;
     this.ejDialog.hide();
-  //   let si: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sid')!;
-  //   let sn: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sname')!;
-  //   let sr: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sroll')!;
-  //   let sc: HTMLInputElement =  document.getElementById('dialog')?.querySelector('#sclass')!;
-  // console.log("sn val",sn.value)
-  //   var data = [{
-  //     id:si.value,
-  //     name: sn.value,
-  //     roll_no:sr.value,
-  //     class: sc.value
-  //   }]
 
-
-  //   var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
-  //   console.log("add next function ", grid.getSelectedRecords()[0].id);
-  //   this.api.addData(data).subscribe(()=>{
-  // console.log("add Data api")
-  //   });
-  //   console.log(this.stuClass.values);
-  //     this.ejDialog.hide();
 }
 ///////////////add Child
 addChild(args:any){
@@ -1148,24 +1126,6 @@ console.log("data child",dataC)
     }
   }
 
-  //  i = 0;
-  // change() {
-  //   let doc = document.getElementById("background");
-  //   let color = ["black", "blue", "brown", "green"];
-  //   doc.style.backgroundColor = color[i];
-  //   i = (i + 1) % color.length;
-  // }
-  // setInterval(change, 1000);
-  // setToRed ( )
-  // {
-  //   document.getElementById("colourButton").style.color = "#FF0000";
-  //   setTimeout ( "setToBlack()", 2000 );
-  // }
-
-  // setToBlack ( )
-  // {
-  //   document.getElementById("colourButton").style.color = "#000000";
-  // }
 
   public gridOptions = {
     rowSelection: "multiple",
@@ -1312,12 +1272,12 @@ console.log("data child",dataC)
     } else if (args.item.id === 'editrow') {
       console.log("edit row");
       this.showEditRow = true;
+      this.selectedRecord = this.treeGridObj['getSelectedRecords']()[0];
+      console.log("edit rowwww", this.selectedRecord);
       this.startTimer();
     } else if (args.item.id === 'multiselectrow') {
       console.log("select mult")
-      if(args.field === 'checkbox'){
-        args.validation.required = true;
-      }
+     
       this.showChooseRow =true;
       this.startTimer(); 
       this.treeGridObj.endEdit();
@@ -1495,25 +1455,40 @@ dataSource(args:any){
 ////////////////////////////////////////////////////////////////////
 doSomething() {
   this.ejDialog.hide();
-  // throw new Error("Function not implemented.");
 }
-// checkB(args:any){
-//   if(args.field === 'checkbox')
-//   {
-//     args.validation.required = true;
-//   }
-// }
 
 toolbarClick(args: ClickEventArgs) {
-  console.log(args, "Add toolbar");
-  
-  this.imageLoader = true;
-  console.log("add")
+  createSpinner({
+    // Specify the target for the spinner to show
+    target: document.getElementById('loader-container') as HTMLElement
+  });
+  console.log("add----------------")
+  showSpinner(document.getElementById('loader-container') as HTMLElement)
   if (this.treeGridObj && args.item.text === 'Add') {
-    // this.imageLoader =false;
+    showSpinner(document.getElementById('loader-container') as HTMLElement)
   }
  
 }
+
+ngAfterViewInit() {
+  //createSpinner() method is used to create spinner
+  createSpinner({
+    // Specify the target for the spinner to show
+    target: document.getElementById('loader-container') as HTMLElement
+  });
+  
+  // showSpinner() will make the spinner visible
+  showSpinner(document.getElementById('loader-container') as HTMLElement); 
+  
+  // setInterval(function(){
+  //   // hideSpinner() method used hide spinner
+  //   hideSpinner(document.getElementById('loader-container') as HTMLElement);
+
+  // }, 10000);
+  
+}
+
+
 
 }
 

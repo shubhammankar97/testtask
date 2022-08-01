@@ -22,7 +22,7 @@ import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { ToolbarModule, ToolbarAllModule } from '@syncfusion/ej2-angular-navigations';
 import { ButtonAllModule } from '@syncfusion/ej2-angular-buttons';
 import { NumericTextBoxAllModule } from '@syncfusion/ej2-angular-inputs';
-import { TreeGridAllModule } from '@syncfusion/ej2-angular-treegrid';
+import { TreeGridAllModule, ContextMenuService, } from '@syncfusion/ej2-angular-treegrid';
 import { ColorPickerModule } from '@syncfusion/ej2-angular-inputs';
 import { IgxButtonModule,	IgxDialogModule, IgxRippleModule } from "igniteui-angular";
 import { FreezeService } from '@syncfusion/ej2-angular-treegrid';
@@ -54,7 +54,7 @@ import { FreezeService } from '@syncfusion/ej2-angular-treegrid';
     MultiSelectAllModule,
     IgxButtonModule,	IgxDialogModule, IgxRippleModule
   ],
-  providers: [ApiService, PageService, SortService, FilterService, SocketioService, FreezeService],
+  providers: [ApiService, PageService, SortService, FilterService, SocketioService, FreezeService, ContextMenuService,],
   bootstrap: [AppComponent]
 })
 export class AppModule {
