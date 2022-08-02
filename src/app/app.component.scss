@@ -237,3 +237,28 @@ th.e-headercell.check {
 .e-gridheader.e-lib.e-draggable.e-droppable {
   padding-right: 0px !important;
 }
+//////////
+.required:after {
+  content:" *";
+  color: red;
+}
+
+.label{
+  color:#65ca2a5e;
+}
+// .required label {
+//     font-weight: bold;
+// }
+// .required label:after {
+//     color: #e32;
+//     content: ' *';
+//     display:inline;
+// }
+// .e-dlg-content {
+//   color: rgba(41, 184, 41, 0.87) !important;
+// }
+
+//////////
+div#treegridcomp_gridcontrol_ccdlg {
+  margin-top: -1803px !important;
+}

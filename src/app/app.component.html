@@ -9,7 +9,7 @@
   <ejs-treegrid [dataSource]='sourceData' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
   [allowSorting]="allowMultSort" [pageSettings]='pageSettings'  idMapping='id' 
   parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
-  (actionComplete)="dataSourceChanged($event)" [contextMenuItems]='contextMenuItems'
+  (actionComplete)="dataSourceChanged($event)"
    [selectionSettings]='selectionSettings' [allowSelection]='true'
   (dataSourceChanged)="dataSourceChanged($event)"
   (beforeOpen)='beforeOpen($event)'
@@ -53,15 +53,15 @@
     item.field.substr(0,1).toUpperCase() + item.field.substr(1)-->
      <e-columns>
     
-  
       <div *ngFor="let item of column">
         
        <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
-        [type]="item.type" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [showCheckbox]="true" [customAttributes]='customAttributes'></e-column>
+        [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [showCheckbox]="true" [customAttributes]='customAttributes'
+        [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" ></e-column>
     </div>
     </e-columns>
   </ejs-treegrid>
-
+  <!-- {item.type !== checkbox ? item.validation : item.validation.required = true} -->
 
 
 
@@ -92,7 +92,7 @@
           #ColumnName="ngModel"
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Column Name</label>
+        <label class="e-float-text e-label-top required" for="name">Column Name</label>
       </div>
     </div>
 
@@ -152,7 +152,7 @@
   >
   
     <ng-template #content>
-      <form id="template_driven" #userForm="ngForm" novalidate>
+      <form id="template_driven" #userForm="ngForm" validate>
         <p>(Timer: {{timeLeft}})</p> 
         <div class="form-group" style="padding-top: 11px;">
           <div class="e-float-input">
@@ -165,7 +165,7 @@
               disabled="true"
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">Column Name  </label>
+            <label class="e-float-text e-label-top required" for="name">Column Name  </label>
             <!-- <div
               *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
             >
@@ -189,9 +189,19 @@
               [(ngModel)]="ColType"
               disabled="true"
             ></ejs-dropdownlist>
-          
+            <div class="e-float-input" style="padding-bottom: 15px;padding-top: -18px;">
+              <label class="e-float-text e-label-top required" for="name"><ejs-checkbox checked="true" ></ejs-checkbox> Mandatory </label>
+             
             </div>
+            </div>
+           
+
         </div>
+
+        <!-- <div class="form-group" style="padding-top: 11px;"> -->
+          
+        <!-- </div> -->
+        
 
         <div class="form-group" style="padding-top: 11px;">
           <div class="e-float-input">
@@ -204,7 +214,7 @@
               disabled="true"
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">Default Value</label>
+            <label class="e-float-text e-label-top required" for="name">Default Value</label>
            
           </div>
         </div>
@@ -219,7 +229,7 @@
               #ColumnName="ngModel"
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">Minimum-Column-Width</label>
+            <label class="e-float-text e-label-top required" for="name">Minimum-Column-Width</label>
             
           </div>
         </div>
@@ -227,7 +237,7 @@
 
         <div class="form-group" style="padding-top: 11px;">
           <div style="display: flex; justify-content: space-between;">
-            <span class="e-float-text e-label-top"
+            <span class="e-float-text e-label-top required"
               >Choose new Font-color</span
             >
 
@@ -243,7 +253,7 @@
         </div>
         <div class="form-group" style="padding-top: 11px;">
           <div style="display: flex; justify-content: space-between;">
-            <span class="e-float-text e-label-top"
+            <span class="e-float-text e-label-top required"
               >Choose new Background-color</span
             >
 
@@ -272,7 +282,7 @@
         </div>
         <div class="form-group" style="padding-top: 11px;">
           <div style="display: flex; justify-content: space-between;">
-            <span class="e-float-text e-label-top" for="email"
+            <span class="e-float-text e-label-top required" for="email"
               >Text-wrap</span
             >
 
@@ -338,7 +348,7 @@
               readonly
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">Name</label>
+            <label class="e-float-text e-label-top required" for="name">Name</label>
             <!-- <div
               *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
             >
@@ -366,7 +376,7 @@
 
         <div class="form-group" style="padding-top: 11px;">
           <div style="display: flex; justify-content: space-between;">
-            <span class="e-float-text e-label-top"
+            <span class="e-float-text e-label-top required"
               >Choose new Font-color</span
             >
 
@@ -383,7 +393,7 @@
         </div>
         <div class="form-group" style="padding-top: 11px;">
           <div style="display: flex; justify-content: space-between;">
-            <span class="e-float-text e-label-top"
+            <span class="e-float-text e-label-top required"
               >Choose new Background-color</span
             >
 
@@ -414,7 +424,7 @@
         </div>
         <div class="form-group" style="padding-top: 11px;">
           <div style="display: flex; justify-content: space-between;">
-            <span class="e-float-text e-label-top" for="email"
+            <span class="e-float-text e-label-top required" for="email"
               >Text-wrap</span
             >
 
@@ -464,7 +474,7 @@
           readonly
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Column Name</label>
+        <label class="e-float-text e-label-top required" for="name">Column Name</label>
         <div
           *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
         >
@@ -507,20 +517,17 @@
 width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
 
 <ng-template #content>
-  <form id="template_driven" #userForm="ngForm" novalidate>
-  
+  <form id="template_driven" #userForm="ngForm" validate>
     <div class="form-group" style="padding-top: 11px;" *ngFor="let col of column">
       <div class="e-float-input">
         <input
           type="text"
           name="rowColdata"
-          
-          
           class='form-control'
           id="sclass"
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+        <label class="e-float-text e-label-top required" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
       </div>
     </div>
 <!-- #ColumnName="ngModel"
@@ -569,7 +576,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
           readonly
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Student Name</label>
+        <label class="e-float-text e-label-top required" for="name">Student Name</label>
         
         </div>
       </div>
@@ -585,7 +592,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
           readonly
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Roll Number</label>
+        <label class="e-float-text e-label-top required" for="name">Roll Number</label>
        
       </div>
     </div>
@@ -634,7 +641,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         id="sid"
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Student ID</label>
+        <label class="e-float-text e-label-top required" for="name">Student ID</label>
       </div>
     </div>
 
@@ -649,7 +656,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         id="sname"
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Student Name</label>
+        <label class="e-float-text e-label-top required" for="name">Student Name</label>
       </div>
     </div>
     <div class="form-group" style="padding-top: 11px;">
@@ -663,7 +670,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         id="sroll" 
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Roll Number</label>
+        <label class="e-float-text e-label-top required" for="name">Roll Number</label>
       </div>
     </div>
     <div class="form-group" style="padding-top: 11px;">
@@ -677,7 +684,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         id="sclass" 
         />
         <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top" for="name">Class</label>
+        <label class="e-float-text e-label-top required" for="name">Class</label>
       </div>
     </div>
 
@@ -725,7 +732,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          id="scid"
          />
          <span class="e-float-line"></span>
-         <label class="e-float-text e-label-top" for="name">Student ID</label>
+         <label class="e-float-text e-label-top required" for="name">Student ID</label>
        </div>
      </div>
  
@@ -740,7 +747,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          id="scname"
          />
          <span class="e-float-line"></span>
-         <label class="e-float-text e-label-top" for="name">Student Name</label>
+         <label class="e-float-text e-label-top required" for="name">Student Name</label>
        </div>
      </div>
      <div class="form-group" style="padding-top: 11px;">
@@ -754,7 +761,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          id="scroll" 
          />
          <span class="e-float-line"></span>
-         <label class="e-float-text e-label-top" for="name">Roll Number</label>
+         <label class="e-float-text e-label-top required" for="name">Roll Number</label>
        </div>
      </div>
      <div class="form-group" style="padding-top: 11px;">
@@ -768,7 +775,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          id="scclass" 
          />
          <span class="e-float-line"></span>
-         <label class="e-float-text e-label-top" for="name">Class</label>
+         <label class="e-float-text e-label-top required" for="name">Class</label>
        </div>
      </div>
  

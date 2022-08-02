@@ -308,8 +308,7 @@ export class AppComponent {
       console.log("data 50k:", this.data);
     this.api.getAllCol().subscribe((res:any)=>{
       console.log("column data",res);
-      
-    this.column = res
+    this.column = res;
     if(this.column.field === 'id')
       {
         this.lock = true;
@@ -587,25 +586,25 @@ this.contextMenuItems = [
       text: "Choose Column",
       id: "chooseCol",
       target: '.e-content',
-      cssClass:'e-checkbox'
+      cssClass:'ejs-checkbox'
     },
     {
       text: "Freeze Column",
       id: "freezeCol",
-      target: '.e-content', 
-      cssClass: 'e-select',
+      iconCss: ' e-icons',
+      cssClass: 'ejs-checkbox',
     },
     {
       text: "Filter Column",
       id: "filterCol",
       target: '.e-content',
-      cssClass: 'e-select',
+      cssClass: 'ejs-checkbox',
     },
     {
       text: "Multisort Column",
       id: "msortCol",
       target: '.e-content',
-      cssClass: 'e-select',
+      cssClass: 'ejs-checkbox',
     },
   ];
 
@@ -628,9 +627,9 @@ this.contextMenuItems = [
     if (args.item.text === "Edit Column") {
       console.log("edit");
       this.showEditColumn = !this.showEditColumn;
-      this.startTimer();
       this.checkNewEdit = "edit";
       this.getCurrentField();
+      this.startTimer();
 
     }
     if (args.item.text === "View Column") {
@@ -645,8 +644,8 @@ this.contextMenuItems = [
     }
     if (args.item.text === "Choose Column") {
       console.log("Choose");
-      this.toolbar = [ "ColumnChooser"];
-
+      // this.toolbar = [ "ColumnChooser"];
+      this.treegrid.openColumnChooser()
     }
     if (args.item.text === "Freeze Column") {
       console.log("Freeze", args);
@@ -749,18 +748,19 @@ startTimer() {
 
   public itemBeforeEvent(args: MenuEventArgs) {
     
-    if (args.item.text !== "Filter Column" && args.item.text !== "Edit Column" && args.item.text !== "Delete Column" && args.item.text !== "View Column") {
+    if (args.item.text !== "Add Column" && args.item.text !== "Edit Column" && args.item.text !== "Delete Column" && args.item.text !== "View Column") {
       let shortCutSpan: HTMLElement = document.createElement("span");
       let text: string = args.item.text!;
       args.element.textContent = "";
 
       this.inputEle = document.createElement("input");
       this.inputEle.type = "checkbox";
-      this.inputEle.setAttribute("class", "e-checkbox");
+      this.inputEle.setAttribute("class", "ejs-checkbox");
       shortCutSpan.innerText = text;
 
       args.element.appendChild(this.inputEle);
       args.element.appendChild(shortCutSpan);
+
     }
     if (this.inputEle?.checked) {
       console.log("checked");
@@ -814,10 +814,10 @@ startTimer() {
 
     var selectedRecord = this.selectedRecord;
     if (
-      !args.event.target.classList.contains("e-checkbox") &&
+      !args.event.target.classList.contains("ejs-checkbox") &&
       args.item.text !== "Edit Row"
     ) {
-      var checkbox = args.element.querySelector(".e-checkbox");
+      var checkbox = args.element.querySelector(".ejs-checkbox");
       checkbox.checked = !checkbox.checked;
     }
 
@@ -832,6 +832,14 @@ startTimer() {
     if (args.item.text === "Edit Row") {
       console.log("edit row")
       this.showEditRow = true
+
+      if (this.grid.getSelectedRecords().length) { 
+        this.grid.startEdit();  // handle the grid actions as per your requirement here.
+        alert('First Select any row');  
+      } else { 
+        alert('Select any row'); 
+      } 
+
     }
     if (args.item.text === "Select Rows") {
       console.log("choose row");
@@ -853,6 +861,16 @@ startTimer() {
       console.log("copy as Next");
       this.treeGridObj.copy();
       console.log(" copy may work check");
+      // this.timeLeft = 10
+      setInterval(() => {
+        if(this.timeLeft > 0) {
+          this.timeLeft--;
+         this.selectedRecord
+        } else {
+          
+          
+        }
+      },1000)
     }
 
     if (args.item.text === "Copy As Child") {
@@ -1236,14 +1254,25 @@ console.log("data child",dataC)
       this.showEditColumn = true;
       this.getCurrentField();
     } 
-    if (args.event.target.classList.contains('e-checkboxspan')) {
-      var checkbox = args.element.querySelector('.e-checkbox');
+    if (args.event.target.classList.contains('ejs-checkboxspan')) {
+      var checkbox = args.element.querySelector('.ejs-checkbox');
       checkbox.checked = !checkbox.checked;
     }
     if(args.item.id === "multiselectrow")
     {
-      console.log("contexmenu select")
-      this.showChooseRow = true;
+      console.log("contexmenu select", args)
+      // this.showChooseRow = true;
+      for(let i = 0; i< this.column.length; i++){
+        console.log("for select", this.column[i].field)
+        if(this.column[i].type !== 'checkbox'){
+          console.log("1st")
+          Object.keys(this.column).filter((i:any)=> this.column[i].required =true);
+          console.log("2nd")
+          this.treegrid.refresh();
+          console.log("3rd")
+        }
+      }
+      // this.typeCheck();
     }
 
     var i = 50001;
@@ -1488,7 +1517,14 @@ ngAfterViewInit() {
   
 }
 
-
+typeCheck(arg:any){
+  if(arg.field === 'checkbox'){
+    return arg.validation.required =true;
+  }
+  else{
+    return arg.type
+  }
+}
 
 }
 
