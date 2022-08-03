@@ -305,14 +305,9 @@ export class AppComponent {
 
 //     ///////////////////////
 
-      console.log("data 50k:", this.data);
     this.api.getAllCol().subscribe((res:any)=>{
       console.log("column data",res);
     this.column = res;
-    if(this.column.field === 'id')
-      {
-        this.lock = true;
-      }
     })
   console.log("column", this.column.field);
   
@@ -384,29 +379,29 @@ this.contextMenuItems = [
   {
     text: 'Delete Row',
     target: '.e-content',
-    id: 'deleterow',
+    id: 'deleterow dim',
     cssClass: 'e-flat',
   },
   { 
     text: 'Copy As Next',
    target: '.e-content',
-    id: 'customCopy' 
+    id: 'customCopy dim' 
   },
   { 
     text: 'Copy As Child',
    target: '.e-content',
-    id: 'customCopy' 
+    id: 'customCopy dim' 
   },
   {
     text: 'Move As Next',
     target: '.e-content',
-    id: 'pastenextrow',
+    id: 'pastenextrow dim',
     cssClass: 'e-flat',
   },
   {
     text: 'Move As Child',
     target: '.e-content',
-    id: 'pastechildrow',
+    id: 'pastechildrow dim',
     cssClass: 'e-flat',
   },
 ];
@@ -485,26 +480,26 @@ this.contextMenuItems = [
     this.nextRow = this.data?.length + 1;
 
 
-// this.column=[
-//   {
-//     field: 'id',
-//     headerText: 'Student ID'
-//   },
-//   {
-//     field: 'name',
-//     headerText: 'Student Name'
-//   },
-//   {
-//     field: 'roll_no',
-//     headerText: 'Roll Number'
-//   },
-//   {
-//     field: 'class',
-//     headerText: 'Class'
+//////////////////////////////////////////////////////////////////////////////////green validation
+// var usernameInput:any = document.querySelector("#usernameInput");
+//   usernameInput.addEventListener("input", function() {
+//   $(document).querySelector("#usernameLabel").style.color = "#98589e";
+//   if (usernameInput.value == '') {
+//       $(document).querySelector("#usernameLabel").style.color = "#b9c0c8";
 //   }
-// ];
+// });
 
+// ///////////////////////
+// var btn:any = document.getElementById('usernameInput');
 
+// btn.addEventListener('click', function onChange(event:any) {
+//   const input:any = document.getElementById('usernameLabel');
+
+//   input.style.backgroundColor = 'green';
+
+//   // 👇️ optionally change the text color
+//   // input.style.color = 'white';
+// });
     ///////////////////////////color row selected
     let gridInstance = this.grid;
 
@@ -529,6 +524,7 @@ this.contextMenuItems = [
       // dialog.header = args.requestType === 'beginEdit' ? 'Record of ' + args.rowData[TaskName] : 'New Customer';
       
     }
+    
   }
 
   public selectitem!: string[];
@@ -537,7 +533,7 @@ this.contextMenuItems = [
   getVal(asdasd: any) {
     alert(asdasd);
   }
-// //////////cruds
+////////////cruds
   public dataSourceChanged(
     dataSourceChangedEvent: DataSourceChangedEventArgs
   ): void {
@@ -621,8 +617,8 @@ this.contextMenuItems = [
     if (args.item.text === "Add Column") {
       console.log("add");
       console.log("col",this.column);
-
       this.showAddColumn = !this.showAddColumn;
+      
    }
     if (args.item.text === "Edit Column") {
       console.log("edit");
@@ -650,11 +646,16 @@ this.contextMenuItems = [
     if (args.item.text === "Freeze Column") {
       console.log("Freeze", args);
       console.log("ID freeze", this.freezeColId);
+      this.treegrid.enableVirtualization = false;
+      this.treegrid.enableInfiniteScrolling =true;
+      // this.treegrid.frozenColumns = this.freezeColId.index;
       if(this.column.id==this.freezeColId)
       {
+        console.log("under freeze IF");
+        
         this.column.allowFreezing = true;
       };
-    //   this.column.freeze = 'Left';
+      this.column.freeze = 'Left';
     this.col2Freeze = this.freezeColId
       
     }
@@ -748,7 +749,7 @@ startTimer() {
 
   public itemBeforeEvent(args: MenuEventArgs) {
     
-    if (args.item.text !== "Add Column" && args.item.text !== "Edit Column" && args.item.text !== "Delete Column" && args.item.text !== "View Column") {
+    if (args.item.text !== "Add Column" && args.item.text !== "Edit Column" && args.item.text !== "Delete Column" && args.item.text !== "View Column" && args.item.text !== "Choose Column") {
       let shortCutSpan: HTMLElement = document.createElement("span");
       let text: string = args.item.text!;
       args.element.textContent = "";
@@ -819,13 +820,7 @@ startTimer() {
     ) {
       var checkbox = args.element.querySelector(".ejs-checkbox");
       checkbox.checked = !checkbox.checked;
-    }
-
-    if (args.item.text === "Add Next") {
-      
-      console.log("checked");
-      this.showAddNext= true;
-    }
+    } 
     if (args.item.text === "Add Child") {
       this.showAddchild =true;
     }
@@ -927,6 +922,7 @@ startTimer() {
     }
   ////////Add Next
   addNext(){
+    console.log("row Index", this.rowIndex);
     var i = 50001;
     var data = {
       id: i + 1,
@@ -1064,21 +1060,28 @@ console.log("deleteData api")
 
 ////////////row drag and drop
   rowDataBound(args: any) {
+    console.log("rowDAtaBound-----------------");
+    
     if (args.data.taskID == 1) {
       args.row.querySelector("td").innerHTML = " "; //hide the DragIcon(td element)
     }
   }
   onRowClicked(event: any) {
+    console.log("onRowClicked+++++++++++")
     setInterval(() => {
       $(event).css("background-color", "red");
     }, 30000);
   }
   rowDragStartHelper(args: any) {
+    console.log("rowDragStartHelper-----------------");
+    
     if (args.data[0].taskID == 1) {
       args.cancel = "true"; //prevent Drag operations by setting args.cancel as true
     }
   }
   rowDrop(args: any) {
+    console.log("rowDrop-----------------");
+    
     var treeGridobj = (document.getElementById("TreeGrid") as any)
       .ej2_instances[0];
     var data = treeGridobj.getCurrentViewRecords()[args.dropIndex];
@@ -1089,9 +1092,13 @@ console.log("deleteData api")
     }
   }
   rowDragStart(args: any) {
+    console.log("rowDragStart-----------------");
+    
     args.rows[0].classList.add("e-dragclonerow"); //customize the dragged row here
   }
   rowDrag(args: any) {
+    console.log("rowDrag-----------------");
+    
     var treeGridobj = (document.getElementById("TreeGrid") as any)
       .ej2_instances[0];
     var rowEle: Element = args.target ? args.target.closest("tr") : null;
@@ -1122,7 +1129,7 @@ console.log("data child",dataC)
     var grid = (document.getElementsByClassName("e-treegrid")[0] as any).ej2_instances[0];
   console.log(grid.getSelectedRecords()[0].id);
   console.log("index",grid.getSelectedRecords()[0].getSelectedRowIndexes);
-
+this.ejDialog.hide();
  
 
   }
@@ -1208,9 +1215,12 @@ console.log("data child",dataC)
   //edit col
 
   contextMenuOpen(arg: any): void {
+    console.log('CMO',arg);
     
-    console.log("contextMenuOpen:", arg.column.field);
-    this.freezeColId = arg.column.id;
+    console.log("contextMenuOpen:", arg.column.index);
+    this.freezeColId = arg.column.index;
+    console.log("freezeColId",this.freezeColId);
+    
     this.rowIndex = arg.rowInfo.rowIndex;
     this.cellIndex = arg.rowInfo.cellIndex;
 
@@ -1235,14 +1245,10 @@ console.log("data child",dataC)
 
     var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
     console.log("delete function ", grid.getSelectedRecords()[0].id);
-     grid.getCurrentField
-
-    for(let i of this.column)
-    {
-      console.log("rowColdata", i);
+     
       this.rowColdata = grid.getSelectedRecords()[0].id;
       console.log("after rowColdata",this.rowColdata);
-    }
+   
 
   }
 
@@ -1306,8 +1312,16 @@ console.log("data child",dataC)
       this.startTimer();
     } else if (args.item.id === 'multiselectrow') {
       console.log("select mult")
-     
+    //  document.getElementById("dim").style.backgroundColor ='#db5555';
       this.showChooseRow =true;
+      this.column.field.map((item:any)=>{
+        console.log("map condition||||||")
+        if(item.field == checkbox)
+        {
+          console.log("checkbox if=-==========")
+          item.validation.required = true
+        }
+      })
       this.startTimer(); 
       this.treeGridObj.endEdit();
       // $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
@@ -1526,5 +1540,9 @@ typeCheck(arg:any){
   }
 }
 
+//////////////////////
+checki(){
+  
+}
 }
 

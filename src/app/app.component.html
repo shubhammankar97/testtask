@@ -37,6 +37,7 @@
       enableStickyHeader="true"
       autoCheckHierarchy='true'
       (toolbarClick)='toolbarClick($event)'
+      [enablePersistence]="true"
   >
   <!-- (rowSelected)='rowSelected1($event)'
       
@@ -57,7 +58,7 @@
         
        <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
         [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [showCheckbox]="true" [customAttributes]='customAttributes'
-        [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" ></e-column>
+        [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" [isFrozen]="true"></e-column>
     </div>
     </e-columns>
   </ejs-treegrid>
