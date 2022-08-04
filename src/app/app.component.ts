@@ -23,7 +23,8 @@ import {
   DataStateChangeEventArgs,
   ColumnChooserService,
   FreezeService,
-  ContextMenuService
+  ContextMenuService,
+  extendArray
 } from "@syncfusion/ej2-angular-treegrid";
 import { ApiService } from "./services/api.service";
 import {
@@ -259,6 +260,11 @@ export class AppComponent {
   public stuCRoll!:number[];
   public stuCId!:number[];
   public stuCClass!:number[];
+
+  public stuRCName!:string[];
+  public stuRCRoll!:number[];
+  public stuRCClass!:number[];
+  public stuRCId!:number;
 
   public rowColdata:any;
   public col2Freeze!:number;
@@ -537,6 +543,7 @@ this.contextMenuItems = [
   public dataSourceChanged(
     dataSourceChangedEvent: DataSourceChangedEventArgs
   ): void {
+    console.log("datasourceChanged called???????????????????????",dataSourceChangedEvent)
     if (dataSourceChangedEvent.action === "add") {
       this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
         dataSourceChangedEvent.endEdit;
@@ -685,7 +692,9 @@ startTimer() {
   /////////////////
   context(arg:any){
     if (arg.column.headerText == "Student ID") {
-      arg.column.Freeze(1);
+      console.log("lockColumn runned");
+      
+      arg.column.lockColumn = true;
       this.columnValue = 1;
       this.columnField = "id";
     }
@@ -923,17 +932,39 @@ startTimer() {
   ////////Add Next
   addNext(){
     console.log("row Index", this.rowIndex);
-    var i = 50001;
+    // var i = 50001;
+    // var data = {
+    //   id: i + 1,
+    //   name: this.stuName,
+    //   roll_no: this.stuRoll,
+    //   class: this.stuClass
+    // };
+    // this.treeGridObj.addRecord(data, this.rowIndex, 'Below'); //aadd record use can add row top orbelow using new row position
+    // this.treeGridObj.endEdit;
+    // this.ejDialog.hide();
+///////////////////////
+var i = 50001;
+    console.log(this.stuRCName, "this.stuCName");
+    console.log(this.stuRCRoll, "this.stuCRoll");
+    console.log(this.stuRCClass, "his.stuCClass");
     var data = {
-      id: i + 1,
-      name: this.stuName,
-      roll_no: this.stuRoll,
-      class: this.stuClass
-    };
-    this.treeGridObj.addRecord(data, this.rowIndex, 'Top'); //aadd record use can add row top orbelow using new row position
-    $(data.id).style.backgroundColor = "blue";
-    this.treeGridObj.endEdit;
-    this.ejDialog.hide();
+     id: i + 1,
+     name: this.stuRCName,
+     roll_no: this.stuRCRoll,
+     class: this.stuRCClass
+   };
+   this.stuRCId = data.id;
+   console.log("data child",data)
+   this.treeGridObj.addRecord(data, this.rowIndex, 'Below'); //aadd record use can add row top orbelow using new row position
+   this.api.addData(data).subscribe(()=>{
+     console.log("data added");
+   })
+   this.treeGridObj.refresh();
+   this.treeGridObj.endEdit;
+   this.ejDialog.hide();
+
+
+
 
 }
 ///////////////add Child
@@ -1120,18 +1151,23 @@ console.log("deleteData api")
     class: this.stuCClass
   };
 console.log("data child",dataC)
+  this.treeGridObj.endEdit
   this.treeGridObj.addRecord(dataC, this.rowIndex, 'Child'); //add child row
-  this.api.addData(dataC).subscribe(()=>{
-    console.log("data added");
-  })
+  this.treeGridObj.refresh();
+  // this.api.addData(dataC).subscribe(()=>{
+  //   console.log("data added");
+  // })
   this.treeGridObj.endEdit;
     /////////////////
-    var grid = (document.getElementsByClassName("e-treegrid")[0] as any).ej2_instances[0];
+  var grid = (document.getElementsByClassName("e-treegrid")[0] as any).ej2_instances[0];
   console.log(grid.getSelectedRecords()[0].id);
   console.log("index",grid.getSelectedRecords()[0].getSelectedRowIndexes);
+  this.treeGridObj.refresh();
 this.ejDialog.hide();
- 
-
+ ////////////////////////////
+//  const dataSource = extendArray((this.treeGridObj as TreeGridComponent).dataSource as object[]);
+//  const a= (dataSource as object[]).unshift({ id:  i + 1, name: this.stuCName, roll_no: this.stuCRoll, class: this.stuCClass}); // Add record.
+//  (this.treeGridObj as TreeGridComponent).dataSource = dataSource; // Refresh the TreeGrid.
   }
   validation(args: any) {
     this.treegrid.endEdit();
@@ -1267,17 +1303,17 @@ this.ejDialog.hide();
     if(args.item.id === "multiselectrow")
     {
       console.log("contexmenu select", args)
-      // this.showChooseRow = true;
-      for(let i = 0; i< this.column.length; i++){
-        console.log("for select", this.column[i].field)
-        if(this.column[i].type !== 'checkbox'){
-          console.log("1st")
-          Object.keys(this.column).filter((i:any)=> this.column[i].required =true);
-          console.log("2nd")
-          this.treegrid.refresh();
-          console.log("3rd")
-        }
-      }
+      this.showChooseRow = true;
+      // for(let i = 0; i< this.column.length; i++){
+      //   console.log("for select", this.column[i].field)
+      //   if(this.column[i].type !== 'checkbox'){
+      //     console.log("1st")
+      //     Object.keys(this.column).filter((i:any)=> this.column[i].required =true);
+      //     console.log("2nd")
+      //     this.treegrid.refresh();
+      //     console.log("3rd")
+      //   }
+      // }
       // this.typeCheck();
     }
 
@@ -1314,14 +1350,8 @@ this.ejDialog.hide();
       console.log("select mult")
     //  document.getElementById("dim").style.backgroundColor ='#db5555';
       this.showChooseRow =true;
-      this.column.field.map((item:any)=>{
-        console.log("map condition||||||")
-        if(item.field == checkbox)
-        {
-          console.log("checkbox if=-==========")
-          item.validation.required = true
-        }
-      })
+      this.treegrid.refreshColumns();
+      this.treegrid.refresh();
       this.startTimer(); 
       this.treeGridObj.endEdit();
       // $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
