@@ -1,9 +1,9 @@
 <!-- <pre>{{sourceData.length | json}}</pre> -->
-<!-- <div class="image-loader" *ngIf="imageLoader">
+<div class="image-loader" *ngIf="imageLoader">
   <img src="../assets/img/loader.gif" />
-</div> -->
-<div id="loader-container">
 </div>
+<!-- <div id="loader-container">
+</div> -->
 
 
   <ejs-treegrid [dataSource]='sourceData' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
@@ -50,26 +50,20 @@
       <e-column type="checkbox" width="50" *ngIf="showChooseColumn"></e-column>
      </e-columns>  
     item.field.substr(0,1).toUpperCase() + item.field.substr(1)-->
-     <e-columns>
-    <e-column field="id" headerText="ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='customAttributes' [edit]="editparams"></e-column>
+    <e-columns>
+    <e-column field="id" headerText="Student ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='customAttributes' [edit]="editparams"></e-column>
     <e-column field='name' id="name" headerText='Student Name' textAlign='Left' [validationRules]='studentnamerules' [edit]="editparams" [showCheckbox]="showChooseRow"></e-column>
     <e-column field='roll_no' headerText='Roll Number' textAlign='Left' type="number" [validationRules]='studentidrules' [edit]="editparams"></e-column>
-      <e-column field='class' headerText='Class' textAlign='Left' [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"
-      [edit]="editparams"></e-column>
+    <e-column field='class' headerText='Class' textAlign='Left' [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"></e-column>
     <div *ngFor="let item of column">
         
        <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
-        [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [customAttributes]='customAttributes'
+        [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [customAttributes]='customAttributes' [lockColumn]=""
         [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" [isFrozen]="true"></e-column>
     </div>
     </e-columns>
   </ejs-treegrid>
   <!-- {item.type !== checkbox ? item.validation : item.validation.required = true} -->
-
-
-
-  
-
 
     <!-- row contextmenu1 -->
   <div>

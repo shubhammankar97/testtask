@@ -240,7 +240,7 @@ th.e-headercell.check {
 //////////
 .required:after {
   content:" *";
-  color: red;
+  color: #ff0000;
 }
 
 .label{
@@ -254,7 +254,7 @@ div#treegridcomp_gridcontrol_ccdlg {
 
 ///////////
 .e-grid .customcss {
-  background-color: #d3d4d4;
+  background-color: #f1f5f5;
 }
 //////////dim
 li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim {
@@ -271,4 +271,13 @@ li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ d
 //////////////hide spinner
 svg#MpQ1i {
   display: none;
+}
+///////////selected row color
+// .e-grid td.e-active {
+//   background: #aa2525 !important;
+//   color: #000;
+// }
+.e-grid td.e-active tr[aria-selected="true"]{
+  background-color: #42DCA3 !important;
+  font-size: 40px !important;
 }

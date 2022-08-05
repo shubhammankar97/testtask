@@ -289,10 +289,10 @@ export class AppComponent {
     private socketService: SocketioService
   ) {
     this.sourceData = JSON.parse(localStorage.getItem('dataSource') || '{}');
-  //  this.imageLoader = true;
+   this.imageLoader = true;
   showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.api.getAll().subscribe((res: any) => {
-    // this.imageLoader = false
+    this.imageLoader = false
         this.data = res.filter((item: any) => item);
         localStorage.setItem('dataSource', JSON.stringify(this.data));
   hideSpinner(document.getElementById("loader-container") as HTMLElement);
@@ -619,10 +619,16 @@ this.contextMenuItems = [
   public pos: object={ X: 860, Y: 100 };
 
   select(args: any): void {
+    console.log("select method", args)
     this.selectitem = args.item.text;
+    if(args.item.properties.id == 'addCol'){
+      console.log("under if cond.");
+      
+    }
     
     if (args.item.text === "Add Column") {
-      console.log("add");
+      console.log("add", this.treegrid.getColumnFieldNames());
+      
       console.log("col",this.column);
       this.showAddColumn = !this.showAddColumn;
       
@@ -791,6 +797,7 @@ startTimer() {
       console.log("column appended", columnName.field);  
       
     })
+    
     this.treegrid.refreshColumns();
     this.treegrid.endEdit;
     this.ejDialog.hide();
@@ -845,9 +852,9 @@ startTimer() {
       } 
 
     }
-    if (args.item.text === "Select Rows") {
+    if (args.item.text === "Select Row") {
       console.log("choose row");
-      this.showChooseRow = true;
+      // this.showChooseRow = true;
       if(args.column.field == 'checkbox')
       {
         console.log("select row", args.column.field);
@@ -855,7 +862,7 @@ startTimer() {
       }
     }
 
-    if (args.item.text === "Delete Rows") {
+    if (args.item.text === "Delete Row") {
       console.log("delete",args);
       this.showDeleteRow = true;
       this.delete();
@@ -1092,21 +1099,30 @@ console.log("deleteData api")
 ////////////row drag and drop
   rowDataBound(args: any) {
     console.log("rowDAtaBound-----------------");
-    
-    if (args.data.taskID == 1) {
+    if(args.getSelectedRecords) {
+      args.getSelectedRecords.style.background = '#ff0000';
+    } else {
+      args.getSelectedRecords.style.background = '#ffffff';
+    }
+    // $(document).getElementById(".e-grid td.e-active")?.style.background as HTMLElement ="#ff0000";
+   
+      // $(".e-grid td.e-active").css("background-color", "#ff0000");
+           
+    if (args.data.id == 1) {
       args.row.querySelector("td").innerHTML = " "; //hide the DragIcon(td element)
     }
   }
   onRowClicked(event: any) {
     console.log("onRowClicked+++++++++++")
-    setInterval(() => {
-      $(event).css("background-color", "red");
-    }, 30000);
+    // setInterval(() => {
+    //   $(event).css("background-color", "red");
+    // }, 30000);
+    event.row.style.background = '#ff0000';
   }
   rowDragStartHelper(args: any) {
     console.log("rowDragStartHelper-----------------");
     
-    if (args.data[0].taskID == 1) {
+    if (args.data[0].id == 1) {
       args.cancel = "true"; //prevent Drag operations by setting args.cancel as true
     }
   }
@@ -1252,7 +1268,38 @@ this.ejDialog.hide();
 
   contextMenuOpen(arg: any): void {
     console.log('CMO',arg);
-    
+    // console.log("text", arg.getColumnByField)
+
+    // if(arg.column.field == 'id'){
+    //   console.log("id if new");
+    //   // arg.co
+    // }
+    // if(arg.column.field == 'name'){
+    //   console.log("name if new");
+    //   setInterval(() => {
+    //     if(this.timeLeft > 0) {
+    //       this.timeLeft--;
+    //   arg.column.name.lockColumn = true;
+
+    //     } else {
+    //       this.timeLeft = 30;
+    //   arg.column.name.lockColumn = false;
+
+    //     }
+    //   },1000)
+    // }
+    // if(arg.column.field == 'roll_no'){
+    //   arg.column.lockColumn = true;
+    //   console.log("roll if new");
+
+    // }
+    // if(arg.column.field == 'class'){
+    //   console.log("class if new");
+
+    //   arg.column.lockColumn = true;
+
+    // }
+
     console.log("contextMenuOpen:", arg.column.index);
     this.freezeColId = arg.column.index;
     console.log("freezeColId",this.freezeColId);
@@ -1303,18 +1350,8 @@ this.ejDialog.hide();
     if(args.item.id === "multiselectrow")
     {
       console.log("contexmenu select", args)
-      this.showChooseRow = true;
-      // for(let i = 0; i< this.column.length; i++){
-      //   console.log("for select", this.column[i].field)
-      //   if(this.column[i].type !== 'checkbox'){
-      //     console.log("1st")
-      //     Object.keys(this.column).filter((i:any)=> this.column[i].required =true);
-      //     console.log("2nd")
-      //     this.treegrid.refresh();
-      //     console.log("3rd")
-      //   }
-      // }
-      // this.typeCheck();
+      // this.showChooseRow = true;
+
     }
 
     var i = 50001;
@@ -1336,9 +1373,12 @@ this.ejDialog.hide();
     if (args.item.id === 'addnextrow') {
       this.showAddNext =true;
     } else if (args.item.id === 'addchildrow') {
+      console.log("adding child")
       this.showAddchild = true;
-    } else if (args.item.id === 'deleterow') {
+    } else if (args.item.id === 'deleterow' || args.item.text === 'Delete Row') {
+      console.log("delete row")
       this.treeGridObj.deleteRecord('id', selectedRecord); // delete the selected row
+      // this.delete();
       this.treeGridObj.endEdit();
     } else if (args.item.id === 'editrow') {
       console.log("edit row");
@@ -1538,7 +1578,8 @@ toolbarClick(args: ClickEventArgs) {
   console.log("add----------------")
   showSpinner(document.getElementById('loader-container') as HTMLElement)
   if (this.treeGridObj && args.item.text === 'Add') {
-    showSpinner(document.getElementById('loader-container') as HTMLElement)
+    hideSpinner(document.getElementById('loader-container') as HTMLElement);
+    // showSpinner(document.getElementById('loader-container') as HTMLElement)
   }
  
 }
@@ -1555,7 +1596,7 @@ ngAfterViewInit() {
   
   // setInterval(function(){
   //   // hideSpinner() method used hide spinner
-  //   hideSpinner(document.getElementById('loader-container') as HTMLElement);
+    hideSpinner(document.getElementById('loader-container') as HTMLElement);
 
   // }, 10000);
   

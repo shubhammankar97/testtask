@@ -1,11 +1,9 @@
 [
-  
-
   {
     "field": "id",
-    "id": 2,
+    "id": 1,
     "type": "number",
-    "isPrimaryKey": true, 
+    "isPrimaryKey": true,
     "validation": {
       "required": true,
       "number": true,
@@ -14,16 +12,15 @@
   },
   {
     "field": "name",
-    "id": 3,
+    "id": 2,
     "type": "string",
     "validation": {
       "required": true
     }
-
   },
   {
     "field": "roll_no",
-    "id": 4,
+    "id": 3,
     "type": "number",
     "validation": {
       "required": true,
@@ -32,7 +29,7 @@
   },
   {
     "field": "class",
-    "id": 5,
+    "id": 4,
     "type": "number",
     "validation": {
       "required": true,
