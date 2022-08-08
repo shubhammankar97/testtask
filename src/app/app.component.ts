@@ -24,7 +24,8 @@ import {
   ColumnChooserService,
   FreezeService,
   ContextMenuService,
-  extendArray
+  extendArray,
+  CommandColumnService
 } from "@syncfusion/ej2-angular-treegrid";
 import { ApiService } from "./services/api.service";
 import {
@@ -90,7 +91,8 @@ declare var $: any;
     FreezeService,
     VirtualScrollService,
     ContextMenuService,
-    RowDDService      
+    RowDDService,
+    CommandColumnService      
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -109,6 +111,7 @@ export class AppComponent {
   public formatOptions!: Object;
   public selectionOptions!: object;
   public contextMenuSettings: any;
+  public commands!: Object[];
 
   @ViewChild("treegrid")
   public treeGridObj!: TreeGridComponent;
@@ -258,7 +261,7 @@ export class AppComponent {
 
   public stuCName!:string[];
   public stuCRoll!:number[];
-  public stuCId!:number[];
+  public stuCId!:number;
   public stuCClass!:number[];
 
   public stuRCName!:string[];
@@ -280,7 +283,10 @@ export class AppComponent {
   numberOfClicks = 1;
   number:any
   store:any;
-  getValue:any;
+  getValue:any;call:number =1;
+  // ssid:any = '_' + Math.random().toString(36).substr(2, 9);
+  ssid:any = Math.floor(Math.random() * 10);
+  tabID:any =1;
   /////////////////////////////////
   abc =  null;
   constructor(
@@ -305,6 +311,14 @@ export class AppComponent {
       showContextMenu: true,
       toolbar: ["Add", "Edit", "Delete", "ColumnChooser"],
     };
+    this.tabID = sessionStorage["tabID"] && 
+    sessionStorage["closedLastTab"] !== '2' ? 
+    sessionStorage["tabID"]=this.call+1 : 
+    sessionStorage["tabID"] = this.call++;
+  sessionStorage["closedLastTab"] = '2';
+  $(window).on('unload beforeunload', function() {
+  sessionStorage["closedLastTab"] = '1';
+  });
   }
   ngOnInit(): void {
 
@@ -313,7 +327,7 @@ export class AppComponent {
 
     this.api.getAllCol().subscribe((res:any)=>{
       console.log("column data",res);
-    this.column = res;
+      this.column = res;
     })
   console.log("column", this.column.field);
   
@@ -484,7 +498,7 @@ this.contextMenuItems = [
     //close of ngOninit
     this.student = new Student();
     this.nextRow = this.data?.length + 1;
-
+    
 
 //////////////////////////////////////////////////////////////////////////////////green validation
 // var usernameInput:any = document.querySelector("#usernameInput");
@@ -628,8 +642,20 @@ this.contextMenuItems = [
     
     if (args.item.text === "Add Column") {
       console.log("add", this.treegrid.getColumnFieldNames());
+      console.log("column Field", this.columnField);
       
-      console.log("col",this.column);
+      setInterval(() => {
+        if(this.timeLeft > 0) {
+          this.timeLeft--;
+          // this.lock=true;
+          this.column.columnField.lockColumn =true;
+      // this.treegrid.getColumnByField(this.columnField).lockColumn =true;
+        } else {
+          this.lock =false;
+      // this.treegrid.getColumnByField(this.columnField).lockColumn =false;
+          // this.timeLeft = 30;
+        }
+      },1000)
       this.showAddColumn = !this.showAddColumn;
       
    }
@@ -839,11 +865,12 @@ startTimer() {
     } 
     if (args.item.text === "Add Child") {
       this.showAddchild =true;
+      this.stuCId = this.data.length+1;
     }
     if (args.item.text === "Edit Row") {
       console.log("edit row")
       this.showEditRow = true
-
+      this.stuRCId = this.data.length+1;
       if (this.grid.getSelectedRecords().length) { 
         this.grid.startEdit();  // handle the grid actions as per your requirement here.
         alert('First Select any row');  
@@ -854,12 +881,8 @@ startTimer() {
     }
     if (args.item.text === "Select Row") {
       console.log("choose row");
-      // this.showChooseRow = true;
-      if(args.column.field == 'checkbox')
-      {
-        console.log("select row", args.column.field);
-        this.checRow = true;
-      }
+      this.showChooseRow = true;
+
     }
 
     if (args.item.text === "Delete Row") {
@@ -939,9 +962,9 @@ startTimer() {
   ////////Add Next
   addNext(){
     console.log("row Index", this.rowIndex);
-    // var i = 50001;
+
     // var data = {
-    //   id: i + 1,
+    //   id:this.data.length+1,
     //   name: this.stuName,
     //   roll_no: this.stuRoll,
     //   class: this.stuClass
@@ -950,17 +973,17 @@ startTimer() {
     // this.treeGridObj.endEdit;
     // this.ejDialog.hide();
 ///////////////////////
-var i = 50001;
+
     console.log(this.stuRCName, "this.stuCName");
     console.log(this.stuRCRoll, "this.stuCRoll");
     console.log(this.stuRCClass, "his.stuCClass");
     var data = {
-     id: i + 1,
+     id: this.data.length+1,
      name: this.stuRCName,
      roll_no: this.stuRCRoll,
      class: this.stuRCClass
    };
-   this.stuRCId = data.id;
+   this.stuRCId = this.data.length+1;
    console.log("data child",data)
    this.treeGridObj.addRecord(data, this.rowIndex, 'Below'); //aadd record use can add row top orbelow using new row position
    this.api.addData(data).subscribe(()=>{
@@ -1091,7 +1114,6 @@ console.log("deleteData api")
   }
   btnclick3(args: any) {
     this.ejDialog.hide();
-
     this.hideDialog3.bind(args)
   }
 
@@ -1101,9 +1123,10 @@ console.log("deleteData api")
     console.log("rowDAtaBound-----------------");
     if(args.getSelectedRecords) {
       args.getSelectedRecords.style.background = '#ff0000';
-    } else {
-      args.getSelectedRecords.style.background = '#ffffff';
     }
+    // else {
+    //   args.getSelectedRecords.style.background = '#ffffff';
+    // }
     // $(document).getElementById(".e-grid td.e-active")?.style.background as HTMLElement ="#ff0000";
    
       // $(".e-grid td.e-active").css("background-color", "#ff0000");
@@ -1159,9 +1182,9 @@ console.log("deleteData api")
 
   //adding child record
   onAddRecord(args: any) {
-   var i = 50001;
+   
    var dataC = {
-    id: i + 1,
+    id: this.data.length+1,
     name: this.stuCName,
     roll_no: this.stuCRoll,
     class: this.stuCClass
@@ -1350,19 +1373,19 @@ this.ejDialog.hide();
     if(args.item.id === "multiselectrow")
     {
       console.log("contexmenu select", args)
-      // this.showChooseRow = true;
+      this.showChooseRow = true;
 
     }
 
-    var i = 50001;
+    
     var data = {
-      id: i + 1,
+      id: this.data.length+1,
       name: this.stuName,
       roll_no: this.stuRoll,
       class: this.stuClass
     };
     var dataC = {
-      id: i + 1,
+      id: this.data.length+1,
       name: this.stuCName,
       roll_no: this.stuCRoll,
       class: this.stuCClass
@@ -1372,11 +1395,17 @@ this.ejDialog.hide();
     var selectedRecord = this.selectedRecord;
     if (args.item.id === 'addnextrow') {
       this.showAddNext =true;
+      console.log("data",data.id);
+      console.log("last row index=======", this.data.length+1);
+      
+      this.stuRCId = this.data.length+1;
     } else if (args.item.id === 'addchildrow') {
       console.log("adding child")
       this.showAddchild = true;
+      this.stuCId = this.data.length+1;
     } else if (args.item.id === 'deleterow' || args.item.text === 'Delete Row') {
       console.log("delete row")
+      this.stuRCId = this.data.length+1;
       this.treeGridObj.deleteRecord('id', selectedRecord); // delete the selected row
       // this.delete();
       this.treeGridObj.endEdit();
@@ -1390,9 +1419,12 @@ this.ejDialog.hide();
       console.log("select mult")
     //  document.getElementById("dim").style.backgroundColor ='#db5555';
       this.showChooseRow =true;
+      this.commands = [{ type: 'Edit', buttonOption: { iconCss: ' e-icons e-edit', cssClass: 'e-flat' } },
+      { type: 'Delete', buttonOption: { iconCss: 'e-icons e-delete', cssClass: 'e-flat' } },
+      { type: 'Save', buttonOption: { iconCss: 'e-icons e-update', cssClass: 'e-flat' } },
+      { type: 'Cancel', buttonOption: { iconCss: 'e-icons e-cancel-icon', cssClass: 'e-flat' } }];
       this.treegrid.refreshColumns();
-      this.treegrid.refresh();
-      this.startTimer(); 
+      // this.startTimer(); 
       this.treeGridObj.endEdit();
       // $('.e-grid td.e-active').css('background-color','hsl(192, 91%, 79%)').setTimeout(() => {
       //   this.treeGridObj.selectionSettings.type = 'Multiple'; //enable multiselection
