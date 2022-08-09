@@ -274,10 +274,18 @@ svg#MpQ1i {
 }
 ///////////selected row color
 // .e-grid td.e-active {
-//   background: #aa2525 !important;
+//   background: #5bd0ee !important;
 //   color: #000;
 // }
-.e-grid td.e-active tr[aria-selected="true"]{
-  background-color: #42DCA3 !important;
-  font-size: 40px !important;
+.red-input {
+  border: 1px solid red;
+}
+.template_driven.fv-plugins-bootstrap .has-danger .fv-plugins-icon {
+  color: red;
+}
+.template_driven.fv-plugins-bootstrap .has-success .fv-plugins-icon {
+  color: #18bc9c;
+}
+.e-grid .customss {
+  background-color: #ecedeeb0;
 }
