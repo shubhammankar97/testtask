@@ -5,7 +5,7 @@
 <!-- <div id="loader-container">
 </div> -->
 
-<!-- <div style="text-align: right;margin-right: 25px;font-weight: 80px;"> Session ID : User{{ssid}}.Tab{{tabID}}</div> -->
+<div style="text-align: right;margin-right: 25px;font-weight: 80px;">User{{ssid}}.Tab{{tabID}}</div>
 
   <ejs-treegrid [dataSource]='sourceData' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
   [allowSorting]="true" [pageSettings]='pageSettings'  idMapping='id' allowMultiSorting="allowMultSort"
@@ -34,13 +34,11 @@
       (contextMenuOpen)="context($event)" 
       [frozenColumns]="col2Freeze"
       [enableVirtualization]=true
-      [height]="60000"
+      height = 60000
       enableStickyHeader="true"
       autoCheckHierarchy='true'
       (toolbarClick)='toolbarClick($event)'
-      
-      
-      
+      (beginEdit)="beginEdit($event)"
   >
  
      <!-- <e-columns>
@@ -54,16 +52,15 @@
      </e-columns>  
     item.field.substr(0,1).toUpperCase() + item.field.substr(1)-->
     <e-columns>
-    <e-column field="id" headerText="Student ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='customAttributes' [edit]="editparams"></e-column>
+    <e-column field="id" headerText="Student ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='customAttributes' [lockColumn]="true" [edit]="editparams"></e-column>
     <e-column field='name' id="name" headerText='Student Name' textAlign='Left' [validationRules]='studentnamerules' [edit]="editparams" [showCheckbox]="showChooseRow" [commands]='commands'></e-column>
     <e-column field='roll_no' headerText='Roll Number' textAlign='Left' type="number" [validationRules]='studentidrules' [edit]="editparams"></e-column>
     <e-column field='class' headerText='Class' textAlign='Left' [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"></e-column>
     <!-- <e-column *ngIf="showChooseRow" headerText='Cancel' width='50' [commands]='commands'></e-column> -->
     <div *ngFor="let item of column">
-        
-       <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
-        [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [customAttributes]='start' [lockColumn]="lock"
-        [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" [isFrozen]="true"></e-column>
+      <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
+      [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [customAttributes]='start' [lockColumn]="lock"
+      [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" [isFrozen]="true"></e-column>
     </div>
     </e-columns>
   </ejs-treegrid>
@@ -86,19 +83,20 @@
   <form id="template_driven" #userForm="ngForm" novalidate>
     <p>(Timer: {{timeLeft}})</p> 
     <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
+      <div class="e-float-input chex">
         <input
           type="text"
           name="ColName"
           [(ngModel)]="ColName"
           #ColumnName="ngModel"
+          id="valid" onchange="return FormValidation()"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Column Name</label>
       </div>
     </div>
 
-    <div class="form-group" style="padding-top: 11px;">
+    <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
       <div class="e-float-input">
         <ejs-dropdownlist
           #dropdown2
@@ -148,13 +146,13 @@
     [target]="targetElement"
     width="300px"
     showCloseIcon="true"
-    [height]="650"
+    [height]="710"
     allowDragging='true'
     [position]="pos" 
   >
   
     <ng-template #content>
-      <form id="template_driven" #userForm="ngForm" validate>
+      <form id="template_driven" #userForm="ngForm" validate onchange="return FormValidation()">
         <p>(Timer: {{timeLeft}})</p> 
         <div class="form-group" style="padding-top: 11px;">
           <div class="e-float-input">
@@ -164,7 +162,8 @@
               required
               [(ngModel)]="ColName"
               #ColumnName="ngModel"
-              disabled="true"
+          id="valid" onchange="return FormValidation()"
+          disabled="true"
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Column Name  </label>
@@ -178,7 +177,7 @@
           </div>
         </div>
 
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           
           <div class="e-float-input">
             <ejs-dropdownlist
@@ -205,7 +204,7 @@
         <!-- </div> -->
         
 
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="text"
@@ -213,14 +212,15 @@
               required
               [(ngModel)]="ColName"
               #ColumnName="ngModel"
-              disabled="true"
+          id="valid" onchange="return FormValidation()"
+          disabled="true"
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Default Value</label>
            
           </div>
         </div>
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="number"
@@ -228,7 +228,8 @@
               name="ColMinWidth"
               required
               [(ngModel)]="ColMinWidth"
-              #ColumnName="ngModel"
+          id="valid" onchange="return FormValidation()"
+          #ColumnName="ngModel"
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Minimum-Column-Width</label>
@@ -237,7 +238,7 @@
         </div>
   
 
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Font-color</span
@@ -249,11 +250,12 @@
               id="element"
               value="#FFFFFF"
               (change)="changeFontColor($event)"
-              id="colorpicker"
+          id="valid" onchange="return FormValidation()"
+          id="colorpicker"
             />
           </div>
         </div>
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Background-color</span
@@ -265,11 +267,12 @@
               id="element"
               value="#FFFFFF"
               (change)="changeBackground($event)"
-              id="colorpicker"
+          id="valid" onchange="return FormValidation()"
+          id="colorpicker"
             />
           </div>
         </div>
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <ejs-dropdownlist
               #dropdown2
@@ -282,7 +285,7 @@
             ></ejs-dropdownlist>
           </div>
         </div>
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required" for="email"
               >Text-wrap</span
@@ -338,7 +341,7 @@
     [position]="pos" 
   >
     <ng-template #content>
-      <form id="template_driven" #userForm="ngForm" novalidate>
+      <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
         <div class="form-group" style="padding-top: 11px;">
           <div class="e-float-input">
             <input
@@ -351,17 +354,17 @@
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Name</label>
-            <!-- <div
+            <div
               *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
             >
-              <div class="e-error" *ngIf="ColumnName.errors.required">
+              <div class="e-error" *ngIf="ColumnName.errors?.['required']">
                 * Enter Column name
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
 
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="text"
@@ -369,14 +372,15 @@
               required
               [(ngModel)]="ColType"
               #ColumnName="ngModel"
-              readonly
+          id="valid" onchange="return FormValidation()"
+          readonly
             />
             </div>
         </div>
 
   
 
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Font-color</span
@@ -389,11 +393,12 @@
               value="#FFFFFF"
               (change)="changeFontColor($event)"
               id="colorpicker"
-              aria-readonly="true"
+          id="valid" onchange="return FormValidation()"
+          aria-readonly="true"
             />
           </div>
         </div>
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Background-color</span
@@ -406,11 +411,12 @@
               value="#FFFFFF"
               (change)="changeBackground($event)"
               id="colorpicker"
-              aria-readonly="true"
+          id="valid" onchange="return FormValidation()"
+          aria-readonly="true"
             />
           </div>
         </div>
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="text"
@@ -420,11 +426,12 @@
               [(ngModel)]="ColAlign"
               #ColumnName="ngModel"
               readonly
-            />
+          id="valid" onchange="return FormValidation()"
+          />
             
           </div>
         </div>
-        <div class="form-group" style="padding-top: 11px;">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required" for="email"
               >Text-wrap</span
@@ -464,7 +471,7 @@
 [target]='targetElement' width='300px' [height]="400" [position]="pos" showCloseIcon="true"> 
 
 <ng-template #content>
-  <form id="template_driven" #userForm="ngForm" novalidate>
+  <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
     <div class="form-group" style="padding-top: 11px;">
       <div class="e-float-input">
         <input
@@ -473,6 +480,7 @@
           required
           [(ngModel)]="ColName"
           #ColumnName="ngModel"
+          id="valid" onchange="return FormValidation()"
           readonly
         />
         <span class="e-float-line"></span>
@@ -480,9 +488,9 @@
         <div
           *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
         >
-          <!-- <div class="e-error" *ngIf="ColumnName.errors?.required">
+          <div class="e-error" *ngIf="ColumnName.errors?.['required']">
             * Enter Column name
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
@@ -519,7 +527,7 @@
 width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
 
 <ng-template #content>
-  <form id="template_driven" #userForm="ngForm" validate>
+  <form id="template_driven" #userForm="ngForm" validate onchange="return FormValidation()">
     <!-- <div class="form-group" style="padding-top: 11px;" *ngFor="let col of column">
       <div class="e-float-input">
         <input
@@ -545,7 +553,8 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
       class='form-control'
       id="sclass"
       [(ngModel)]="stuRCId"
-      disabled
+          id="valid" onchange="return FormValidation()"
+          disabled
     />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
@@ -556,7 +565,9 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
       name="stuRCName"          
       class='form-control'
       id="sclass"
-      [(ngModel)]="stuRCName"
+      [(ngModel)]="stuRCName"  
+      id="valid" onchange="return FormValidation()"
+
     />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
@@ -567,8 +578,9 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
       name="stuRCRoll"          
       class='form-control'
       id="sclass"
-      [(ngModel)]="stuRCRoll"
-    />
+      [(ngModel)]="stuRCRoll"       
+      id="valid" onchange="return FormValidation()"
+      />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
   </div>
@@ -579,6 +591,8 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
       class='form-control'
       id="sclass"
       [(ngModel)]="stuRCClass"
+      id="valid" onchange="return FormValidation()"
+
     />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
@@ -620,8 +634,8 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
 
 
 <ng-template #content>
-  <form id="template_driven" #userForm="ngForm" novalidate>
-    <div class="form-group" style="padding-top: 11px;">
+  <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
+    <div class="form-group" style="padding-top: 11px;"  onchange="return FormValidation()">
       <div class="e-float-input">
         <input
           type="text"
@@ -629,19 +643,21 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
           class='form-control'
           id="sclass"
           [(ngModel)]="stuRCId"
+          id="valid" onchange="return FormValidation()"
           disabled
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Student ID</label>
       </div>
       </div>
-    <div class="form-group" style="padding-top: 11px;">
+    <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
       <div class="e-float-input">
         <input
           type="text"
           name="stuName"
           required
           [(ngModel)]="stuName"
+          id="valid" onchange="return FormValidation()"
           readonly
         />
         <span class="e-float-line"></span>
@@ -651,13 +667,14 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
       </div>
     
 
-    <div class="form-group" style="padding-top: 11px;">
+    <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
       <div class="e-float-input">
         <input
           type="text"
           name="stuRoll"
           required
           [(ngModel)]="stuRoll"
+          id="valid" onchange="return FormValidation()"
           readonly
         />
         <span class="e-float-line"></span>
@@ -721,7 +738,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
           class='form-control'
           id="sclass"
           [(ngModel)]="stuRCId"
-          disabled
+          disabled onchange="return FormValidation()"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top" for="name">Student ID</label>
@@ -735,7 +752,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         required
         [(ngModel)]="stuName"
         class='form-control' 
-        id="sname"
+        id="sname" onchange="return FormValidation()"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Student Name</label>
@@ -749,7 +766,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         required
         [(ngModel)]="stuRoll"
         class='form-control'
-        id="sroll" 
+        id="sroll"  onchange="return FormValidation()"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Roll Number</label>
@@ -763,7 +780,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         required
         [(ngModel)]="stuClass"
         class='form-control'
-        id="sclass" 
+        id="sclass"  onchange="return FormValidation()"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Class</label>
@@ -802,7 +819,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
  width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
  
  <ng-template #content>
-   <form id="template_driven" #userForm="ngForm" novalidate>
+   <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
      <div class="form-group" style="padding-top: 11px;">
        <div class="e-float-input">
          <input
@@ -812,7 +829,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          [(ngModel)]="stuCId"
          class='form-control' 
          id="scid"
-         disabled
+         disabled onchange="return FormValidation()"
          />
          <span class="e-float-line"></span>
          <label class="e-float-text e-label-top required" for="name">Student ID</label>
@@ -827,7 +844,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          required
          [(ngModel)]="stuCName"
          class='form-control' 
-         id="scname"
+         id="scname" onchange="return FormValidation()"
          />
          <span class="e-float-line"></span>
          <label class="e-float-text e-label-top required" for="name">Student Name</label>
@@ -841,7 +858,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          required
          [(ngModel)]="stuCRoll"
          class='form-control'
-         id="scroll" 
+         id="scroll"  onchange="return FormValidation()"
          />
          <span class="e-float-line"></span>
          <label class="e-float-text e-label-top required" for="name">Roll Number</label>
@@ -855,7 +872,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          required
          [(ngModel)]="stuCClass"
          class='form-control'
-         id="scclass" 
+         id="scclass"  onchange="return FormValidation()"
          />
          <span class="e-float-line"></span>
          <label class="e-float-text e-label-top required" for="name">Class</label>

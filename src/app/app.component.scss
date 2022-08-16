@@ -287,5 +287,33 @@ svg#MpQ1i {
   color: #18bc9c;
 }
 .e-grid .customss {
-  background-color: #ecedeeb0;
+  background-color: #ecedee96;
 }
+////validation
+input.ng-invalid {
+  background-color:rgb(241, 229, 231);
+}
+input.ng-valid {
+  background-color:lightgreen;
+}
+.e-float-line{
+  border-color: royalblue;
+}
+/////////////////////////////////////////////////////////////////////////////////////=============
+.material .disableRow .e-rowcell{
+  color: rgba(0, 0, 0, .38) !important;
+}
+/* custom code start*/
+.material-dark .disableRow .e-rowcell, .fabric-dark .disableRow .e-rowcell,
+.bootstrap-dark .disableRow .e-rowcell, .bootstrap5-dark .disableRow .highcontrast .disableRow .e-rowcell, 
+.tailwind .disableRow .e-rowcell, .tailwind-dark .disableRow .e-rowcell {
+  color: #757575 !important;
+}
+.fabric .disableRow .e-rowcell {
+  color: #c8c8c8 !important;
+}
+.bootstrap .disableRow .e-rowcell, .bootstrap4 .disableRow .e-rowcell, 
+.bootstrap5 .disableRow .e-rowcell {
+  color: rgba(0, 0, 0, .35) !important;
+}
+/* custom code end*/

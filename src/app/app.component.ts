@@ -72,6 +72,8 @@ import { Internationalization, isNullOrUndefined } from '@syncfusion/ej2-base';
 import { TreeClipboard } from '@syncfusion/ej2-angular-treegrid';
 import { ClickEventArgs } from '@syncfusion/ej2-angular-navigations';
 import { createSpinner, showSpinner, hideSpinner } from '@syncfusion/ej2-angular-popups';
+import { RowDataBoundEventArgs, BeginEditArgs } from '@syncfusion/ej2-grids';
+import { addClass, removeClass } from '@syncfusion/ej2-base';
 declare var $: any;
 
 @Component({
@@ -290,6 +292,7 @@ export class AppComponent {
   ssid:any = Math.floor(Math.random() * 10);
   tabID:any =1;
   start:any;
+  isLock:boolean =false;
   /////////////////////////////////
   abc =  null;
   constructor(
@@ -299,15 +302,15 @@ export class AppComponent {
   ) {
     this.sourceData = JSON.parse(localStorage.getItem('dataSource') || '{}');
    this.imageLoader = true;
-  showSpinner(document.getElementById("loader-container") as HTMLElement);
+  // showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.api.getAll().subscribe((res: any) => {
     this.imageLoader = false
         this.data = res.filter((item: any) => item);
         localStorage.setItem('dataSource', JSON.stringify(this.data));
-  hideSpinner(document.getElementById("loader-container") as HTMLElement);
+  // hideSpinner(document.getElementById("loader-container") as HTMLElement);
 
       })
-      hideSpinner(document.getElementById("loader-container") as HTMLElement);
+      // hideSpinner(document.getElementById("loader-container") as HTMLElement);
       console.log(this.sourceData, "-----------------------------");
 
     this.contextMenuSettings = {
@@ -645,30 +648,35 @@ this.contextMenuItems = [
     this.selectitem = args.item.text;
     if(args.item.properties.id == 'addCol'){
       console.log("under if cond.");
-      
+      // this.column[args.column.index].lock = true;
     }
     
     if (args.item.text === "Add Column") {
-      if(this.lock){alert("Failed to lock Column")}
-      else{this.lock =true;
-        setInterval(() => {
-          if(this.timeLeft > 0) {
-            this.timeLeft--;
-            console.log("timer start")
-            // this.lock=true;
-            
-            this.start = this.customAttributes2
-        // this.treegrid.getColumnByField(this.columnField).lockColumn =true;
-          } else {
-            this.ejDialog.hide();
-            this.lock =false;
-   
-          }
-        },1000)
+      if(this.lock){
+        console.log("message", this.lock);
+        this.column[args.column.index].lock = true;
+      // this.lock = true;
+    this.start = this.customAttributes;
+    setInterval(() => {
+      if(this.timeLeft > 0) {
+        this.timeLeft--;
+        console.log("timer start")
+     
+      } else {
+        this.ejDialog.hide();
+        this.column[args.column.index].lock = false;
+        // this.lock =false;
+
+      }
+    },1000)}
+      else{
+        console.log("error",this.lock)
+
+        alert("Failed to lock Column")
+        
       }
       console.log("add", this.treegrid.getColumnFieldNames());
       console.log("column Field", this.columnField);
-      
       
       this.showAddColumn = !this.showAddColumn;
       
@@ -689,7 +697,6 @@ this.contextMenuItems = [
     if (args.item.text === "Delete Column") {
       console.log("delete");
       this.showDelColumn = !this.showDelColumn;
-
     }
     if (args.item.text === "Choose Column") {
       console.log("Choose");
@@ -841,7 +848,7 @@ startTimer() {
     this.treegrid.refreshColumns();
     this.treegrid.endEdit;
     this.ejDialog.hide();
-    this.lock =false;
+    // this.column[arg.column.index].lock = false;
   }
 
 ///////
@@ -1130,17 +1137,20 @@ console.log("deleteData api")
 
 
 ////////////row drag and drop
-  rowDataBound(args: any) {
+  rowDataBound(args:any):void {
     console.log("rowDAtaBound-----------------");
     if(args.getSelectedRecords) {
       args.getSelectedRecords.style.background = '#ff0000';
     }
-    // else {
-    //   args.getSelectedRecords.style.background = '#ffffff';
-    // }
-    // $(document).getElementById(".e-grid td.e-active")?.style.background as HTMLElement ="#ff0000";
-   
-      // $(".e-grid td.e-active").css("background-color", "#ff0000");
+    let key: string = 'id';
+    if ((<Object[]>this.treegrid.getSelectedRowIndexes()).indexOf(args.data[key]) !== -1) {
+      console.log("selected row Data bound");
+      
+         addClass([args.row], 'disableRow');
+     } else {
+      // console.log("Else selected row Data bound");
+         removeClass([args.row], 'disableRow');
+     }
            
     if (args.data.id == 1) {
       args.row.querySelector("td").innerHTML = " "; //hide the DragIcon(td element)
@@ -1149,6 +1159,18 @@ console.log("deleteData api")
     //        args.row.classList.add('e-disabled');
     //      }
   }
+  ////////////
+  public beginEdit (e: any): void {
+    let key: string = 'id';
+   if ((<Object[]>this.treegrid.getSelectedRowIndexes()).indexOf(e.rowData[key]) !== -1) {
+        e.cancel = true;
+    }
+}
+
+public removed (e: any) {
+    this.treegrid.refresh();
+}
+////////////////////
   onRowClicked(event: any) {
     console.log("onRowClicked+++++++++++")
     // setInterval(() => {
@@ -1312,10 +1334,28 @@ this.ejDialog.hide();
   //edit col
 
   contextMenuOpen(arg: any): void {
-    console.log('CMO',arg);
 
-    this.lock = true;
-    this.treegrid
+    console.log('CMO',arg.column.field);
+
+    if(arg.column.field == 'name'){
+    console.log('inside if',arg.column.field);
+
+    this.column[arg.column.index].lock = true;
+      // this.lock = true;
+      this.start = this.customAttributes;
+    }
+    if(arg.column.field == 'class'){
+      console.log('class',arg.column.field);
+      this.lock = true;
+      this.start = this.customAttributes;
+    }
+    if(arg.column.field == 'roll_no'){
+      console.log('roll',arg.column.field);
+      this.lock = true;
+      this.start = this.customAttributes;
+    }
+    
+    // this.treegrid
     // console.log("text", arg.getColumnByField)
 
     // if(arg.column.field == 'id'){
@@ -1421,6 +1461,7 @@ this.ejDialog.hide();
     if (args.item.id === 'addnextrow') {
       this.showAddNext =true;
       console.log("data",data.id);
+      // this.treegrid.getSelectedRecords()[0].disable = true
       this.stuRCId = this.data.length+1;
       // this.treeGridObj.addRecord(data, this.rowIndex, 'Top'); //aadd record use can add row top orbelow using new row position
     } else if (args.item.id === 'addchildrow') {
@@ -1690,6 +1731,31 @@ typeCheck(arg:any){
 //////////////////////
 checki(){
   
+}
+FormValidation():any{
+  //First Name Validation 
+  var fn = $(document).getElementById('firstname').value!;
+  if(fn == ""){
+      alert('Please Enter First Name');
+      $(document).getElementById('firstname').style.borderColor = "red";
+      return false;
+  }else{
+      $(document).getElementById('firstname').style.borderColor = "green";
+  }
+  if (/^[0-9]+$/.test($(document).getElementById("firstname").value)) {
+      alert("First Name Contains Numbers!");
+      $(document).getElementById('firstname').style.borderColor = "red";
+      return false;
+  }else{
+      $(document).getElementById('firstname').style.borderColor = "green";
+  }
+  if(fn.length <=2){
+      alert('Your Name is To Short');
+      $(document).getElementById('firstname').style.borderColor = "red";
+      return false;
+  }else{
+      $(document).getElementById('firstname').style.borderColor = "green";
+  }
 }
 }
 
