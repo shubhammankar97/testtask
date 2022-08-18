@@ -39,8 +39,11 @@
       autoCheckHierarchy='true'
       (toolbarClick)='toolbarClick($event)'
       (beginEdit)="beginEdit($event)"
+      
   >
- 
+  <!-- (rowSelected)="rowSelected($event)"
+      enablePersistence="true"
+ -->
      <!-- <e-columns>
       <e-column field='id' *ngIf="isShown" headerText='Student ID' textAlign='Centre' [isPrimaryKey]="true" width=70 type="number"
       [lockColumn]= 'true' [customAttributes]='customAttributes' [edit]="editparams"></e-column>
@@ -524,10 +527,11 @@
   <!-- Add Next -->
   <div *ngIf="showAddNext"> 
   <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Next'
-width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
+width='300px' [position]="pos" showCloseIcon="true" [height]="470"> 
 
 <ng-template #content>
   <form id="template_driven" #userForm="ngForm" validate onchange="return FormValidation()">
+    <p>(Timer: {{timeLeft}})</p> 
     <!-- <div class="form-group" style="padding-top: 11px;" *ngFor="let col of column">
       <div class="e-float-input">
         <input
@@ -607,7 +611,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="400">
     <button
       id="Button1"
       class="e-control e-btn e-primary e-flat"
-      (click)="addNext()"
+      (click)="addChild($event)"
       data-ripple="true"
     >
       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
@@ -748,9 +752,9 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
       <div class="e-float-input">
         <input
         type="text"
-        name="stuName"
+        name="stuNamen"
         required
-        [(ngModel)]="stuName"
+        [(ngModel)]="stuNamen"
         class='form-control' 
         id="sname" onchange="return FormValidation()"
         />
@@ -762,9 +766,9 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
       <div class="e-float-input">
         <input
         type="text"
-        name="stuRoll"
+        name="stuRolln"
         required
-        [(ngModel)]="stuRoll"
+        [(ngModel)]="stuRolln"
         class='form-control'
         id="sroll"  onchange="return FormValidation()"
         />
@@ -776,9 +780,9 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
       <div class="e-float-input">
         <input
         type="text"
-        name="stuClass"
+        name="stuClassn"
         required
-        [(ngModel)]="stuClass"
+        [(ngModel)]="stuClassn"
         class='form-control'
         id="sclass"  onchange="return FormValidation()"
         />
@@ -816,10 +820,11 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
  <!-- Add Child -->
  <div *ngIf="showAddchild"> 
  <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Child'
- width='300px' [position]="pos" showCloseIcon="true" [height]="400"> 
+ width='300px' [position]="pos" showCloseIcon="true" [height]="470"> 
  
  <ng-template #content>
    <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
+    <p>(Timer: {{timeLeft}})</p> 
      <div class="form-group" style="padding-top: 11px;">
        <div class="e-float-input">
          <input

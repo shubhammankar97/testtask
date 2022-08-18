@@ -24,7 +24,7 @@ export class ApiService {
   }
   addData(addNew:any){
     console.log("service data",addNew)
-    return this.http.post(this.API_URL+'/add-Student',addNew[1], httpOptions)
+    return this.http.post(this.API_URL+'/add-Student',addNew, httpOptions)
   }
 
   // Update
