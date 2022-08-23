@@ -258,7 +258,7 @@ div#treegridcomp_gridcontrol_ccdlg {
 }
 //////////dim
 li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim {
-  background-color: lightcoral;
+  background-color: #f08080;
 }
 
 
@@ -321,3 +321,15 @@ input.ng-valid {
 tr.e-row.disableRow.e-altrow[aria-selected="true"]{
   background-color: coral;
 }
+/////////////////////////////////////////////
+.bgcolor td{
+ 
+  background-color: rgb(219, 97, 97) !important;
+
+  color: white !important;
+
+}
+// .e-treegrid td.e-active{ 
+//   background-color: #f382c4;    // pink
+// } 
+// hsl(192, 91%, 79%) sky blue
