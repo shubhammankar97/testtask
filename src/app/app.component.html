@@ -1,7 +1,6 @@
 <div class="image-loader" *ngIf="imageLoader">
   <img src="../assets/img/loader.gif" />
 </div>
-
 <div class="control-section">
   <div style="text-align: right; margin-right: 25px; font-weight: 80px">
     <div style="text-align: left; font-weight: 80px">
@@ -14,204 +13,126 @@
     User{{ ssid }}.Tab{{ tabID }}
   </div>
 
-  <ejs-treegrid
-    [dataSource]="data"
-    [treeColumnIndex]="1"
-    [allowFiltering]="allowFilter"
-    [sortSettings]="sortSettings"
-    id="treegridcomp"
-    #treegrid
-    [allowSorting]="true"
-    [pageSettings]="pageSettings"
-    idMapping="id"
-    allowMultiSorting="allowMultSort"
-    parentIdMapping="parentID"
-    [editSettings]="editSettings"
-    [toolbar]="toolbar"
-    (actionComplete)="dataSourceChanged($event)"
-    [selectionSettings]="selectionSettings"
-    [allowSelection]="true"
-    (dataSourceChanged)="dataSourceChanged($event)"
-    (beforeOpen)="beforeOpen($event)"
-    itemBeforeEvent="{this.itemBeforeEvent.bind(this)}"
-    (select)="onSelect($event)"
-    [filterSettings]="filterSettings"
-    [contextMenuItems]="contextMenuItems"
-    (contextMenuOpen)="contextMenuOpen($event)"
-    (checkboxChange)="checkboxChange($event)"
-    (contextMenuClick)="contextMenuClick($event)"
-    [allowReordering]="true"
-    [allowResizing]="true"
-    (actionComplete)="actionComplete($event)"
-    [allowRowDragAndDrop]="true"
-    (rowDragStartHelper)="rowDragStartHelper($event)"
-    (rowDrop)="rowDrop($event)"
-    (rowDragStart)="rowDragStart($event)"
-    (rowDrag)="rowDrag($event)"
-    childMapping="Crew"
-    (rowClicked)="onRowClicked($event)"
-    [showColumnChooser]="true"
-    (columnMenuClick)="onColumnClicked($event)"
-    [editSettings]="editSetting1"
-    [columns]="column"
-    (contextMenuOpen)="context($event)"
-    [frozenColumns]="col2Freeze"
-    [enableVirtualization]="true"
-    height="60000"
-    enableStickyHeader="true"
-    autoCheckHierarchy="true"
-    (beginEdit)="beginEdit($event)"
-    (rowSelected)="rowSelected($event)"
-    enablePersistence="true"
-    (rowSelecting)="rowSelectingClick($event)"
-    (dataBound)="dataBound($event)"
-    (rowDataBound)="rowBound($event)"
-    (checkboxChange)="checkboxChange($event)"
-    adaptor="remoteSaveAdaptor"
-    (beforeBatchSave)="batchSave($event)"
+  <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
+  [allowSorting]="true" [pageSettings]='pageSettings'  idMapping='id' allowMultiSorting="allowMultSort"
+  parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
+  (actionComplete)="dataSourceChanged($event)"
+   [selectionSettings]='selectionSettings' [allowSelection]='true'
+  (dataSourceChanged)="dataSourceChanged($event)"
+  (beforeOpen)='beforeOpen($event)'
+  itemBeforeEvent={this.itemBeforeEvent.bind(this)}
+  (select)="onSelect($event)" 
+  [filterSettings]="filterSettings"
+  [contextMenuItems]="contextMenuItems"
+      (contextMenuOpen)="contextMenuOpen($event)"
+      (contextMenuClick)="contextMenuClick($event)"
+      [allowReordering]='true'
+      [allowResizing]='true' 
+      (actionComplete)='actionComplete($event)'
+      [allowRowDragAndDrop]='true'
+      (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
+      childMapping='Crew'
+      (rowClicked)='onRowClicked($event)'
+      [showColumnChooser]='true' 
+      (columnMenuClick)="onColumnClicked($event)"
+      [editSettings]="editSetting1"
+      [columns]="column"
+      (contextMenuOpen)="context($event)" 
+      [frozenColumns]="col2Freeze"
+      [enableVirtualization]=true
+      height = "data.length +1"
+      enableStickyHeader="true"
+      autoCheckHierarchy='true'
+      (beginEdit)="beginEdit($event)"
+      (rowSelected)="rowSelected($event)"
+      enablePersistence="true"
+      (rowSelecting)="rowSelectingClick($event)"
+      (dataBound)="dataBound($event)"
+      (rowDataBound)="rowBound($event)"
+      (checkboxChange)="checkboxChange($event)"
+      
   >
     <e-columns>
-      <e-column
-        field="id"
-        headerText="Student ID"
-        textAlign="left"
-        [isPrimaryKey]="true"
-        type="number"
-        [customAttributes]="customAttributes"
-        [lockColumn]="true"
-        [edit]="editparams"
-      ></e-column>
-      <e-column
-        field="name"
-        id="name"
-        headerText="Student Name"
-        textAlign="Left"
-        [validationRules]="studentnamerules"
-        [edit]="editparams"
-        [showCheckbox]="showChooseRow"
-      ></e-column>
-      <e-column
-        field="roll_no"
-        headerText="Roll Number"
-        textAlign="Left"
-        type="number"
-        [validationRules]="studentidrules"
-        [edit]="editparams"
-      ></e-column>
-      <e-column
-        field="class"
-        headerText="Class"
-        textAlign="Left"
-        [filterBarTemplate]="filterBarTemplate"
-        [validationRules]="studentidrules"
-        [edit]="editparams"
-      ></e-column>
-      <div *ngFor="let item of column">
-        <e-column
-          [field]="item.field"
-          [headerText]="item.field"
-          [width]="item.width"
-          [type]="typeCheck(item.field)"
-          [edit]="editparams"
-          textAlign="Left"
-          [validationRules]="item.validation"
-          [customAttributes]="start"
-          [lockColumn]="lock"
-          [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null"
-          [isFrozen]="true"
-        >
-        </e-column>
-      </div>
+    <e-column field="id" headerText="Student ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='customAttributes' [lockColumn]="true" [edit]="editparams"></e-column>
+    <e-column field='name' id="name" headerText='Student Name' textAlign='Left' [validationRules]='studentnamerules' [edit]="editparams" [showCheckbox]="showChooseRow"></e-column>
+    <e-column field='roll_no' headerText='Roll Number' textAlign='Left' type="number" [validationRules]='studentidrules' [edit]="editparams"></e-column>
+    <e-column field='class' headerText='Class' textAlign='Left' [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"></e-column>
+    <div *ngFor="let item of column">
+      <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
+      [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [customAttributes]='start' [lockColumn]="lock"
+      [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" [isFrozen]="true"></e-column>
+    </div>
     </e-columns>
   </ejs-treegrid>
-</div>
 
-<!-- row contextmenu1 -->
-<div>
-  <ejs-contextmenu
-    #headercontextmenu
-    target=".e-gridheader"
-    [items]="headermenuItems"
-    (beforeItemRender)="itemBeforeEvent($event)"
-    (select)="select($event)"
-  ></ejs-contextmenu>
-</div>
+    <!-- row contextmenu1 -->
+  <div>
+  <ejs-contextmenu #headercontextmenu target='.e-gridheader'
+  [items]='headermenuItems' 
+  (beforeItemRender)="itemBeforeEvent($event)"
+   (select)='select($event)'></ejs-contextmenu>
+  </div>
 
 <!-- add col -->
 <div *ngIf="showAddColumn">
-  <ejs-dialog
-    id="dialog"
-    #ejDialog
-    allowDragging="true"
-    header="Add Column"
-    content="This is a Dialog with drag enabled"
-    [target]="targetElement3"
-    width="300px"
-    [height]="450"
-    [position]="pos"
-    showCloseIcon="true"
-  >
-    <ng-template #content>
-      <form id="template_driven" #userForm="ngForm" novalidate>
-        <p>(Timer: {{ timeLeft }})</p>
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input chex">
-            <input
-              type="text"
-              name="ColName"
-              [(ngModel)]="ColName"
-              #ColumnName="ngModel"
-              id="valid"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Column Name</label
-            >
-          </div>
-        </div>
+<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Column' content='This is a Dialog with drag enabled'
+    [target]='targetElement3' width='300px' [height]="450" [position]="pos" showCloseIcon="true" > 
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div class="e-float-input">
-            <ejs-dropdownlist
-              #dropdown2
-              id="element"
-              [dataSource]="d2data"
-              [fields]="fields"
-              name="ColType"
-              [(ngModel)]="ColType"
-              placeholder="Alignment"
-            ></ejs-dropdownlist>
-          </div>
-        </div>
-      </form>
-    </ng-template>
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button1"
-          class="e-control e-btn e-primary e-flat"
-          (click)="clicked()"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
-        </button>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick3($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-          >Cancel
-        </button>
+<ng-template #content>
+  <form id="template_driven" #userForm="ngForm" novalidate>
+    <p>(Timer: {{timeLeft}})</p> 
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input chex">
+        <input
+          type="text"
+          name="ColName"
+          [(ngModel)]="ColName"
+          #ColumnName="ngModel"
+          id="valid" onchange="return FormValidation()"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Column Name</label>
       </div>
-    </ng-template>
-  </ejs-dialog>
+    </div>
+
+    <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+      <div class="e-float-input">
+        <ejs-dropdownlist
+          #dropdown2
+          id="element"
+          [dataSource]="d2data"
+          [fields]="fields"
+          name="ColType"
+          [(ngModel)]="ColType"
+          placeholder="Alignment"
+        ></ejs-dropdownlist>
+      </div>
+    </div>
+    
+  </form>
+</ng-template>
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="clicked()"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
+    </button>
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick3($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+  </div>
+</ng-template>
+</ejs-dialog>
 </div>
 <!--edit Column -->
 
@@ -225,18 +146,14 @@
     width="300px"
     showCloseIcon="true"
     [height]="710"
-    allowDragging="true"
-    [position]="pos"
+    allowDragging='true'
+    [position]="pos" 
   >
+  
     <ng-template #content>
-      <form
-        id="template_driven"
-        #userForm="ngForm"
-        validate
-        onchange="return FormValidation()"
-      >
-        <p>(Timer: {{ timeLeft }})</p>
-        <div class="form-group" style="padding-top: 11px">
+      <form id="template_driven" #userForm="ngForm" validate onchange="return FormValidation()">
+        <p>(Timer: {{timeLeft}})</p> 
+        <div class="form-group" style="padding-top: 11px;">
           <div class="e-float-input">
             <input
               type="text"
@@ -244,24 +161,26 @@
               required
               [(ngModel)]="ColName"
               #ColumnName="ngModel"
-              id="valid"
-              onchange="return FormValidation()"
-              disabled="true"
+          id="valid" onchange="return FormValidation()"
+          disabled="true"
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Column Name
-            </label>
+            <label class="e-float-text e-label-top required" for="name">Column Name  </label>
+            <!-- <div
+              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
+            >
+              <div class="e-error" *ngIf="ColumnName.errors.required">
+                * Enter Column name
+              </div>
+            </div> -->
           </div>
         </div>
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+          
           <div class="e-float-input">
             <ejs-dropdownlist
+              
               id="coltypeid"
               [dataSource]="d2data"
               [fields]="fields"
@@ -270,22 +189,21 @@
               [(ngModel)]="ColType"
               disabled="true"
             ></ejs-dropdownlist>
-            <div
-              class="e-float-input"
-              style="padding-bottom: 15px; padding-top: -18px"
-            >
-              <label class="e-float-text e-label-top required" for="name">
-                <ejs-checkbox checked="true"></ejs-checkbox> Mandatory
-              </label>
+            <div class="e-float-input" style="padding-bottom: 15px;padding-top: -18px;">
+              <label class="e-float-text e-label-top required" for="name"><ejs-checkbox checked="true" ></ejs-checkbox> Mandatory </label>
+             
             </div>
-          </div>
+            </div>
+           
+
         </div>
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
+        <!-- <div class="form-group" style="padding-top: 11px;"> -->
+          
+        <!-- </div> -->
+        
+
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="text"
@@ -293,21 +211,15 @@
               required
               [(ngModel)]="ColName"
               #ColumnName="ngModel"
-              id="valid"
-              onchange="return FormValidation()"
-              disabled="true"
+          id="valid" onchange="return FormValidation()"
+          disabled="true"
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Default Value</label
-            >
+            <label class="e-float-text e-label-top required" for="name">Default Value</label>
+           
           </div>
         </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="number"
@@ -315,23 +227,18 @@
               name="ColMinWidth"
               required
               [(ngModel)]="ColMinWidth"
-              id="valid"
-              onchange="return FormValidation()"
-              #ColumnName="ngModel"
+          id="valid" onchange="return FormValidation()"
+          #ColumnName="ngModel"
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Minimum-Column-Width</label
-            >
+            <label class="e-float-text e-label-top required" for="name">Minimum-Column-Width</label>
+            
           </div>
         </div>
+  
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div style="display: flex; justify-content: space-between">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+          <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Font-color</span
             >
@@ -342,18 +249,13 @@
               id="element"
               value="#FFFFFF"
               (change)="changeFontColor($event)"
-              id="valid"
-              onchange="return FormValidation()"
-              id="colorpicker"
+          id="valid" onchange="return FormValidation()"
+          id="colorpicker"
             />
           </div>
         </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div style="display: flex; justify-content: space-between">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+          <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Background-color</span
             >
@@ -364,17 +266,12 @@
               id="element"
               value="#FFFFFF"
               (change)="changeBackground($event)"
-              id="valid"
-              onchange="return FormValidation()"
-              id="colorpicker"
+          id="valid" onchange="return FormValidation()"
+          id="colorpicker"
             />
           </div>
         </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <ejs-dropdownlist
               #dropdown2
@@ -387,12 +284,8 @@
             ></ejs-dropdownlist>
           </div>
         </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div style="display: flex; justify-content: space-between">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+          <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required" for="email"
               >Text-wrap</span
             >
@@ -402,8 +295,7 @@
               [checked]="false"
               name="ColChecked"
               [(ngModel)]="ColChecked"
-            >
-            </ejs-checkbox>
+            ></ejs-checkbox>
           </div>
         </div>
       </form>
@@ -432,9 +324,10 @@
   </ejs-dialog>
 </div>
 
+
 <!--view dialog -->
 <div *ngIf="showViewColumn">
-  <ejs-dialog
+<ejs-dialog
     id="dialog"
     #ejDialog
     [animationSettings]="animationSettings"
@@ -443,17 +336,12 @@
     width="300px"
     showCloseIcon="true"
     [height]="450"
-    allowDragging="true"
-    [position]="pos"
+    allowDragging='true'
+    [position]="pos" 
   >
     <ng-template #content>
-      <form
-        id="template_driven"
-        #userForm="ngForm"
-        novalidate
-        onchange="return FormValidation()"
-      >
-        <div class="form-group" style="padding-top: 11px">
+      <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
+        <div class="form-group" style="padding-top: 11px;">
           <div class="e-float-input">
             <input
               type="text"
@@ -464,13 +352,9 @@
               readonly
             />
             <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Name</label
-            >
+            <label class="e-float-text e-label-top required" for="name">Name</label>
             <div
-              *ngIf="
-                ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)
-              "
+              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
             >
               <div class="e-error" *ngIf="ColumnName.errors?.['required']">
                 * Enter Column name
@@ -479,11 +363,7 @@
           </div>
         </div>
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="text"
@@ -491,19 +371,16 @@
               required
               [(ngModel)]="ColType"
               #ColumnName="ngModel"
-              id="valid"
-              onchange="return FormValidation()"
-              readonly
+          id="valid" onchange="return FormValidation()"
+          readonly
             />
-          </div>
+            </div>
         </div>
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div style="display: flex; justify-content: space-between">
+  
+
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+          <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Font-color</span
             >
@@ -515,18 +392,13 @@
               value="#FFFFFF"
               (change)="changeFontColor($event)"
               id="colorpicker"
-              id="valid"
-              onchange="return FormValidation()"
-              aria-readonly="true"
+          id="valid" onchange="return FormValidation()"
+          aria-readonly="true"
             />
           </div>
         </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div style="display: flex; justify-content: space-between">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+          <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required"
               >Choose new Background-color</span
             >
@@ -538,17 +410,12 @@
               value="#FFFFFF"
               (change)="changeBackground($event)"
               id="colorpicker"
-              id="valid"
-              onchange="return FormValidation()"
-              aria-readonly="true"
+          id="valid" onchange="return FormValidation()"
+          aria-readonly="true"
             />
           </div>
         </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
               type="text"
@@ -558,17 +425,13 @@
               [(ngModel)]="ColAlign"
               #ColumnName="ngModel"
               readonly
-              id="valid"
-              onchange="return FormValidation()"
-            />
+          id="valid" onchange="return FormValidation()"
+          />
+            
           </div>
         </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div style="display: flex; justify-content: space-between">
+        <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+          <div style="display: flex; justify-content: space-between;">
             <span class="e-float-text e-label-top required" for="email"
               >Text-wrap</span
             >
@@ -584,544 +447,461 @@
         </div>
       </form>
     </ng-template>
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span>Back
-        </button>
-      </div>
-    </ng-template>
-  </ejs-dialog>
+<ng-template #footerTemplate>
+  <div>
+    
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Back
+    </button>
+  </div>
+</ng-template>
+
+</ejs-dialog>
 </div>
 <!-- delete col -->
-<div *ngIf="showDelColumn">
-  <ejs-dialog
-    id="dialog"
-    #ejDialog
-    allowDragging="true"
-    header="Delete Column"
-    content="This is a Dialog with drag enabled"
-    [target]="targetElement"
-    width="300px"
-    [height]="400"
-    [position]="pos"
-    showCloseIcon="true"
-  >
-    <ng-template #content>
-      <form
-        id="template_driven"
-        #userForm="ngForm"
-        novalidate
-        onchange="return FormValidation()"
-      >
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="ColName"
-              required
-              [(ngModel)]="ColName"
-              #ColumnName="ngModel"
-              id="valid"
-              onchange="return FormValidation()"
-              readonly
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Column Name</label
-            >
-            <div
-              *ngIf="
-                ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)
-              "
-            >
-              <div class="e-error" *ngIf="ColumnName.errors?.['required']">
-                * Enter Column name
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </ng-template>
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button1"
-          class="e-control e-btn e-primary e-flat"
-          (click)="removeColumn(ColName)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Delete
-        </button>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-          >Cancel
-        </button>
-      </div>
-    </ng-template>
-  </ejs-dialog>
-</div>
+<div *ngIf="showDelColumn"> 
+<ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Delete Column' content='This is a Dialog with drag enabled'
+[target]='targetElement' width='300px' [height]="400" [position]="pos" showCloseIcon="true"> 
 
-<!-- Add Next -->
-<div *ngIf="showAddNext">
-  <ejs-dialog
-    id="dialog"
-    #ejDialog
-    allowDragging="true"
-    header="Add Next"
-    width="300px"
-    [position]="pos"
-    showCloseIcon="true"
-    [height]="470"
-  >
-    <ng-template #content>
-      <form
-        id="template_driven"
-        #userForm="ngForm"
-        validate
-        onchange="return FormValidation()"
-      >
-        <p>(Timer: {{ timeLeft }})</p>
-
+<ng-template #content>
+  <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="ColName"
+          required
+          [(ngModel)]="ColName"
+          #ColumnName="ngModel"
+          id="valid" onchange="return FormValidation()"
+          readonly
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Column Name</label>
         <div
-          class="form-group"
-          style="padding-top: 11px"
-          *ngFor="let col of column; let i = index"
+          *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
         >
-          <div *ngIf="i == 0" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCId"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCId"
-              id="valid"
-              onchange="return FormValidation()"
-              disabled
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
-          </div>
-          <div *ngIf="i == 1" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCName"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCName"
-              id="valid"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
-          </div>
-          <div *ngIf="i == 2" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCRoll"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCRoll"
-              id="valid"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
-          </div>
-          <div *ngIf="i == 3" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCClass"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCClass"
-              id="valid"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
+          <div class="e-error" *ngIf="ColumnName.errors?.['required']">
+            * Enter Column name
           </div>
         </div>
-        <!-- ------------------------ -->
-      </form>
-    </ng-template>
-
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button1"
-          class="e-control e-btn e-primary e-flat"
-          (click)="addChild($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
-        </button>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick3($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-          >Cancel
-        </button>
       </div>
-    </ng-template>
+    </div>
+
+  </form>
+</ng-template>
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="removeColumn(ColName)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Delete
+    </button>
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+  </div>
+</ng-template>
   </ejs-dialog>
 </div>
+
+  <!-- Add Next -->
+  <div *ngIf="showAddNext"> 
+  <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Next'
+width='300px' [position]="pos" showCloseIcon="true" [height]="470"> 
+
+<ng-template #content>
+  <form id="template_driven" #userForm="ngForm" validate onchange="return FormValidation()">
+    <p>(Timer: {{timeLeft}})</p> 
+    <!-- <div class="form-group" style="padding-top: 11px;" *ngFor="let col of column">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="rowColdata"
+          class='form-control'
+          id="sclass"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+      </div>
+    </div> -->
+<!-- #ColumnName="ngModel"
+  [(ngModel)]="rowColdata" -->
+
+  <!-- ------------- -->
+
+<div class="form-group" style="padding-top: 11px;" *ngFor="let col of column; let i = index">
+  <div  *ngIf="i == 0" class="e-float-input">
+    <input
+      type="text"
+      name="stuRCId"          
+      class='form-control'
+      id="sclass"
+      [(ngModel)]="stuRCId"
+          id="valid" onchange="return FormValidation()"
+          disabled
+    />
+    <span class="e-float-line"></span>
+    <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+  </div>
+  <div  *ngIf="i == 1" class="e-float-input">
+    <input
+      type="text"
+      name="stuRCName"          
+      class='form-control'
+      id="sclass"
+      [(ngModel)]="stuRCName"  
+      id="valid" onchange="return FormValidation()"
+
+    />
+    <span class="e-float-line"></span>
+    <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+  </div>
+  <div  *ngIf="i == 2" class="e-float-input">
+    <input
+      type="text"
+      name="stuRCRoll"          
+      class='form-control'
+      id="sclass"
+      [(ngModel)]="stuRCRoll"       
+      id="valid" onchange="return FormValidation()"
+      />
+    <span class="e-float-line"></span>
+    <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+  </div>
+  <div  *ngIf="i == 3" class="e-float-input">
+    <input
+      type="text"
+      name="stuRCClass"          
+      class='form-control'
+      id="sclass"
+      [(ngModel)]="stuRCClass"
+      id="valid" onchange="return FormValidation()"
+
+    />
+    <span class="e-float-line"></span>
+    <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+  </div>
+</div>
+<!-- ------------------------ -->
+  </form>
+</ng-template>
+
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="addChild($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
+    </button>
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick3($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+  </div>
+</ng-template>
+</ejs-dialog>
+</div>
+
 
 <!-- Delete Row dialog -->
-<div *ngIf="showDeleteRow">
-  <ejs-dialog
-    id="dialog"
-    #ejDialog
-    allowDragging="true"
-    header="Delete Column"
-    content="This is a Dialog with drag enabled"
-    [target]="targetElement"
-    width="300px"
-    [height]="400"
-    [position]="pos"
-    showCloseIcon="true"
-  >
-    <ng-template #content>
-      <form
-        id="template_driven"
-        #userForm="ngForm"
-        novalidate
-        onchange="return FormValidation()"
-      >
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuRCId"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCId"
-              id="valid"
-              onchange="return FormValidation()"
-              disabled
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name"
-              >Student ID</label
-            >
-          </div>
-        </div>
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuName"
-              required
-              [(ngModel)]="stuName"
-              id="valid"
-              onchange="return FormValidation()"
-              readonly
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Student Name</label
-            >
-          </div>
-        </div>
+<div *ngIf="showDeleteRow"> 
+ <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Delete Column' content='This is a Dialog with drag enabled'
+[target]='targetElement' width='300px' [height]="400" [position]="pos" showCloseIcon="true"> 
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          onchange="return FormValidation()"
-        >
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuRoll"
-              required
-              [(ngModel)]="stuRoll"
-              id="valid"
-              onchange="return FormValidation()"
-              readonly
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Roll Number</label
-            >
-          </div>
-        </div>
-      </form>
-    </ng-template>
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button1"
-          class="e-control e-btn e-primary e-flat"
-          (click)="delete()"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>OK
-        </button>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick3($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-          >Cancel
-        </button>
+
+<ng-template #content>
+  <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
+    <div class="form-group" style="padding-top: 11px;"  onchange="return FormValidation()">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="stuRCId"          
+          class='form-control'
+          id="sclass"
+          [(ngModel)]="stuRCId"
+          id="valid" onchange="return FormValidation()"
+          disabled
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Student ID</label>
       </div>
-    </ng-template>
+      </div>
+    <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="stuName"
+          required
+          [(ngModel)]="stuName"
+          id="valid" onchange="return FormValidation()"
+          readonly
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Student Name</label>
+        
+        </div>
+      </div>
+    
+
+    <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="stuRoll"
+          required
+          [(ngModel)]="stuRoll"
+          id="valid" onchange="return FormValidation()"
+          readonly
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Roll Number</label>
+       
+      </div>
+    </div>
+  </form>
+</ng-template>
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="delete()"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>OK
+    </button>
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick3($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+  </div>
+</ng-template>
   </ejs-dialog>
 </div>
 
-<!-- Edit Row -->
-<div *ngIf="showEditRow">
-  <ejs-dialog
-    id="dialog"
-    #ejDialog
-    allowDragging="true"
-    header="Edit Row"
-    width="300px"
-    [position]="pos"
-    showCloseIcon="true"
-    [height]="500"
-  >
-    <ng-template #content>
-      <form id="template_driven" #userForm="ngForm" novalidate>
-        <p>(Timer: {{ timeLeft }})</p>
+  <!-- Edit Row -->
+  <div *ngIf="showEditRow"> 
+  <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Edit Row'
+width='300px' [position]="pos" showCloseIcon="true" [height]="500"> 
 
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuRCId"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCId"
-              disabled
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name"
-              >Student ID</label
-            >
-          </div>
-        </div>
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuNamen"
-              required
-              [(ngModel)]="stuNamen"
-              class="form-control"
-              id="sname"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Student Name</label
-            >
-          </div>
-        </div>
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuRolln"
-              required
-              [(ngModel)]="stuRolln"
-              class="form-control"
-              id="sroll"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Roll Number</label
-            >
-          </div>
-        </div>
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuClassn"
-              required
-              [(ngModel)]="stuClassn"
-              class="form-control"
-              id="sclass"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Class</label
-            >
-          </div>
-        </div>
-      </form>
-    </ng-template>
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button1"
-          class="e-control e-btn e-primary e-flat"
-          (click)="editRow()"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
-        </button>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick3($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-          >Cancel
-        </button>
+<ng-template #content>
+  <form id="template_driven" #userForm="ngForm" novalidate>
+    <p>(Timer: {{timeLeft}})</p> 
+    <!-- <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuId"
+        required
+        [(ngModel)]="stuId"
+        class='form-control' 
+        id="sid"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Student ID</label>
       </div>
-    </ng-template>
-  </ejs-dialog>
+    </div> -->
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+          type="text"
+          name="stuRCId"          
+          class='form-control'
+          id="sclass"
+          [(ngModel)]="stuRCId"
+          disabled onchange="return FormValidation()"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top" for="name">Student ID</label>
+      </div>
+      </div>
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuNamen"
+        required
+        [(ngModel)]="stuNamen"
+        class='form-control' 
+        id="sname" onchange="return FormValidation()"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Student Name</label>
+      </div>
+    </div>
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuRolln"
+        required
+        [(ngModel)]="stuRolln"
+        class='form-control'
+        id="sroll"  onchange="return FormValidation()"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Roll Number</label>
+      </div>
+    </div>
+    <div class="form-group" style="padding-top: 11px;">
+      <div class="e-float-input">
+        <input
+        type="text"
+        name="stuClassn"
+        required
+        [(ngModel)]="stuClassn"
+        class='form-control'
+        id="sclass"  onchange="return FormValidation()"
+        />
+        <span class="e-float-line"></span>
+        <label class="e-float-text e-label-top required" for="name">Class</label>
+      </div>
+    </div>
+
+  </form>
+</ng-template>
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="editRow()"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
+    </button>
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick3($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+  </div>
+</ng-template>
+</ejs-dialog>
 </div>
 
-<!-- Add Child -->
-<div *ngIf="showAddchild">
-  <ejs-dialog
-    id="dialog"
-    #ejDialog
-    allowDragging="true"
-    header="Add Child"
-    width="300px"
-    [position]="pos"
-    showCloseIcon="true"
-    [height]="470"
-  >
-    <ng-template #content>
-      <form
-        id="template_driven"
-        #userForm="ngForm"
-        novalidate
-        onchange="return FormValidation()"
-      >
-        <p>(Timer: {{ timeLeft }})</p>
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuCId"
-              required
-              [(ngModel)]="stuCId"
-              class="form-control"
-              id="scid"
-              disabled
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Student ID</label
-            >
-          </div>
-        </div>
-
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuCName"
-              required
-              [(ngModel)]="stuCName"
-              class="form-control"
-              id="scname"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Student Name</label
-            >
-          </div>
-        </div>
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuCRoll"
-              required
-              [(ngModel)]="stuCRoll"
-              class="form-control"
-              id="scroll"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Roll Number</label
-            >
-          </div>
-        </div>
-        <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input">
-            <input
-              type="text"
-              name="stuCClass"
-              required
-              [(ngModel)]="stuCClass"
-              class="form-control"
-              id="scclass"
-              onchange="return FormValidation()"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top required" for="name"
-              >Class</label
-            >
-          </div>
-        </div>
-      </form>
-    </ng-template>
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button1"
-          class="e-control e-btn e-primary e-flat"
-          (click)="onAddRecord($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
-        </button>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick3($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-          >Cancel
-        </button>
-      </div>
-    </ng-template>
-  </ejs-dialog>
+ <!-- Add Child -->
+ <div *ngIf="showAddchild"> 
+ <ejs-dialog id='dialog' #ejDialog allowDragging='true' header='Add Child'
+ width='300px' [position]="pos" showCloseIcon="true" [height]="470"> 
+ 
+ <ng-template #content>
+   <form id="template_driven" #userForm="ngForm" novalidate onchange="return FormValidation()">
+    <p>(Timer: {{timeLeft}})</p> 
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCId"
+         required
+         [(ngModel)]="stuCId"
+         class='form-control' 
+         id="scid"
+         disabled onchange="return FormValidation()"
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top required" for="name">Student ID</label>
+       </div>
+     </div>
+ 
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCName"
+         required
+         [(ngModel)]="stuCName"
+         class='form-control' 
+         id="scname" onchange="return FormValidation()"
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top required" for="name">Student Name</label>
+       </div>
+     </div>
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCRoll"
+         required
+         [(ngModel)]="stuCRoll"
+         class='form-control'
+         id="scroll"  onchange="return FormValidation()"
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top required" for="name">Roll Number</label>
+       </div>
+     </div>
+     <div class="form-group" style="padding-top: 11px;">
+       <div class="e-float-input">
+         <input
+         type="text"
+         name="stuCClass"
+         required
+         [(ngModel)]="stuCClass"
+         class='form-control'
+         id="scclass"  onchange="return FormValidation()"
+         />
+         <span class="e-float-line"></span>
+         <label class="e-float-text e-label-top required" for="name">Class</label>
+       </div>
+     </div>
+ 
+   </form>
+ </ng-template>
+ <ng-template #footerTemplate>
+   <div>
+     <button
+       id="Button1"
+       class="e-control e-btn e-primary e-flat"
+       (click)="onAddRecord($event)"
+       data-ripple="true"
+     >
+       <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
+     </button>
+     <button
+       id="Button2"
+       class="e-control e-btn e-flat"
+       (click)="btnclick3($event)"
+       data-ripple="true"
+     >
+       <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+       >Cancel
+     </button>
+   </div>
+ </ng-template>
+ </ejs-dialog>
 </div>

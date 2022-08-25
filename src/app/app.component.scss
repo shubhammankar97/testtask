@@ -2,97 +2,97 @@
 //     padding: 3rem 10rem 10rem 10rem;
 // }
 .grid__wrapper {
-    margin: 10px;
+  margin: 10px;
 }
 
 e-columns:nth-child(even) {
-    background-color: aliceblue;
+  background-color: aliceblue;
 }
 
 .e-gridlist .e-tbar-btn.e-btn,
 .e-gridlist .e-btn {
-  box-shadow: none;
-  text-transform: none;
+box-shadow: none;
+text-transform: none;
 }
 
 .e-ghidden {
-  opacity: 0.35;
+opacity: 0.35;
 }
 
 .e-mastertext {
-  font-size: 15px;
-  font-family: Roboto;
-  opacity: 0.87;
-  padding: 1em;
+font-size: 15px;
+font-family: Roboto;
+opacity: 0.87;
+padding: 1em;
 }
 #dialog-container {
-  display: block;
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
+display: block;
+height: 100%;
+overflow: hidden;
+width: 100%;
 }
 
 #container {
-  visibility: hidden;
+visibility: hidden;
 }
 
 
 .e-treegrid .e-headercell.customcssa {
-  background-color: blue;
-  color: yellow;
-  font-size: "20px";
+background-color: blue;
+color: yellow;
+font-size: "20px";
 }
 .e-treegrid .e-headercell.customcssb {
-  background-color: blue;
-  color: white;
-  font-size: "20px";
+background-color: blue;
+color: white;
+font-size: "20px";
 }
 .e-treegrid .e-headercell.customcssc {
-  background-color: green;
-  color: white;
-  font-size: "15px";
+background-color: green;
+color: white;
+font-size: "15px";
 }
 
 .e-treegrid .e-headercell.customcssd {
-  background-color: green !important;
-  color: yellow !important;
-  font-size: "15px" !important;
+background-color: green !important;
+color: yellow !important;
+font-size: "15px" !important;
 }
 div#_gridcontrol_dialogEdit_wrapper_dialog-content {
-    margin: 0!important;
-    height: 100%!important;
-    overflow: hidden!important;
+  margin: 0!important;
+  height: 100%!important;
+  overflow: hidden!important;
 }
 .e-treegrid {
-    margin: 0!important;
-    height: 100%!important;
-    overflow: hidden!important;
+  margin: 0!important;
+  height: 100%!important;
+  overflow: hidden!important;
 }
 
 .e-treegrid .e-altrow {
-    background-color: #fafafae5;
+  background-color: #fafafae5;
 }
 .e-treegrid::-webkit-scrollbar{
-  overflow: hidden!important;
+overflow: hidden!important;
 }
 
 //drag
 .e-dragclonerow {
-  font-family: fantasy;
+font-family: fantasy;
 }
 //////////////////license
 div#js-licensing {
-  display: none !important;
+display: none !important;
 }
 
 input.e-checkbox {
-  display: none;
+display: none;
 }
 ////////
 
 .e-confirm-dialog.e-control.e-dialog.e-lib.e-dlg-modal.e-popup.e-popup-open {
-  width: 300px;
-  height: 415px;
+width: 300px;
+height: 415px;
 }
 /////row selected color
 // .e-grid td.e-active {
@@ -104,115 +104,123 @@ input.e-checkbox {
 
 .e-gridlist .e-tbar-btn.e-btn,
 .e-gridlist .e-btn {
-  box-shadow: none;
-  text-transform: none;
+box-shadow: none;
+text-transform: none;
 }
 
 .e-ghidden {
-  opacity: 0.35;
+opacity: 0.35;
 }
 
 .e-mastertext {
-  font-size: 15px;
-  font-family: Roboto;
-  opacity: 0.87;
-  padding: 1em;
+font-size: 15px;
+font-family: Roboto;
+opacity: 0.87;
+padding: 1em;
 }
 #dialog-container {
-  display: block;
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
+display: block;
+height: 100%;
+overflow: hidden;
+width: 100%;
 }
 
 #container {
-  visibility: hidden;
+visibility: hidden;
 }
 
 .e-treegrid .e-headercell.customcssa {
-  background-color: blue;
-  color: yellow;
-  font-size: "20px";
+background-color: blue;
+color: yellow;
+font-size: "20px";
 }
 .e-treegrid .e-headercell.customcssb {
-  background-color: blue;
-  color: white;
-  font-size: "20px";
+background-color: blue;
+color: white;
+font-size: "20px";
 }
 .e-treegrid .e-headercell.customcssc {
-  background-color: green;
-  color: white;
-  font-size: "15px";
+background-color: green;
+color: white;
+font-size: "15px";
 }
 
 .e-treegrid .e-headercell.customcssd {
-  background-color: green !important;
-  color: yellow !important;
-  font-size: "15px" !important;
+background-color: green !important;
+color: yellow !important;
+font-size: "15px" !important;
 }
 ////////////////////////////////////////
 
 .e-menu-item {
 background-color: red;
 }
+// li#customCopy\ dim\ light {
+//   background-color: #18bc9c !important;
+
+// }
+// .e-menu-item[role='menuitem'] {
+//   background-color: yellow;
+// }
+
 
 .e-contextmenu-wrapper ul, .e-contextmenu-container ul {
-  background-color: black;
-  color: #fff;
+background-color: black;
+color: #fff;
 }
 
 .e-menu-item:hover{
-  background-color: black;
+background-color: black;
 }
 
 .e-contextmenu-wrapper ul .e-menu-item.e-focused, .e-contextmenu-container ul .e-menu-item.e-focused {
-  background-color: black;
-  color: #fff;
-  outline: 0 solid rgba(0, 0, 0, 0.12);
-  outline-offset: 0;
+background-color: black;
+color: #fff;
+outline: 0 solid rgba(0, 0, 0, 0.12);
+outline-offset: 0;
 }
 .e-menu-item #chooseCol #freezeCol #filterCol #msortCol{
-  background-color: rgb(51, 136, 12);
+background-color: rgb(51, 136, 12);
 }
 .e-menu-item .e-flat{
-  background-color: olive;
+background-color: olive;
 }
 ////////////////
 li#freezeCol {
-  background-color: forestgreen !important;
+background-color: forestgreen !important;
 }
 li#filterCol {
-  background-color: forestgreen !important;
+background-color: forestgreen !important;
 }
 li#chooseCol {
-  background-color: forestgreen !important;
+background-color: forestgreen !important;
 }
 li#msortCol {
-  background-color: forestgreen !important;
+background-color: forestgreen !important;
 }
 li#freezeCol:hover {
-  background-color: black !important;
+background-color: black !important;
 }
 li#filterCol:hover {
-  background-color: black !important;
+background-color: black !important;
 }
 li#chooseCol:hover {
-  background-color: black !important;
+background-color: black !important;
 }
 li#msortCol:hover {
-  background-color: black !important;
+background-color: black !important;
 }
 
 .e-headercelldiv.e-headerchkcelldiv {
-  width: 50px;
+width: 50px;
 }
 /////////////////select row
 td.e-rowcell.e-gridchkbox.e-detailrowvisible.rowCheck {
-  width: 140px;
+width: 140px;
 }
 
 th.e-headercell.check {
-  width: 140px;
+width: 140px;
 }
 
 
@@ -221,56 +229,52 @@ th.e-headercell.check {
 //   display: none;
 // }
 .ejs-treegrid .customcss {
-  background-color: #ecedeeb0;
+background-color: #ecedeeb0;
 }
 
 .e-content {
-  overflow-y: hidden;
+overflow-y: hidden;
 }
 .e-treegrid .e-content {
-  -webkit-overflow-scrolling: touch;
-  overflow-x: auto;
-  overflow-y: hidden !important;
-  position: relative;
+-webkit-overflow-scrolling: touch;
+overflow-x: auto;
+overflow-y: hidden !important;
+position: relative;
 }
 //////////
 .e-gridheader.e-lib.e-draggable.e-droppable {
-  padding-right: 0px !important;
+padding-right: 0px !important;
 }
 //////////
 .required:after {
-  content:" *";
-  color: #ff0000;
+content:" *";
+color: #ff0000;
 }
 
 .label{
-  color:#65ca2a5e;
+color:#65ca2a5e;
 }
 
 //////////
 div#treegridcomp_gridcontrol_ccdlg {
-  margin-top: -1803px !important;
+margin-top: -1803px !important;
 }
 
 ///////////
 .e-grid .customcss {
-  background-color: #f1f5f5;
+background-color: #f1f5f5;
 }
 //////////dim
 li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim {
-  background-color: #f08080;
+background-color: lightcoral;
 }
-
-
-// div#treegridcomp_gridcontrol_ccdlg_dialog-content {
-//   overflow-y: hidden!important;
+// li#customCopy\ dim{
+//   background-color: coral;
 // }
-// .e-main-div .e-cc{
-//   overflow-y: hidden;
-// }
+
 //////////////hide spinner
 svg#MpQ1i {
-  display: none;
+display: none;
 }
 ///////////selected row color
 // .e-grid td.e-active {
@@ -278,58 +282,58 @@ svg#MpQ1i {
 //   color: #000;
 // }
 .red-input {
-  border: 1px solid red;
+border: 1px solid red;
 }
 .template_driven.fv-plugins-bootstrap .has-danger .fv-plugins-icon {
-  color: red;
+color: red;
 }
 .template_driven.fv-plugins-bootstrap .has-success .fv-plugins-icon {
-  color: #18bc9c;
+color: #18bc9c;
 }
 .e-grid .customss {
-  background-color: #ecedee96;
+background-color: #ecedee96;
 }
 ////validation
 input.ng-invalid {
-  background-color:rgb(241, 229, 231);
+background-color:rgb(241, 229, 231);
 }
 input.ng-valid {
-  background-color:lightgreen;
+background-color:lightgreen;
 }
 .e-float-line{
-  border-color: royalblue;
+border-color: royalblue;
 }
 /////////////////////////////////////////////////////////////////////////////////////=============
 .material .disableRow .e-rowcell{
-  color: rgba(0, 0, 0, .38) !important;
+color: rgba(0, 0, 0, .38) !important;
 }
 /* custom code start*/
 .material-dark .disableRow .e-rowcell, .fabric-dark .disableRow .e-rowcell,
 .bootstrap-dark .disableRow .e-rowcell, .bootstrap5-dark .disableRow .highcontrast .disableRow .e-rowcell, 
 .tailwind .disableRow .e-rowcell, .tailwind-dark .disableRow .e-rowcell {
-  color: #757575 !important;
+color: #757575 !important;
 }
 .fabric .disableRow .e-rowcell {
-  color: #c8c8c8 !important;
+color: #c8c8c8 !important;
 }
 .bootstrap .disableRow .e-rowcell, .bootstrap4 .disableRow .e-rowcell, 
 .bootstrap5 .disableRow .e-rowcell {
-  color: rgba(0, 0, 0, .35) !important;
+color: rgba(0, 0, 0, .35) !important;
 }
 /* custom code end*/
 
 tr.e-row.disableRow.e-altrow[aria-selected="true"]{
-  background-color: coral;
+background-color: coral;
 }
 /////////////////////////////////////////////
 .bgcolor td{
- 
-  background-color: rgb(219, 97, 97) !important;
 
-  color: white !important;
+background-color: rgb(219, 97, 97) !important;
+
+color: white !important;
 
 }
-// .e-treegrid td.e-active{ 
-//   background-color: #f382c4;    // pink
-// } 
+.e-treegrid .e-row {
+height: 2em;
+}
 // hsl(192, 91%, 79%) sky blue
