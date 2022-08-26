@@ -88,3 +88,29 @@ exports.update=(req,res)=>{
     }
     };
 };
+// app.post('/addNext-Student',StudentController.next);
+
+exports.next=(req,res)=>{
+   var index = req.params.id
+    console.log(req.body);
+var user = 
+{
+       name : req.body.name,
+       class : req.body.class,
+       roll_no : req.body.roll_no
+}
+ var data=fs.readFileSync("student.json") 
+ data = data.toString();
+ var Data = JSON.parse( data );
+ var id=Data.length;
+
+ user["id"]=index+1;
+ console.log('+++',user);
+ console.log('---',Data);
+ Data.splice(index, 0, user);
+//  Data.join()
+//  Data.push(user);   
+
+ fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
+ return res.json(Data)
+}

@@ -3,7 +3,7 @@
 </div>
 <div class="control-section">
   <div style="text-align: right; margin-right: 25px; font-weight: 80px">
-    <div style="text-align: left; font-weight: 80px">
+    <div class="hidebtn" style="text-align: left; font-weight: 80px">
       <span *ngIf="checkB"
         ><button #btn1 ejs-button cssClass="e-flat" (click)="click($event)">
           Cancel</button
@@ -13,7 +13,7 @@
     User{{ ssid }}.Tab{{ tabID }}
   </div>
 
-  <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
+  <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid 
   [allowSorting]="true" [pageSettings]='pageSettings'  idMapping='id' allowMultiSorting="allowMultSort"
   parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
   (actionComplete)="dataSourceChanged($event)"
@@ -39,8 +39,8 @@
       [columns]="column"
       (contextMenuOpen)="context($event)" 
       [frozenColumns]="col2Freeze"
-      [enableVirtualization]=true
-      height = "60000"
+      [enableVirtualization] = true
+      height = 70000
       enableStickyHeader="true"
       autoCheckHierarchy='true'
       (beginEdit)="beginEdit($event)"
@@ -50,7 +50,6 @@
       (dataBound)="dataBound($event)"
       (rowDataBound)="rowBound($event)"
       (checkboxChange)="checkboxChange($event)"
-      
   >
     <e-columns>
     <e-column field="id" headerText="Student ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='customAttributes' [lockColumn]="true" [edit]="editparams"></e-column>
@@ -145,7 +144,7 @@
     [target]="targetElement"
     width="300px"
     showCloseIcon="true"
-    [height]="710"
+    [height]=800
     allowDragging='true'
     [position]="pos" 
   >

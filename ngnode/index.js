@@ -14,6 +14,7 @@ app.post('/add-Student',StudentController.store);
 app.delete('/delete-Student/:id',StudentController.delete);
 app.put('/update-Student/:id',StudentController.update);
 app.get('/edit-Student/:id',StudentController.getid);
+app.post('/addNext-Student',StudentController.next);
 const io = require('socket.io')(http, {
   cors: {
     origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001', 'http://192.168.7.136:4001','https://pdptappsensor.elb.cisinlive.com']

@@ -68,13 +68,13 @@ import {
 import { Student } from "./student";
 import { BeforeOpenCloseEventArgs } from "@syncfusion/ej2-angular-inputs";
 import { EmitType } from '@syncfusion/ej2-base';
-import { Query } from '@syncfusion/ej2-data';
+import { Query, DataManager, JsonAdaptor } from '@syncfusion/ej2-data';
 import { Internationalization, isNullOrUndefined } from '@syncfusion/ej2-base';
 import { TreeClipboard } from '@syncfusion/ej2-angular-treegrid';
 import { ClickEventArgs } from '@syncfusion/ej2-angular-navigations';
 import { createSpinner, showSpinner, hideSpinner } from '@syncfusion/ej2-angular-popups';
 import { RowDataBoundEventArgs, BeginEditArgs } from '@syncfusion/ej2-grids';
-import { addClass, removeClass } from '@syncfusion/ej2-base';
+import { addClass, removeClass, loadCldr} from '@syncfusion/ej2-base';
 declare var $: any;
 
 @Component({
@@ -276,19 +276,20 @@ export class AppComponent {
   public selIndex: number[] = [];
   checkB: boolean = false;
   flagg: number = 0;
+  public change:boolean = false;
   /////////////////////////////////
   abc =  null;
 
   constructor(
     private api: ApiService,
-    private http: HttpClient,
     private socketService: SocketioService
   ) {
-    // console.log = function () {};
-   this.imageLoader = true;
+    console.log = function () {};
+      this.imageLoader = true;
       this.api.getAll().subscribe((res: any) => {
-    this.imageLoader = false
-        this.data = res.filter((item: any) => item);
+      this.data = res.filter((item: any) => item);
+      this.imageLoader = false;
+
       })
 
     this.contextMenuSettings = {
@@ -299,10 +300,11 @@ export class AppComponent {
     sessionStorage["closedLastTab"] !== '2' ? 
     sessionStorage["tabID"]=this.call+1 : 
     sessionStorage["tabID"] = this.call++;
-  sessionStorage["closedLastTab"] = '2';
-  $(window).on('unload beforeunload', function() {
-  sessionStorage["closedLastTab"] = '1';
+    sessionStorage["closedLastTab"] = '2';
+    $(window).on('unload beforeunload', function() {
+    sessionStorage["closedLastTab"] = '1';
   });
+  loadCldr(this.data);
   }
 
   ////////////////////////////////////////////===================
@@ -517,7 +519,6 @@ this.contextMenuItems = [
   public dataSourceChanged(
     dataSourceChangedEvent: DataSourceChangedEventArgs
   ): void {
-    console.log("datasourceChanged called???????????????????????",dataSourceChangedEvent)
     if (dataSourceChangedEvent.action === "add") {
       this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
         dataSourceChangedEvent.endEdit;
@@ -781,7 +782,7 @@ clicked(): void {
   });
 
   this.treegrid.refreshColumns();
-  this.treegrid.endEdit;
+  // this.treegrid.endEdit;
   this.ejDialog.hide();
   // this.column[arg.column.index].lock = false;
 }
@@ -941,6 +942,7 @@ addNext() {
 }
 ///////////////add Child
 addChild(args: any) {
+  
   var i;
   var rec: any = [];
   ///////
@@ -967,9 +969,16 @@ addChild(args: any) {
   var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
   this.treeGridObj.addRecord(data, index + 1, "Below"); // as Child
-  // this.treeGridObj.addRecord(data, index - 1, 'Below'); // paste as Child
+  // this.api.addNext(data,index+1).subscribe(()=>{
+  //   console.log("addNext API working or not check first");
+  // })
+  this.treeGridObj.refreshColumns();
   this.treeGridObj.endEdit;
-  
+
+  // this.treeGridObj.addRecord(data, index - 1, 'Below'); // paste as Child
+  // this.treeGridObj.getRowByIndex(index+1) // 
+  // this.treeGridObj.setRowData(index +1, data); //set row at index
+  // this.treeGridObj.setRowData(index+1, data)
   if (args.item.text === "Edit Column") {
     this.checkNewEdit = "edit";
     this.showEditColumn = true;
@@ -988,6 +997,13 @@ addChild(args: any) {
  
   this.ejDialog.hide();
   args.disableRow = false;
+  this.treeGridObj.endEdit;
+  this.treeGridObj.refreshColumns();
+//////////////resultant row after addNext
+var last = this.data.length +1;
+console.log(":batch changes",this.treeGridObj.getBatchChanges());
+$('.e-rowcell .customcss .e-detailrowvisible[role ="gridcell"]').css('background-color','red');
+
 }
 ///////////////edit Row
 editRow() {
@@ -1335,11 +1351,7 @@ contextMenuClick(args: any): void {
         this.checkB = true;
         args.cancel = true;
         $(".e-grid td.e-active").css("background-color", "#f382c4");
-        $(".li#deleterow\.dim").css("background-color", "red");
-        $(".pastenextrow.dim").css("background-color", "red");
-        $(".pastechildrow.dim").css("background-color", "red");
-        $(".deleterow.dim").css("background-color", "red");
-
+        $("li").css("background-color", "red");
         console.log("intervallll");
       } else {
         this.flagg = 1;
@@ -1348,15 +1360,15 @@ contextMenuClick(args: any): void {
     if (this.flagg == 1) {
       this.checkB = false;
       $(".e-grid td.e-active").css("background-color", "#fafafa");
+      $("li").css("background-color", "#fafafa");
+      $(".hidebtn").css("display", "none");
       args.cancel = false;
       console.log("outtttt");
-      $(".customCopy.dim, .pastenextrow.dim, .pastechildrow.dim, .deleterow.dim").css("background-color", "#f08080");
       alert("Not Selected: Failed to lock");
     }
   } else if (args.item.id === "customCopy") {
     this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
     this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
-    // this.selectedRecord.lo
   } else if (args.item.id === "pastenextrow") {
     console.log("move as next");
     // args.cancel = true;  //lock the current row
@@ -1491,32 +1503,38 @@ rowSelected(args: any) {
   var grid = (document.getElementsByClassName("e-grid")[0] as any)
     .ej2_instances[0];
   console.log(grid.getSelectedRecords());
-  var checkbox = args.element.querySelector(".ejs-checkbox");
-  checkbox.checked = !checkbox.checked;
+  // var checkbox = args.element.querySelector(".ejs-checkbox");
+  // checkbox.checked = !checkbox.checked;
   if(args.isChecked){
     $(".e-grid td.e-active").css("background-color", "#f382c4");
+    // args.checkbox.checked = true;
   }
   else{
     $(".e-grid td.e-active").css("background-color", "#fafafa");
+    // args.checkbox.checked = false;
   }
-  // $(".e-grid td.e-active")
-  //   .css("background-color", "#f382c4")
-  //   .setInterval(() => {
-  //     if (this.timeLeft > 0) {
-  //       this.timeLeft--;
-  //       args.cancel = true;
-  //     } else {
-  //       args.cancel = false;
-  //       $(".e-grid td.e-active").css("background-color", "#fafafa");
-  //     }
-  //   }, 3000);
+  $(".e-grid td.e-active")
+    .css("background-color", "#f382c4")
+    .setInterval(() => {
+      if (this.timeLeft > 0) {
+        this.timeLeft--;
+        args.cancel = true;
+      } else {
+        args.cancel = false;
+        $(".e-grid td.e-active").css("background-color", "#fafafa");
+      }
+    }, 3000);
   console.log("timer");
   // alert("Failed. User" + this.ssid + ".Tab" + this.tabID + " occupies Row");
+  console.log("row new generated", args.row.lastIndexOf(this.data.length+1));
+  
+  if(args.row.getAttribute('aria-rowindex') == args.row.lastIndexOf(this.data.length+1)){
+    console.log("resultant ROW+++++++++++++++++++++");
+  }
 }
 
 onColumnClicked(args: any) {
-  var grid = (document.getElementsByClassName("e-grid")[0] as any)
-    .ej2_instances[0];
+  var grid = (document.getElementsByClassName("e-grid")[0] as any).ej2_instances[0];
   console.log("column clicked", grid);
 }
 dataSource(args: any) {
@@ -1576,8 +1594,11 @@ checkboxChange(args: any) {
     count
   );
   alert("changes fetched");
+  this.change = true;
+  console.log("changes ",this.change);
+  
   this.selIndex = this.treeGridObj.getCheckedRowIndexes(); //get the checkedRowIndexes
-  if (args.checked) {
+  if (args.isChecked) {
     setTimeout(() => {
       const checkedRows = this.treegrid.element.querySelectorAll(".e-check");
       Array.from(checkedRows).map((row) => {
@@ -1605,6 +1626,8 @@ checkboxChange(args: any) {
 } 
 }
 dataBound(args: DataBoundEventArgs) {
+  console.log("dataBound check index");
+  
   this.treeGridObj.selectCheckboxes(this.selIndex); //pass the checkedRowIndex on selectCheckbox method on data reload
 }
 click(args: any) {
@@ -1615,19 +1638,20 @@ click(args: any) {
 can: any;
 rowSelectingClick(RowSelectingtArgs: any) {
   console.log("rowClick");
-  // $("li#customCopy\ dim.e-menu-item").css({ "background-color": "green" });
-  // $(".e-menu-item").css({ "background-color": "green" });
-  if (RowSelectingtArgs.target != null) {
+  // $(".e-menu-item").css({ "background-color": "red" });
+  // $("li#deleterow #dim.e-menu-item").css({ "background-color": "yellow" });
+  // $("li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim").css({ "background-color": "lightcoral" });
+  if (RowSelectingtArgs.target == null) {
     if (RowSelectingtArgs.target.classList == "e-frame e-icons") {
-      console.log("rowClick if");
-      $(".e-treegrid td.e-active").css({ "background-color": "#f382c4" });
-      var checkbox = RowSelectingtArgs.element.querySelector(".ejs-checkbox");
-      checkbox.checked = !checkbox.checked;
-      RowSelectingtArgs.checked = true;
-      // $(".e-menu-item[role='menuitem'").css({ "background-color": "yellow" });
-      $(".pastenextrow.light").css({ "background-color": "#f382c4" });
-      $(".pastechildrow.dim").css({ "background-color": "#f382c4" });
-      $(".deleterow.dim").css({ "background-color": "#f382c4" });
+      // console.log("rowClick if");
+      // $(".e-treegrid td.e-active").css({ "background-color": "#f382c4" });
+      // var checkbox = RowSelectingtArgs.element.querySelector(".ejs-checkbox");
+      // checkbox.checked = !checkbox.checked;
+      // RowSelectingtArgs.checked = true;
+      // $("li#deleterow dim.e-menu-item").css({ "background-color": "yellow" });
+      // $(".pastenextrow.light").css({ "background-color": "#f382c4" });
+      // $(".pastechildrow.dim").css({ "background-color": "#f382c4" });
+      // $(".deleterow.dim").css({ "background-color": "#f382c4" });
 
       // alert("Working");
       this.can = RowSelectingtArgs;
@@ -1639,6 +1663,7 @@ rowSelectingClick(RowSelectingtArgs: any) {
           $('.e-row.disableRow.e-altrow[aria-selected="true"]').css({
             "background-color": "#f382c4",
           });
+          console.log("running.....");
         } else {
           RowSelectingtArgs.cancel = false;
           this.checkB = false;
@@ -1657,7 +1682,6 @@ changeHandler(args: any) {
 }
 queryCellInfo(args: any) {
   if (args.column.field == "approved" && args.data.hasChildRecords) {
-    debugger;
     args.cell.closest(".e-templatecell").classList.add("e-custom"); //remove the checkbox for Parentrow by adding Custom class
   }
 }
@@ -1687,5 +1711,22 @@ rowRefresh() {
     treeObj.refreshRow(selectedItem.index);
   }
 }
+
+// searchRowForId(id: number): number {
+//   this.treeGridObj.
+//   const tree = this.treegrid.widget;
+//   const dataRow = tree.model.currentViewData;
+
+//   let rowIdx = -1;
+//   for (let i = 0; i < dataRow.length; ++i) {
+//       if (dataRow[i].id === id) {
+//           rowIdx = i;
+//           break;
+//       }
+//   }
+//   return rowIdx;
+// }
+// alert("row index: " + " " + (args.row as HTMLTableRowElement).getAttribute("aria-rowindex"));
+// alert("column index: " + " " + args.target.closest("td").getAttribute("aria-colindex"));
 }
 

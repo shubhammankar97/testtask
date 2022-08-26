@@ -34,7 +34,12 @@ export class ApiService {
       
   }
 
-
+// Update
+addNext(id: any, data: any){
+  return this.http
+    .put(this.API_URL+'/addNext-Student/'+id, data[0], httpOptions)
+    
+}
 
 
   addRecord(dataSourceChangedEvent: DataSourceChangedEventArgs){
