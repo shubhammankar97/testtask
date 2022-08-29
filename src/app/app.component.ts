@@ -279,16 +279,26 @@ export class AppComponent {
   public change:boolean = false;
   /////////////////////////////////
   abc =  null;
+  filtersLoaded!: Promise<boolean>;
 
   constructor(
     private api: ApiService,
     private socketService: SocketioService
   ) {
-    console.log = function () {};
+    // console.log = function () {};
       this.imageLoader = true;
       this.api.getAll().subscribe((res: any) => {
-      this.data = res.filter((item: any) => item);
+              // this.imageLoader = false;
+      this.data = res.filter((item: any) => item
+      );
       this.imageLoader = false;
+      
+      
+      if(this.data.length){
+        console.log("this", this.data.length);
+           this.imageLoader = false;
+      }
+
 
       })
 
@@ -304,19 +314,20 @@ export class AppComponent {
     $(window).on('unload beforeunload', function() {
     sessionStorage["closedLastTab"] = '1';
   });
-  loadCldr(this.data);
   }
 
   ////////////////////////////////////////////===================
  
  
   ngOnInit(): void {
-
+    this.imageLoader = true;
     this.api.getAllCol().subscribe((res:any)=>{
       console.log("column data",res);
       this.column = res;
+      this.imageLoader = false;
     })
   console.log("column", this.column.field);
+  this.getFiltersSubscription();
   
   this.selectionSettings = { persistSelection: true };
 
@@ -485,6 +496,19 @@ this.contextMenuItems = [
   }
 
 
+
+  getFiltersSubscription(){
+    this.imageLoader = true;
+    this.api.getAllCol().subscribe((res:any)=>{
+      console.log("column data",res);
+
+      this.column = res;
+      // this.imageLoader = false;
+    })
+
+  }
+
+
   actionComplete(args: any) {
     // this.imageLoader = false
     console.log("action complete 1-------------")
@@ -594,20 +618,21 @@ beforeOpen(args: any): void {
 public pos: object = { X: 860, Y: 100 };
 
 select(args: any): void {
-  console.log("select method", args);
+  console.log("select method", args.item.text);
   this.selectitem = args.item.text;
   if (args.item.properties.id == "addCol") {
     console.log("under if cond.");
     // this.column[args.column.index].lock = true;
   }
 
-  if (args.item.text === "Add Column") {
-    if (this.lock) {
-      console.log("message", this.lock);
-      this.column[args.column.index].lock = true;
+  if (args.item.text == "Add Column") {
+    // if (this.lock) {
+      console.log("message", this.lock, this.column);
       // this.lock = true;
       this.start = this.customAttributes;
       setInterval(() => {
+        console.log("werwerwrwrwer");
+        
         if (this.timeLeft > 0) {
           this.timeLeft--;
           console.log("timer start");
@@ -618,15 +643,16 @@ select(args: any): void {
           // this.lock =false;
         }
       }, 1000);
-    } else {
+    // } else {
       console.log("error", this.lock);
 
       alert("Failed to lock Column");
-    }
+    // }
     console.log("add", this.treegrid.getColumnFieldNames());
     console.log("column Field", this.columnField);
 
-    this.showAddColumn = !this.showAddColumn;
+this.showAddColumn = !this.showAddColumn;
+
   }
   if (args.item.text === "Edit Column") {
     console.log("edit");
@@ -687,28 +713,7 @@ startTimer() {
 /////////////////
 context(arg: any) {
   console.log("context arg", arg.selectedRecord);
-  
-  // if (arg.row == "id") {
-  //   console.log("lockColumn runned");
 
-  //   arg.column.lockColumn = true;
-  //   this.columnValue = 1;
-  //   this.columnField = "id";
-  // }
-  // if (arg.column.headerText == "Student Name") {
-  //   this.columnValue = 2;
-  //   this.columnField = "name";
-  // }
-  // if (arg.column.headerText == "Roll Number") {
-  //   this.columnValue = 3;
-
-  //   this.columnField = "roll_no";
-  // }
-  // if (arg.column.headerText == "Class") {
-  //   this.columnValue = 4;
-
-  //   this.columnField = "class";
-  // }
 }
 //dialog///////////////////////////////
 
@@ -981,7 +986,7 @@ addChild(args: any) {
   // this.treeGridObj.setRowData(index+1, data)
   if (args.item.text === "Edit Column") {
     this.checkNewEdit = "edit";
-    this.showEditColumn = true;
+    this.showEditColumn = !this.showEditColumn;
     this.getCurrentField();
   }
   if (args.item.id === "addnext") {
@@ -1073,6 +1078,7 @@ btnclick(args: any) {
   this.hideDialog.bind(args);
   this.ejDialog.hide();
   args.disableRow = false;
+  this.showEditColumn = false
 }
 btnclick3(args: any) {
   this.ejDialog.hide();
@@ -1277,7 +1283,7 @@ contextMenuClick(args: any): void {
 
   if (args.item.id === "editCol") {
     this.checkNewEdit = "edit";
-    this.showEditColumn = true;
+    this.showEditColumn = ! this.showEditColumn;
     this.getCurrentField();
   }
   if (args.event.target.classList.contains("ejs-checkboxspan")) {
@@ -1390,6 +1396,7 @@ cancel() {
   this.student = new Student();
   }
 saveColEdit(args: any) {
+  clearInterval(this.interval);
   console.log("saveColEdit:", args);
   if (this.checkNewEdit == "edit") {
     var catched = false;
@@ -1426,6 +1433,7 @@ saveColEdit(args: any) {
 
     this.treegrid.refreshColumns(true);
     this.textWrap = this.ColChecked;
+    this.showEditColumn = false;
   }
 
   this.showEditColumn = false;
@@ -1638,20 +1646,9 @@ click(args: any) {
 can: any;
 rowSelectingClick(RowSelectingtArgs: any) {
   console.log("rowClick");
-  // $(".e-menu-item").css({ "background-color": "red" });
-  // $("li#deleterow #dim.e-menu-item").css({ "background-color": "yellow" });
-  // $("li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim").css({ "background-color": "lightcoral" });
+ 
   if (RowSelectingtArgs.target == null) {
     if (RowSelectingtArgs.target.classList == "e-frame e-icons") {
-      // console.log("rowClick if");
-      // $(".e-treegrid td.e-active").css({ "background-color": "#f382c4" });
-      // var checkbox = RowSelectingtArgs.element.querySelector(".ejs-checkbox");
-      // checkbox.checked = !checkbox.checked;
-      // RowSelectingtArgs.checked = true;
-      // $("li#deleterow dim.e-menu-item").css({ "background-color": "yellow" });
-      // $(".pastenextrow.light").css({ "background-color": "#f382c4" });
-      // $(".pastechildrow.dim").css({ "background-color": "#f382c4" });
-      // $(".deleterow.dim").css({ "background-color": "#f382c4" });
 
       // alert("Working");
       this.can = RowSelectingtArgs;
@@ -1712,21 +1709,6 @@ rowRefresh() {
   }
 }
 
-// searchRowForId(id: number): number {
-//   this.treeGridObj.
-//   const tree = this.treegrid.widget;
-//   const dataRow = tree.model.currentViewData;
 
-//   let rowIdx = -1;
-//   for (let i = 0; i < dataRow.length; ++i) {
-//       if (dataRow[i].id === id) {
-//           rowIdx = i;
-//           break;
-//       }
-//   }
-//   return rowIdx;
-// }
-// alert("row index: " + " " + (args.row as HTMLTableRowElement).getAttribute("aria-rowindex"));
-// alert("column index: " + " " + args.target.closest("td").getAttribute("aria-colindex"));
 }
 

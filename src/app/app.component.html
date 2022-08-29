@@ -91,6 +91,13 @@
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Column Name</label>
+        <div
+              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
+            >
+              <div class="e-error" *ngIf="ColumnName.errors?.['required']">
+                * Enter Column name
+              </div>
+            </div>
       </div>
     </div>
 
@@ -165,13 +172,13 @@
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Column Name  </label>
-            <!-- <div
+            <div
               *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
             >
-              <div class="e-error" *ngIf="ColumnName.errors.required">
+              <div class="e-error" *ngIf="ColumnName.errors?.['required']">
                 * Enter Column name
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
 
@@ -197,11 +204,6 @@
 
         </div>
 
-        <!-- <div class="form-group" style="padding-top: 11px;"> -->
-          
-        <!-- </div> -->
-        
-
         <div class="form-group" style="padding-top: 11px;" onchange="return FormValidation()">
           <div class="e-float-input">
             <input
@@ -215,6 +217,13 @@
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Default Value</label>
+            <div
+              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
+            >
+              <div class="e-error" *ngIf="ColumnName.errors?.['required']">
+                * Enter Default Value
+              </div>
+            </div>
            
           </div>
         </div>
@@ -231,6 +240,13 @@
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Minimum-Column-Width</label>
+            <div
+              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
+            >
+              <div class="e-error" *ngIf="ColumnName.errors?.['required']">
+                * Enter Minimum-Column-Width
+              </div>
+            </div>
             
           </div>
         </div>
@@ -347,18 +363,10 @@
               name="ColName"
               required
               [(ngModel)]="ColName"
-              #ColumnName="ngModel"
               readonly
             />
             <span class="e-float-line"></span>
             <label class="e-float-text e-label-top required" for="name">Name</label>
-            <div
-              *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
-            >
-              <div class="e-error" *ngIf="ColumnName.errors?.['required']">
-                * Enter Column name
-              </div>
-            </div>
           </div>
         </div>
 
@@ -369,7 +377,6 @@
               name="ColType"
               required
               [(ngModel)]="ColType"
-              #ColumnName="ngModel"
           id="valid" onchange="return FormValidation()"
           readonly
             />
@@ -422,7 +429,6 @@
               name="ColAlign"
               required
               [(ngModel)]="ColAlign"
-              #ColumnName="ngModel"
               readonly
           id="valid" onchange="return FormValidation()"
           />
@@ -477,19 +483,11 @@
           name="ColName"
           required
           [(ngModel)]="ColName"
-          #ColumnName="ngModel"
           id="valid" onchange="return FormValidation()"
           readonly
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Column Name</label>
-        <div
-          *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
-        >
-          <div class="e-error" *ngIf="ColumnName.errors?.['required']">
-            * Enter Column name
-          </div>
-        </div>
       </div>
     </div>
 
@@ -552,11 +550,12 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="470">
       class='form-control'
       id="sclass"
       [(ngModel)]="stuRCId"
-          id="valid" onchange="return FormValidation()"
-          disabled
+      id="valid" onchange="return FormValidation()"
+      disabled
     />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+
   </div>
   <div  *ngIf="i == 1" class="e-float-input">
     <input
@@ -566,10 +565,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="470">
       id="sclass"
       [(ngModel)]="stuRCName"  
       id="valid" onchange="return FormValidation()"
-
+      #StudentClass = "ngModel"
     />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+    <div
+              *ngIf="StudentClass.invalid && (StudentClass.dirty || StudentClass.touched)"
+            >
+              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
+                * Enter student name
+              </div>
+            </div>
   </div>
   <div  *ngIf="i == 2" class="e-float-input">
     <input
@@ -579,9 +585,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="470">
       id="sclass"
       [(ngModel)]="stuRCRoll"       
       id="valid" onchange="return FormValidation()"
+      #StudentClass = "ngModel"
       />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+    <div
+              *ngIf="StudentClass.invalid && (StudentClass.dirty || StudentClass.touched)"
+            >
+              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
+                * Enter roll number
+              </div>
+            </div>
   </div>
   <div  *ngIf="i == 3" class="e-float-input">
     <input
@@ -591,10 +605,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="470">
       id="sclass"
       [(ngModel)]="stuRCClass"
       id="valid" onchange="return FormValidation()"
-
+      #StudentClass = "ngModel"
     />
     <span class="e-float-line"></span>
     <label class="e-float-text e-label-top" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
+    <div
+              *ngIf="StudentClass.invalid && (StudentClass.dirty || StudentClass.touched)"
+            >
+              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
+                * Enter class
+              </div>
+            </div>
   </div>
 </div>
 <!-- ------------------------ -->
@@ -752,9 +773,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         [(ngModel)]="stuNamen"
         class='form-control' 
         id="sname" onchange="return FormValidation()"
+        #StudentName = "ngModel"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Student Name</label>
+        <div
+              *ngIf="StudentName.invalid && (StudentName.dirty || StudentName.touched)"
+            >
+              <div class="e-error" *ngIf="StudentName.errors?.['required']">
+                * Enter student name
+              </div>
+            </div>
       </div>
     </div>
     <div class="form-group" style="padding-top: 11px;">
@@ -766,9 +795,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         [(ngModel)]="stuRolln"
         class='form-control'
         id="sroll"  onchange="return FormValidation()"
+        #StudentRoll = "ngModel"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Roll Number</label>
+        <div
+              *ngIf="StudentRoll.invalid && (StudentRoll.dirty || StudentRoll.touched)"
+            >
+              <div class="e-error" *ngIf="StudentRoll.errors?.['required']">
+                * Enter roll number
+              </div>
+            </div>
       </div>
     </div>
     <div class="form-group" style="padding-top: 11px;">
@@ -780,9 +817,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
         [(ngModel)]="stuClassn"
         class='form-control'
         id="sclass"  onchange="return FormValidation()"
+        #StudentClass = "ngModel"
         />
         <span class="e-float-line"></span>
         <label class="e-float-text e-label-top required" for="name">Class</label>
+        <div
+              *ngIf="StudentClass.invalid && (StudentClass.dirty || StudentClass.touched)"
+            >
+              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
+                * Enter class
+              </div>
+            </div>
       </div>
     </div>
 
@@ -845,9 +890,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          [(ngModel)]="stuCName"
          class='form-control' 
          id="scname" onchange="return FormValidation()"
+         #StudentName = "ngModel"
          />
          <span class="e-float-line"></span>
          <label class="e-float-text e-label-top required" for="name">Student Name</label>
+         <div
+              *ngIf="StudentName.invalid && (StudentName.dirty || StudentName.touched)"
+            >
+              <div class="e-error" *ngIf="StudentName.errors?.['required']">
+                * Enter student name
+              </div>
+            </div>
        </div>
      </div>
      <div class="form-group" style="padding-top: 11px;">
@@ -859,9 +912,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          [(ngModel)]="stuCRoll"
          class='form-control'
          id="scroll"  onchange="return FormValidation()"
+         #StudentRoll = "ngModel"
          />
          <span class="e-float-line"></span>
          <label class="e-float-text e-label-top required" for="name">Roll Number</label>
+         <div
+         *ngIf="StudentRoll.invalid && (StudentRoll.dirty || StudentRoll.touched)"
+       >
+         <div class="e-error" *ngIf="StudentRoll.errors?.['required']">
+           * Enter student roll number
+         </div>
+       </div>
        </div>
      </div>
      <div class="form-group" style="padding-top: 11px;">
@@ -873,9 +934,17 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
          [(ngModel)]="stuCClass"
          class='form-control'
          id="scclass"  onchange="return FormValidation()"
+         #StudentClass = ngModel
          />
          <span class="e-float-line"></span>
          <label class="e-float-text e-label-top required" for="name">Class</label>
+         <div
+              *ngIf="StudentClass.invalid && (StudentClass.dirty || StudentClass.touched)"
+            >
+              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
+                * Enter class
+              </div>
+            </div>
        </div>
      </div>
  
