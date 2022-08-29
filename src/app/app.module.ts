@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TreeGridModule } from '@syncfusion/ej2-angular-treegrid';
+import { TreeGridModule, VirtualScrollService } from '@syncfusion/ej2-angular-treegrid';
 import { PageService, SortService, FilterService } from '@syncfusion/ej2-angular-treegrid';
 import { AppComponent } from './app.component';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
@@ -24,7 +24,6 @@ import { ButtonAllModule } from '@syncfusion/ej2-angular-buttons';
 import { NumericTextBoxAllModule } from '@syncfusion/ej2-angular-inputs';
 import { TreeGridAllModule, ContextMenuService, } from '@syncfusion/ej2-angular-treegrid';
 import { ColorPickerModule } from '@syncfusion/ej2-angular-inputs';
-import { IgxButtonModule,	IgxDialogModule, IgxRippleModule } from "igniteui-angular";
 import { FreezeService } from '@syncfusion/ej2-angular-treegrid';
 
 @NgModule({
@@ -42,7 +41,6 @@ import { FreezeService } from '@syncfusion/ej2-angular-treegrid';
     DropDownListAllModule,
     CheckBoxAllModule,
     ContextMenuModule,
-    IgxTreeGridModule,
     BrowserAnimationsModule, CommonModule,
     DialogModule,
     ColorPickerModule,
@@ -52,9 +50,8 @@ import { FreezeService } from '@syncfusion/ej2-angular-treegrid';
     ToolbarModule, ToolbarAllModule,
     DropDownListModule,
     MultiSelectAllModule,
-    IgxButtonModule,	IgxDialogModule, IgxRippleModule
   ],
-  providers: [ApiService, PageService, SortService, FilterService, SocketioService, FreezeService, ContextMenuService,],
+  providers: [ApiService, PageService, SortService, FilterService, SocketioService, FreezeService, ContextMenuService,VirtualScrollService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -285,18 +285,24 @@ export class AppComponent {
     private api: ApiService,
     private socketService: SocketioService
   ) {
-    // console.log = function () {};
-      this.imageLoader = true;
+    console.log = function () {};
+      // this.imageLoader = true;
+      showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.api.getAll().subscribe((res: any) => {
-              // this.imageLoader = false;
+      showSpinner(document.getElementById("loader-container") as HTMLElement);
+      // this.imageLoader = true;
       this.data = res.filter((item: any) => item
       );
-      this.imageLoader = false;
+      
+
+      // this.imageLoader = false;
       
       
       if(this.data.length){
         console.log("this", this.data.length);
            this.imageLoader = false;
+      hideSpinner(document.getElementById("loader-container") as HTMLElement);
+
       }
 
 
@@ -1220,36 +1226,6 @@ actionBegin(args: any) {
 contextMenuOpen(arg: any): void {
   console.log("CMO", arg);
 
-  console.log("locked.....");
-
-  // arg.disableRow = true;
-  // if (arg.disableRow) {
-  //   console.log("disableRow of contextmenuOpen working", arg.disableRow);
-  //   $(".e-treegrid td.e-active").css({ "background-color": "#f382c4" });
-
-  // } else {
-  //   console.log("Failed disableRow of contextMenuOpen", arg.disableRow);
-    
-  //   alert("Failed to lock Row");
-  // }
-  // arg.column.lockColumn = true;
-  // if (arg.column.field == "name") {
-  //   console.log("inside if", arg.column.field);
-
-  //   this.column[arg.column.index].lock = true;
-  //   this.start = this.customAttributes;
-  // }
-  // if (arg.column.field == "class") {
-  //   console.log("class", arg.column.field);
-  //   this.lock = true;
-  //   this.start = this.customAttributes;
-  // }
-  // if (arg.column.field == "roll_no") {
-  //   console.log("roll", arg.column.field);
-  //   this.lock = true;
-  //   this.start = this.customAttributes;
-  // }
-
   console.log("contextMenuOpen:", arg.column.index);
   this.freezeColId = arg.column.index;
   console.log("freezeColId", this.freezeColId);
@@ -1395,52 +1371,7 @@ cancel() {
   this.ejDialog.close();
   this.student = new Student();
   }
-saveColEdit(args: any) {
-  clearInterval(this.interval);
-  console.log("saveColEdit:", args);
-  if (this.checkNewEdit == "edit") {
-    var catched = false;
 
-    console.log("edit:", this.column);
-
-    this.treegrid.columns.forEach((r: any) => {
-      console.log("R:", r);
-      if (!catched) {
-        console.log("catched:", catched);
-        catched = true;
-        var style = document.createElement("style");
-        style.type = "text/css";
-        style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
-          color:${this.ColFColor};
-        }`;
-        document.body.append(style);
-        this.treegrid.refreshColumns();
-        this.treegrid.refreshColumns(true);
-        this.treegrid.endEdit;
-      }
-
-      if (r.field == this.columnField) {
-        console.log("r.field:", r.field, "columnField:", this.columnField);
-        r.headerText = this.ColName;
-        r.type = this.ColType;
-        r.textAlign = this.ColAlign;
-        r["customAttributes"] = { class: "cssClassaa" };
-        this.treegrid.dataSourceChanged.endEdit;
-        this.treegrid.refreshColumns(true);
-        this.treegrid.endEdit;
-      }
-    });
-
-    this.treegrid.refreshColumns(true);
-    this.textWrap = this.ColChecked;
-    this.showEditColumn = false;
-  }
-
-  this.showEditColumn = false;
-  this.treegrid.endEdit();
-  this.ejDialog.hide();
-  args.disableRow = false;
-}
 public changeFontColor(e: ChangeEventArgs): void {
   this.ColFColor = <string>e.value;
 }
@@ -1511,34 +1442,28 @@ rowSelected(args: any) {
   var grid = (document.getElementsByClassName("e-grid")[0] as any)
     .ej2_instances[0];
   console.log(grid.getSelectedRecords());
-  // var checkbox = args.element.querySelector(".ejs-checkbox");
-  // checkbox.checked = !checkbox.checked;
+
   if(args.isChecked){
-    $(".e-grid td.e-active").css("background-color", "#f382c4");
-    // args.checkbox.checked = true;
-  }
-  else{
-    $(".e-grid td.e-active").css("background-color", "#fafafa");
-    // args.checkbox.checked = false;
-  }
-  $(".e-grid td.e-active")
-    .css("background-color", "#f382c4")
-    .setInterval(() => {
+    setInterval(() => {
       if (this.timeLeft > 0) {
         this.timeLeft--;
         args.cancel = true;
+        $(".e-grid td.e-active").css("background-color", "#f382c4");
+        console.log("timer");
+
       } else {
         args.cancel = false;
         $(".e-grid td.e-active").css("background-color", "#fafafa");
+        alert("Failed. User" + this.ssid + ".Tab" + this.tabID + " occupies Row");
+
       }
     }, 3000);
-  console.log("timer");
-  // alert("Failed. User" + this.ssid + ".Tab" + this.tabID + " occupies Row");
-  console.log("row new generated", args.row.lastIndexOf(this.data.length+1));
-  
-  if(args.row.getAttribute('aria-rowindex') == args.row.lastIndexOf(this.data.length+1)){
-    console.log("resultant ROW+++++++++++++++++++++");
+
   }
+
+    
+  console.log("row new generated", args.row.lastIndexOf(this.data.length+1));
+
 }
 
 onColumnClicked(args: any) {
@@ -1708,7 +1633,43 @@ rowRefresh() {
     treeObj.refreshRow(selectedItem.index);
   }
 }
+public saveColumn(args:any) {
+  console.log('saveColumn:');
+  if (this.checkNewEdit == 'edit') {
+    var catched = false;
 
+    console.log('edit:');
+    this.column.forEach((r:any) => {
+      console.log('R:', r);
+      if (!catched) {
+        console.log('catched:', catched);
+        catched = true;
+        var style = document.createElement('style');
+        // style.type = 'text/css';
+        style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
+          color:${this.ColFColor};
+        }`;
+        document.body.append(style);
+      }
+
+      if (r.field == this.columnField) {
+        console.log('r.field:', r.field, 'columnField:', this.columnField);
+        r.headerText = this.ColName;
+        r.type = this.ColType;
+        r.textAlign = this.ColAlign;
+        r['customAttributes'] = { class: 'cssClassaa' };
+      }
+    });
+
+    this.treegrid.refreshColumns();
+    this.textWrap = this.ColChecked;
+  }
+
+  this.showEditColumn = false;
+  this.treegrid.endEdit();
+  this.ejDialog.hide();
+  args.disableRow = false;
+}
 
 }
 

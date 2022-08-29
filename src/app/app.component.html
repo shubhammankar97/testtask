@@ -1,7 +1,10 @@
-<div class="image-loader" *ngIf="imageLoader">
+<!-- <div class="image-loader" *ngIf="imageLoader">
   <img src="../assets/img/loader.gif" />
-</div>
+</div> -->
+<div id="loader-container" class = "custom-rolling"></div>
 <div class="control-section">
+</div>
+
   <div style="text-align: right; margin-right: 25px; font-weight: 80px">
     <div class="hidebtn" style="text-align: left; font-weight: 80px">
       <span *ngIf="checkB"
@@ -13,12 +16,17 @@
     User{{ ssid }}.Tab{{ tabID }}
   </div>
 
-  <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid 
-  [allowSorting]="true" [pageSettings]='pageSettings'  idMapping='id' allowMultiSorting="allowMultSort"
+  
+  <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' 
   parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
-  (actionComplete)="dataSourceChanged($event)"
-   [selectionSettings]='selectionSettings' [allowSelection]='true'
+  idMapping='id' [columns]="column"
+  [allowSorting]="true"  allowMultiSorting="allowMultSort"
+  [selectionSettings]='selectionSettings' [allowSelection]='true'
   (dataSourceChanged)="dataSourceChanged($event)"
+  [allowFiltering]="allowFilter" [sortSettings]="sortSettings" id='treegridcomp' #treegrid
+  height="1000"
+  enableInfiniteScrolling="true"
+  (actionComplete)="dataSourceChanged($event)"
   (beforeOpen)='beforeOpen($event)'
   itemBeforeEvent={this.itemBeforeEvent.bind(this)}
   (select)="onSelect($event)" 
@@ -28,7 +36,7 @@
       (contextMenuClick)="contextMenuClick($event)"
       [allowReordering]='true'
       [allowResizing]='true' 
-      (actionComplete)='actionComplete($event)'
+      (actionComplete)='actionComplete($event)' 
       [allowRowDragAndDrop]='true'
       (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
       childMapping='Crew'
@@ -36,16 +44,10 @@
       [showColumnChooser]='true' 
       (columnMenuClick)="onColumnClicked($event)"
       [editSettings]="editSetting1"
-      [columns]="column"
       (contextMenuOpen)="context($event)" 
       [frozenColumns]="col2Freeze"
-      [enableVirtualization] = true
-      height = 70000
-      enableStickyHeader="true"
-      autoCheckHierarchy='true'
       (beginEdit)="beginEdit($event)"
       (rowSelected)="rowSelected($event)"
-      enablePersistence="true"
       (rowSelecting)="rowSelectingClick($event)"
       (dataBound)="dataBound($event)"
       (rowDataBound)="rowBound($event)"
@@ -320,9 +322,10 @@
         <button
           id="Button1"
           class="e-control e-btn e-primary e-flat"
-          (click)="saveColEdit($event)"
+          (click)="saveColumn($event)"
           data-ripple="true"
         >
+
           <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Save
         </button>
         <button
