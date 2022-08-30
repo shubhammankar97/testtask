@@ -52,15 +52,21 @@
       (dataBound)="dataBound($event)"
       (rowDataBound)="rowBound($event)"
       (checkboxChange)="checkboxChange($event)"
+
+
   >
+  <!-- 
+      (actionComplete)="complete($event)"
+
+   -->
     <e-columns>
-    <e-column field="id" headerText="Student ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='customAttributes' [lockColumn]="true" [edit]="editparams"></e-column>
+    <e-column field="id" headerText="Student ID" textAlign='Centre' [isPrimaryKey]="true" type="number" [customAttributes]='offCustom' [lockColumn]="isLock" [edit]="editparams"></e-column>
     <e-column field='name' id="name" headerText='Student Name' textAlign='Left' [validationRules]='studentnamerules' [edit]="editparams" [showCheckbox]="showChooseRow"></e-column>
     <e-column field='roll_no' headerText='Roll Number' textAlign='Left' type="number" [validationRules]='studentidrules' [edit]="editparams"></e-column>
     <e-column field='class' headerText='Class' textAlign='Left' [filterBarTemplate]="filterBarTemplate" [validationRules]='studentidrules' [edit]="editparams"></e-column>
     <div *ngFor="let item of column">
       <e-column [field]="item.field" [headerText]="item.field" [width]="item.width" 
-      [type]="typeCheck(item.type)" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [customAttributes]='start' [lockColumn]="lock"
+      [type]="item.type" [edit]="editparams" textAlign="Left" [validationRules]="item.validation" [customAttributes]='start' [lockColumn]="lock"
       [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null" [isFrozen]="true"></e-column>
     </div>
     </e-columns>
@@ -153,7 +159,7 @@
     [target]="targetElement"
     width="300px"
     showCloseIcon="true"
-    [height]=800
+    [height]=700
     allowDragging='true'
     [position]="pos" 
   >
@@ -246,7 +252,7 @@
               *ngIf="ColumnName.invalid && (ColumnName.dirty || ColumnName.touched)"
             >
               <div class="e-error" *ngIf="ColumnName.errors?.['required']">
-                * Enter Minimum-Column-Width
+                * Minimum column width is required
               </div>
             </div>
             

@@ -272,11 +272,12 @@ export class AppComponent {
   ssid:any = Math.floor(Math.random() * 10);
   tabID:any =1;
   start:any;
-  isLock:boolean =false;
+  isLock:boolean =true;
   public selIndex: number[] = [];
   checkB: boolean = false;
   flagg: number = 0;
   public change:boolean = false;
+  public offCustom:any;
   /////////////////////////////////
   abc =  null;
   filtersLoaded!: Promise<boolean>;
@@ -286,6 +287,7 @@ export class AppComponent {
     private socketService: SocketioService
   ) {
     console.log = function () {};
+      this.offCustom = this.customAttributes;
       // this.imageLoader = true;
       showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.api.getAll().subscribe((res: any) => {
@@ -293,10 +295,8 @@ export class AppComponent {
       // this.imageLoader = true;
       this.data = res.filter((item: any) => item
       );
-      
 
       // this.imageLoader = false;
-      
       
       if(this.data.length){
         console.log("this", this.data.length);
@@ -304,8 +304,6 @@ export class AppComponent {
       hideSpinner(document.getElementById("loader-container") as HTMLElement);
 
       }
-
-
       })
 
     this.contextMenuSettings = {
@@ -438,9 +436,10 @@ this.contextMenuItems = [
     ];
 
     this.d3data = [
-      { id: "right", type: "Right" },
       { id: "left", type: "Left" },
-      { id: "Center", type: "Center" },
+      { id: "center", type: "Center" },
+      { id: "right", type: "Right" },
+      { id: "justify", type: "Justify" },
     ];
 
     this.fields = { text: "type", value: "id" };
@@ -632,9 +631,10 @@ select(args: any): void {
   }
 
   if (args.item.text == "Add Column") {
-    // if (this.lock) {
-      console.log("message", this.lock, this.column);
-      // this.lock = true;
+      this.isLock = false;
+      this.offCustom = "";
+      console.log("message", this.lock, args);
+      this.lock = true;
       this.start = this.customAttributes;
       setInterval(() => {
         console.log("werwerwrwrwer");
@@ -646,26 +646,29 @@ select(args: any): void {
           this.ejDialog.hide();
           args.disableRow = false;
           this.column[args.column.index].lock = false;
-          // this.lock =false;
+          this.lock =false;
         }
       }, 1000);
-    // } else {
-      console.log("error", this.lock);
-
       alert("Failed to lock Column");
-    // }
-    console.log("add", this.treegrid.getColumnFieldNames());
-    console.log("column Field", this.columnField);
+
+      console.log("error", this.lock);
+      console.log("add", this.treegrid.getColumnFieldNames());
+      console.log("column Field", this.columnField);
 
 this.showAddColumn = !this.showAddColumn;
 
   }
+  this.isLock = true;
   if (args.item.text === "Edit Column") {
     console.log("edit");
     this.showEditColumn = !this.showEditColumn;
     this.checkNewEdit = "edit";
     this.getCurrentField();
     this.startTimer();
+    this.isLock = false;
+    this.offCustom = "";
+    this.lock =true;
+    this.start = this.customAttributes;
   }
   if (args.item.text === "View Column") {
     console.log("view");
@@ -683,8 +686,8 @@ this.showAddColumn = !this.showAddColumn;
   if (args.item.text === "Freeze Column") {
     console.log("Freeze", args);
     console.log("ID freeze", this.freezeColId);
-    this.treegrid.enableVirtualization = false;
-    this.treegrid.enableInfiniteScrolling = true;
+    this.treegrid.enableVirtualization = true;
+    this.treegrid.enableInfiniteScrolling = false;
     // this.treegrid.frozenColumns = this.freezeColId.index;
     if (this.column.id == this.freezeColId) {
       console.log("under freeze IF");
@@ -1459,10 +1462,7 @@ rowSelected(args: any) {
       }
     }, 3000);
 
-  }
-
-    
-  console.log("row new generated", args.row.lastIndexOf(this.data.length+1));
+  } 
 
 }
 
@@ -1486,13 +1486,6 @@ ngAfterViewInit() {
 
 }
 
-typeCheck(arg: any) {
-  if (arg.field === "checkbox") {
-    return (arg.validation.required = true);
-  } else {
-    return arg.type;
-  }
-}
 
 FormValidation(): any {
   // First Name Validation
@@ -1602,11 +1595,7 @@ rowSelectingClick(RowSelectingtArgs: any) {
 changeHandler(args: any) {
   alert("Change event triggered");
 }
-queryCellInfo(args: any) {
-  if (args.column.field == "approved" && args.data.hasChildRecords) {
-    args.cell.closest(".e-templatecell").classList.add("e-custom"); //remove the checkbox for Parentrow by adding Custom class
-  }
-}
+
 rowSelecting(args: any) {
   console.log("rowSelecting");
 }
@@ -1649,6 +1638,8 @@ public saveColumn(args:any) {
         style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
           color:${this.ColFColor};
         }`;
+        console.log("bg",style);
+        
         document.body.append(style);
       }
 
@@ -1670,6 +1661,43 @@ public saveColumn(args:any) {
   this.ejDialog.hide();
   args.disableRow = false;
 }
+
+complete(args:any) {
+
+  if (args.requestType == 'save') {
+
+     //Add the background color
+
+    var selected_rowInfo = this.treegrid.getSelectedRows()[0]; // get the moved record row info
+
+    selected_rowInfo.classList.add('newclass_add'); // add the background color
+
+
+
+// Remove the background color
+
+    setTimeout(() => {
+
+      if (
+
+        !isNullOrUndefined(
+
+          selected_rowInfo.classList.contains('newclass_add')
+
+        )
+
+      ) {
+
+        selected_rowInfo.classList.remove('newclass_add'); // remove the background color
+
+      }
+
+    }, 10000);
+
+  }
+
+}
+
 
 }
 
