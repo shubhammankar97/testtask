@@ -335,7 +335,7 @@ background-color: coral;
 /////////////////////////////////////////////
 .bgcolor td{
 
-background-color: rgb(219, 97, 97) !important;
+background-color: #f382c4 !important;
 
 color: white !important;
 
@@ -377,7 +377,14 @@ height: 2em;
   height: 50px;
 }
 
-.e-treegrid .e-headercell.cssClassaa .e-headertext{
+.e-treegrid .e-headercell.cssClassaa{
   background-color: var(ColBColor); 
           color: var(ColFColor);
+}
+.e-headercell.cssClassaa{
+  background-color: var(ColBColor);
+  color: var(ColFColor);
+}
+.headerText{
+  background-color: #ff0000 !important;
 }

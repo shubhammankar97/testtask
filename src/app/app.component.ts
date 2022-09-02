@@ -516,12 +516,15 @@ this.contextMenuItems = [
 
   actionComplete(args: any) {
     // this.imageLoader = false
-    console.log("action complete 1-------------")
+    console.log("action complete 1-------------");
     if (args.requestType == "save") {
       var index = args.index;
+      console.log("indexxxx", index);
+      
       this.treegrid.selectRow(index); // select the newly added row to scroll to it
-      console.log("action complete 2")
-}
+      console.log("action complete!!!", this.treegrid.selectRow(index));  
+      
+    }
     if (args.requestType === "beginEdit" || args.requestType === "add") {
       const dialog = args.dialog as Dialog;
       let getVal = args;
@@ -532,6 +535,7 @@ this.contextMenuItems = [
       // dialog.header = args.requestType === 'beginEdit' ? 'Record of ' + args.rowData[TaskName] : 'New Customer';
       
     }
+    
     if(args.requestType == "refreshDataSource"){ 
        console.log("check--------->",this.treegrid.getCurrentViewRecords);
    } 
@@ -686,13 +690,14 @@ this.showAddColumn = !this.showAddColumn;
   if (args.item.text === "Freeze Column") {
     console.log("Freeze", args);
     console.log("ID freeze", this.freezeColId);
-    this.treegrid.enableVirtualization = true;
+    // this.treegrid.enableVirtualization = true;
     this.treegrid.enableInfiniteScrolling = false;
     // this.treegrid.frozenColumns = this.freezeColId.index;
     if (this.column.id == this.freezeColId) {
       console.log("under freeze IF");
 
       this.column.allowFreezing = true;
+      this.column.ColMinWidth = 70;
     }
     this.column.freeze = "Left";
     this.col2Freeze = this.freezeColId;
@@ -700,6 +705,7 @@ this.showAddColumn = !this.showAddColumn;
   if (args.item.text === "Filter Column") {
     console.log("Filter");
     this.allowFilter = !this.allowFilter;
+    this.treeGridObj.selectCheckboxes;
   }
   if (args.item.text === "Multisort Column") {
     console.log("Multisort");
@@ -929,7 +935,8 @@ public dataStateChange(
   });
 }
 ////////Add Next
-addNext() {
+
+addNext(dataSourceChangedEvent: DataSourceChangedEventArgs): void  {
   console.log("row Index", this.rowIndex);
 
   console.log(this.stuRCName, "this.stuCName");
@@ -943,7 +950,11 @@ addNext() {
   };
   this.stuRCId = this.data.length + 1;
   console.log("data child", data);
-
+  if (dataSourceChangedEvent.action === "add") {
+    this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
+      dataSourceChangedEvent.endEdit;
+    });
+  }
   this.treegrid.addRecord(data, this.rowIndex, "Below"); //aadd record use can add row top orbelow using new row position
   this.data.splice(this.rowIndex, 0, data);
   this.api.addData(data).subscribe(() => {
@@ -983,9 +994,9 @@ addChild(args: any) {
   var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
   this.treeGridObj.addRecord(data, index + 1, "Below"); // as Child
-  // this.api.addNext(data,index+1).subscribe(()=>{
-  //   console.log("addNext API working or not check first");
-  // })
+  this.api.addNext(data,index+1).subscribe(()=>{
+    console.log("addNext API working or not check first");
+  })
   this.treeGridObj.refreshColumns();
   this.treeGridObj.endEdit;
 
@@ -1170,12 +1181,9 @@ onAddRecord(args: any) {
   console.log("data child", dataC);
 
   this.treeGridObj.addRecord(dataC, this.rowIndex, "Child"); //add child row
-
   this.treeGridObj.endEdit;
-  this.treeGridObj.refresh();
   this.ejDialog.hide();
   args.disableRow = false;
- 
 }
 validation(args: any) {
   this.treegrid.endEdit();
@@ -1185,7 +1193,11 @@ actioncomplete(args: any) {
   console.log("action complete");
   if (args.requestType == "save") {
     var index = args.index;
+    console.log("indexxxx", index);
+    
     this.treegrid.selectRow(index); // select the newly added row to scroll to it
+    console.log("action complete!!!", this.treegrid.selectRow(index));
+    
   }
 }
 
@@ -1519,7 +1531,7 @@ checkboxChange(args: any) {
     "method called................................................................................",
     count
   );
-  alert("changes fetched");
+  // alert("changes fetched");
   this.change = true;
   console.log("changes ",this.change);
   
@@ -1541,15 +1553,16 @@ checkboxChange(args: any) {
       });
     }, 0);
   }
-  if (args.isChecked) { 
-    alert("checkbox has been checked"); 
+  if (this.change == true) { 
+    // alert("checkbox has been checked"); 
     console.log("alert checkbox checked");
     $(".e-treegrid td.e-active").css({ "background-color": "#f382c4" });
 } else { 
-    alert("checkbox has been unchecked"); 
+    // alert("checkbox has been unchecked"); 
     console.log("alert checkbox Unchecked");
     $(".e-treegrid td.e-active").css({ "background-color": "lightgrey" });
 } 
+    this.change = false
 }
 dataBound(args: DataBoundEventArgs) {
   console.log("dataBound check index");
@@ -1634,13 +1647,14 @@ public saveColumn(args:any) {
         console.log('catched:', catched);
         catched = true;
         var style = document.createElement('style');
-        // style.type = 'text/css';
+        style.type = 'text/css';
         style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
           color:${this.ColFColor};
         }`;
         console.log("bg",style);
         
         document.body.append(style);
+        // $('.e-headertext').css('background-color', this.ColBColor)
       }
 
       if (r.field == this.columnField) {
@@ -1648,7 +1662,7 @@ public saveColumn(args:any) {
         r.headerText = this.ColName;
         r.type = this.ColType;
         r.textAlign = this.ColAlign;
-        r['customAttributes'] = { class: 'cssClassaa' };
+        r.start = { class: 'cssClassaa' };
       }
     });
 
@@ -1689,6 +1703,8 @@ complete(args:any) {
       ) {
 
         selected_rowInfo.classList.remove('newclass_add'); // remove the background color
+        $('newclass_add').css('background-color', '#39becf');
+
 
       }
 
