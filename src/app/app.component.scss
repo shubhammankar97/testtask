@@ -340,6 +340,11 @@ background-color: #f382c4 !important;
 color: white !important;
 
 }
+.bgcolorback td{
+  background-color: lightgrey !important;
+
+  color: black !important;  
+}
 .e-treegrid .e-row {
 height: 2em;
 }
@@ -377,7 +382,7 @@ height: 2em;
   height: 50px;
 }
 
-.e-treegrid .e-headercell.cssClassaa{
+.e-treegrid .e-headercell.cssClassaa{ 
   background-color: var(ColBColor); 
           color: var(ColFColor);
 }
@@ -387,4 +392,27 @@ height: 2em;
 }
 .headerText{
   background-color: #ff0000 !important;
+}
+.newclass_add{
+  background-color: #85dffa;
+}
+// .disableRow{
+//   background-color: #85dffa;  
+// }
+.e-row .e-altrow .disableRow{
+  background-color: #85dffa;
+}
+
+.e-row .e-altrow .disableRow {
+  background-color: lightblue!important;
+}
+.resultRow{
+  background-color: lightblue;
+}
+.ejs-treegrid{
+  background-color: rgb(177, 168, 168);
+}
+.bgcolorback td{
+  background-color: lightgrey;
+  color: black;
 }

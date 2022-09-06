@@ -75,6 +75,7 @@ import { ClickEventArgs } from '@syncfusion/ej2-angular-navigations';
 import { createSpinner, showSpinner, hideSpinner } from '@syncfusion/ej2-angular-popups';
 import { RowDataBoundEventArgs, BeginEditArgs } from '@syncfusion/ej2-grids';
 import { addClass, removeClass, loadCldr} from '@syncfusion/ej2-base';
+import { interval } from "rxjs";
 declare var $: any;
 
 @Component({
@@ -106,11 +107,11 @@ export class AppComponent {
   public sortSettings!: SortSettingsModel;
   public pageSettings!: PageSettingsModel;
   public editSettings!: EditSettingsModel;
-  public selectionSettings!: SelectionSettingsModel;
+  // public selectionSettings!: SelectionSettingsModel;
   public toolbar!: string[];
 
   public editOptions!: Object;
-  public selectionOptions!: object;
+  public selectionOptions!: object;;
   public contextMenuSettings: any;
 
   @ViewChild("treegrid")
@@ -278,6 +279,8 @@ export class AppComponent {
   flagg: number = 0;
   public change:boolean = false;
   public offCustom:any;
+  public previouSelected:any = -1;
+  public close:boolean = false;
   /////////////////////////////////
   abc =  null;
   filtersLoaded!: Promise<boolean>;
@@ -288,18 +291,17 @@ export class AppComponent {
   ) {
     console.log = function () {};
       this.offCustom = this.customAttributes;
-      // this.imageLoader = true;
+      this.imageLoader = true;
       showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.api.getAll().subscribe((res: any) => {
       showSpinner(document.getElementById("loader-container") as HTMLElement);
-      // this.imageLoader = true;
+      this.imageLoader = true;
       this.data = res.filter((item: any) => item
       );
 
-      // this.imageLoader = false;
+      this.imageLoader = false;
       
-      if(this.data.length){
-        console.log("this", this.data.length);
+      if(this.data.length){ 
            this.imageLoader = false;
       hideSpinner(document.getElementById("loader-container") as HTMLElement);
 
@@ -326,15 +328,12 @@ export class AppComponent {
   ngOnInit(): void {
     this.imageLoader = true;
     this.api.getAllCol().subscribe((res:any)=>{
-      console.log("column data",res);
       this.column = res;
       this.imageLoader = false;
     })
-  console.log("column", this.column.field);
+  console.log("column", this.column);
   this.getFiltersSubscription();
   
-  this.selectionSettings = { persistSelection: true };
-
     this.editSettings = {
       allowAdding: true,
       allowEditing: true,
@@ -357,16 +356,13 @@ export class AppComponent {
     this.dropEditSettings = { allowEditing: true, allowAdding: true };
     this.selectionOptions = {
       cellSelectionMode: "Box",
-      type: "Multiple",
-      mode: "dialog",
-      rowSelecting: true,
+      type: "Multiple",    
       allowColumnSelection:true
     };
     this.studentidrules = { required: true, max: 150000 };
     this.studentnamerules = { required: true };
     this.customAttributes = { class: "customcss" };
 
-    this.selectionSettings = { type: "Multiple" };
     this.socketService.setupSocketConnection();
 
 
@@ -500,12 +496,13 @@ this.contextMenuItems = [
 
   }
 
-
+  // public value:number = 20; 
+  // public static Pkey:any
+  // public Task:any;
 
   getFiltersSubscription(){
     this.imageLoader = true;
     this.api.getAllCol().subscribe((res:any)=>{
-      console.log("column data",res);
 
       this.column = res;
       // this.imageLoader = false;
@@ -514,18 +511,22 @@ this.contextMenuItems = [
   }
 
 
-  actionComplete(args: any) {
+  public async actionComplete(args:any) {
     // this.imageLoader = false
     console.log("action complete 1-------------");
     if (args.requestType == "save") {
-      var index = args.index;
+      console.log("Save Clicked");
+
+      var index:number = args.index.id;
       console.log("indexxxx", index);
-      
-      this.treegrid.selectRow(index); // select the newly added row to scroll to it
-      console.log("action complete!!!", this.treegrid.selectRow(index));  
+      console.log("args.data",args.data.id)
+      this.treegrid.selectRow(index+1); // select the newly added row to scroll to it
+      console.log("action complete!!!", this.treegrid.selectRow(index+1));  
       
     }
     if (args.requestType === "beginEdit" || args.requestType === "add") {
+      console.log("beginEdit");
+      
       const dialog = args.dialog as Dialog;
       let getVal = args;
       const TaskName = "TaskName";
@@ -539,6 +540,35 @@ this.contextMenuItems = [
     if(args.requestType == "refreshDataSource"){ 
        console.log("check--------->",this.treegrid.getCurrentViewRecords);
    } 
+   if (args.requestType == 'save') {
+console.log("action ADDD");
+var a = this.treeGridObj.selectRow(args.index, true);
+
+    //Add the background color
+
+   var selected_rowInfo = this.treegrid.getSelectedRows()[0]; // get the moved record row info
+
+   selected_rowInfo.classList.add('newclass_add'); // add the background color
+   setInterval(()=>{
+     if(this.timeLeft > 0){
+      $('.newclass_add').css('background-color', '#85dffa');
+
+     }
+     else{
+       this.flagg = 1;
+     }
+
+   })
+   if(this.flagg == 1){
+    this.stop();
+    $('.newclass_add').css('background-color', '#fafafa');
+   }
+  //  $('.e-row .e-altrow .disableRow').css('background-color', '#85dffa');
+
+console.log("", this.data); 
+
+
+ }
     
   }
 
@@ -642,24 +672,32 @@ select(args: any): void {
       this.start = this.customAttributes;
       setInterval(() => {
         console.log("werwerwrwrwer");
-        
+      if(this.close !== true){
         if (this.timeLeft > 0) {
-          this.timeLeft--;
-          console.log("timer start");
-        } else {
-          this.ejDialog.hide();
-          args.disableRow = false;
-          this.column[args.column.index].lock = false;
-          this.lock =false;
+            this.timeLeft--;
+            console.log("timer start");
+        console.log("close if out");
+        
+        }} else {
+          this.flagg = 1;
+          
         }
       }, 1000);
+      if(this.flagg == 1){
+        this.stop();
+        this.ejDialog.hide();
+        console.log("{{", this.ejDialog.hide());
+        args.disableRow = false;
+        // this.column[args.column.index].lock = false;
+        this.lock =false;
+      }
       alert("Failed to lock Column");
 
       console.log("error", this.lock);
       console.log("add", this.treegrid.getColumnFieldNames());
       console.log("column Field", this.columnField);
 
-this.showAddColumn = !this.showAddColumn;
+      this.showAddColumn = !this.showAddColumn;
 
   }
   this.isLock = true;
@@ -718,11 +756,13 @@ startTimer() {
     if (this.timeLeft > 0) {
       this.timeLeft--;
     } else {
-      this.ejDialog.hide();
-
-      // this.timeLeft = 30;
+      this.flagg = 1;
     }
   }, 1000);
+  if(this.flagg == 1){
+    this.stop();
+    this.ejDialog.hide();
+  }
 }
 
 /////////////////
@@ -876,8 +916,12 @@ onSelect(args: any) {
         this.timeLeft--;
         this.selectedRecord;
       } else {
+        this.flagg = 1;
       }
     }, 1000);
+    if(this.flagg == 1){
+      this.stop();
+    }
   }
 
   if (args.item.text === "Copy As Child") {
@@ -994,16 +1038,14 @@ addChild(args: any) {
   var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
   this.treeGridObj.addRecord(data, index + 1, "Below"); // as Child
+  this.treegrid.saveCell();
   this.api.addNext(data,index+1).subscribe(()=>{
     console.log("addNext API working or not check first");
   })
   this.treeGridObj.refreshColumns();
   this.treeGridObj.endEdit;
 
-  // this.treeGridObj.addRecord(data, index - 1, 'Below'); // paste as Child
-  // this.treeGridObj.getRowByIndex(index+1) // 
-  // this.treeGridObj.setRowData(index +1, data); //set row at index
-  // this.treeGridObj.setRowData(index+1, data)
+
   if (args.item.text === "Edit Column") {
     this.checkNewEdit = "edit";
     this.showEditColumn = !this.showEditColumn;
@@ -1098,11 +1140,15 @@ btnclick(args: any) {
   this.hideDialog.bind(args);
   this.ejDialog.hide();
   args.disableRow = false;
-  this.showEditColumn = false
+  this.showEditColumn = false;
+  this.stop();
 }
 btnclick3(args: any) {
+  this.close = true;
+  this.stop();
   this.ejDialog.hide();
   this.hideDialog3.bind(args);
+ 
 }
 
 ////////////row drag and drop
@@ -1303,6 +1349,8 @@ contextMenuClick(args: any): void {
   var selectedRecord = this.selectedRecord;
   if (args.item.id === "addnextrow") {
     this.showAddNext = true;
+    args.cancel = true;
+    args.disabled = true;
     this.startTimer();
     console.log("data", data.id);
     this.stuRCId = this.data.length + 1;
@@ -1312,6 +1360,8 @@ contextMenuClick(args: any): void {
     // this.treeGridObj.addRecord(data, this.rowIndex, 'Top'); //aadd record use can add row top orbelow using new row position
   } else if (args.item.id === "addchildrow") {
     console.log("adding child");
+    args.cancel = true;
+
     this.startTimer();
     this.showAddchild = true;
     this.stuCId = this.data.length + 1;
@@ -1323,9 +1373,11 @@ contextMenuClick(args: any): void {
     this.stuRCId = this.data.length + 1;
     this.treeGridObj.deleteRecord("id", selectedRecord); // delete the selected row
     this.treeGridObj.endEdit();
+    
   } else if (args.item.id === "editrow") {
     console.log("edit row");
     this.showEditRow = true;
+    args.cancel = true;
     this.stuRCId = this.data.length + 1;
     this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
     console.log("edit rowwww", this.selectedRecord);
@@ -1335,34 +1387,13 @@ contextMenuClick(args: any): void {
     this.startTimer();
   } else if (args.item.id === "multiselectrow") {
     console.log("select mult");
-    //  $(".e-treegrid td.e-active").css.background ='#f382c4';
     this.showChooseRow = true;
     this.treeGridObj.selectionSettings.type = "Multiple"; //enable multiselection
 
     this.treeGridObj.refreshColumns();
     this.treeGridObj.endEdit();
 
-    setInterval(() => {
-      if (this.timeLeft > 0) {
-        this.timeLeft--;
-        this.checkB = true;
-        args.cancel = true;
-        $(".e-grid td.e-active").css("background-color", "#f382c4");
-        $("li").css("background-color", "red");
-        console.log("intervallll");
-      } else {
-        this.flagg = 1;
-      }
-    }, 3000);
-    if (this.flagg == 1) {
-      this.checkB = false;
-      $(".e-grid td.e-active").css("background-color", "#fafafa");
-      $("li").css("background-color", "#fafafa");
-      $(".hidebtn").css("display", "none");
-      args.cancel = false;
-      console.log("outtttt");
-      alert("Not Selected: Failed to lock");
-    }
+    
   } else if (args.item.id === "customCopy") {
     this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
     this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
@@ -1453,28 +1484,7 @@ showEditor(cell: any) {
 
 rowSelected(args: any) {
   console.log("rowSelected on active setInterval..........");
-  
-  var grid = (document.getElementsByClassName("e-grid")[0] as any)
-    .ej2_instances[0];
-  console.log(grid.getSelectedRecords());
 
-  if(args.isChecked){
-    setInterval(() => {
-      if (this.timeLeft > 0) {
-        this.timeLeft--;
-        args.cancel = true;
-        $(".e-grid td.e-active").css("background-color", "#f382c4");
-        console.log("timer");
-
-      } else {
-        args.cancel = false;
-        $(".e-grid td.e-active").css("background-color", "#fafafa");
-        alert("Failed. User" + this.ssid + ".Tab" + this.tabID + " occupies Row");
-
-      }
-    }, 3000);
-
-  } 
 
 }
 
@@ -1499,34 +1509,9 @@ ngAfterViewInit() {
 }
 
 
-FormValidation(): any {
-  // First Name Validation
-  var fn = $(document).getElementById("firstname").value!;
-  if (fn == "") {
-    alert("Please Enter First Name");
-    $(document).getElementById("firstname").style.borderColor = "red";
-    return false;
-  } else {
-    $(document).getElementById("firstname").style.borderColor = "green";
-  }
-  if (/^[0-9]+$/.test($(document).getElementById("firstname").value)) {
-    alert("First Name Contains Numbers!");
-    $(document).getElementById("firstname").style.borderColor = "red";
-    return false;
-  } else {
-    $(document).getElementById("firstname").style.borderColor = "green";
-  }
-  if (fn.length <= 2) {
-    alert("Your Name is To Short");
-    $(document).getElementById("firstname").style.borderColor = "red";
-    return false;
-  } else {
-    $(document).getElementById("firstname").style.borderColor = "green";
-  }
-}
-
 checkboxChange(args: any) {
   let count = 0;
+  this.flagg = 0;
   console.log(
     "method called................................................................................",
     count
@@ -1534,34 +1519,48 @@ checkboxChange(args: any) {
   // alert("changes fetched");
   this.change = true;
   console.log("changes ",this.change);
-  
+  this.timeLeft = 30;
   this.selIndex = this.treeGridObj.getCheckedRowIndexes(); //get the checkedRowIndexes
-  if (args.isChecked) {
-    setTimeout(() => {
+  // if(args.target.classList === "e-frame e-icons e-check"){
+    console.log("e-frame e-icons");
+    this.checkB = true;
+    setInterval(() => {
+      if(this.timeLeft > 0){
+        this.timeLeft--;
       const checkedRows = this.treegrid.element.querySelectorAll(".e-check");
       Array.from(checkedRows).map((row) => {
         row?.closest("tr")?.classList.add("bgcolor");
       });
-    }, 0);
-  } else {
-    setTimeout(() => {
-      const coloredRows = this.treegrid.element.querySelectorAll(".bgcolor");
-      Array.from(coloredRows).map((row) => {
-        if (row.querySelector(".e-uncheck") || row.querySelector(".e-stop")) {
-          row.classList.remove("bgcolor");
-        }
-      });
-    }, 0);
-  }
-  if (this.change == true) { 
-    // alert("checkbox has been checked"); 
-    console.log("alert checkbox checked");
-    $(".e-treegrid td.e-active").css({ "background-color": "#f382c4" });
-} else { 
-    // alert("checkbox has been unchecked"); 
-    console.log("alert checkbox Unchecked");
-    $(".e-treegrid td.e-active").css({ "background-color": "lightgrey" });
-} 
+      }
+      else{
+        this.flagg = 1;
+
+        // $(".e-grid td.e-active").css("background-color", "#fafafa")
+        // $('.bgcolor').css("background-color", "#fafafa")
+      }
+  
+  }, 600)
+
+  
+// }
+if(this.flagg === 1){
+  this.checkB = false;
+  alert("Failed to Lock : Row");
+  $(".bgcolor td").css("background-color", "#fafafa");
+  $(".e-row .disableRow .e-altrow .bgcolor td").css("background-color", "#fafafa");
+  this.ejDialog.hide();
+
+  const coloredRows = this.treegrid.element.querySelectorAll("e-frame e-icons");
+    Array.from(coloredRows).map((row) => {
+      if (row.querySelector("e-frame e-icons")) {  
+        row?.closest("tr")?.classList.add("bgcolorback");
+
+      }
+})
+  this.ejDialog.hide();
+
+}
+ 
     this.change = false
 }
 dataBound(args: DataBoundEventArgs) {
@@ -1575,35 +1574,9 @@ click(args: any) {
 }
 
 can: any;
-rowSelectingClick(RowSelectingtArgs: any) {
-  console.log("rowClick");
- 
-  if (RowSelectingtArgs.target == null) {
-    if (RowSelectingtArgs.target.classList == "e-frame e-icons") {
-
-      // alert("Working");
-      this.can = RowSelectingtArgs;
-      RowSelectingtArgs.cancel = true;
-      setInterval(() => {
-        if (this.timeLeft > 0) {
-          this.timeLeft--;
-          this.checkB = true;
-          $('.e-row.disableRow.e-altrow[aria-selected="true"]').css({
-            "background-color": "#f382c4",
-          });
-          console.log("running.....");
-        } else {
-          RowSelectingtArgs.cancel = false;
-          this.checkB = false;
-        }
-      }, 1000);
-
-      $("e-frame e-icons").css("background-color", "blue");
-      let row = RowSelectingtArgs.data;
-      console.log("bef changeHandler", row);
-      $(".e-treegrid td.e-active").css({ "background-color": "#f382c4" });
-    }
-  }
+rowSelectingClick(RowSelectingtArgs: RowSelectEventArgs) {
+  console.log("row click before event");
+  
 }
 changeHandler(args: any) {
   alert("Change event triggered");
@@ -1684,36 +1657,53 @@ complete(args:any) {
 
     var selected_rowInfo = this.treegrid.getSelectedRows()[0]; // get the moved record row info
 
-    selected_rowInfo.classList.add('newclass_add'); // add the background color
-
+    // selected_rowInfo.classList.add('newclass_add'); // add the background color
+    // $('newclass_add').css('background-color', '#85dffa');
+    setInterval(()=> {
+      if(this.timeLeft > 0){
+       
+       console.log(this.timeLeft);
+       this.timeLeft--;
+       var rowrs =  this.treeGridObj.getRowByIndex(this.data.length + 1)
+       rowrs?.classList.add('resultRow');
+      }
+      else{
+        this.flagg = 1;
+      }
+    })
+    if(this.flagg == 1){
+      this.stop();
+      // this.treeGridObj.getRowByIndex(this.data.length + 1).remove()
+    }
 
 
 // Remove the background color
 
     setTimeout(() => {
 
-      if (
+        if (!isNullOrUndefined(selected_rowInfo?.classList.contains('resultRow'))
 
-        !isNullOrUndefined(
-
-          selected_rowInfo.classList.contains('newclass_add')
-
-        )
-
-      ) {
-
-        selected_rowInfo.classList.remove('newclass_add'); // remove the background color
-        $('newclass_add').css('background-color', '#39becf');
+        ) {
+          console.log("Moved under 10sec complete method");
+          
+          // selected_rowInfo.classList.remove('newclass_add'); // remove the background color
+          // this.treeGridObj.getRowByIndex(this.data.length + 1).remove()
 
 
-      }
+        }
 
     }, 10000);
 
   }
 
 }
-
+beforeDataBound(args:any){
 
 }
+stop(){
+  console.log("Timer stopped");
+  clearInterval(this.timeLeft)
+  clearInterval(this.interval);
+}
 
+}
