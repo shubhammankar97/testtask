@@ -289,7 +289,7 @@ export class AppComponent {
     private api: ApiService,
     private socketService: SocketioService
   ) {
-    console.log = function () {};
+    // console.log = function () {};
       this.offCustom = this.customAttributes;
       this.imageLoader = true;
       showSpinner(document.getElementById("loader-container") as HTMLElement);
@@ -838,7 +838,7 @@ clicked(): void {
   let columnName = { field: this.ColName, type: this.ColType };
   this.treegrid.columns.splice(this.column.length + 1, 0, columnName); //Add the columns
   this.api.addColumn(columnName).subscribe((res: any) => {
-    console.log("column appended", columnName.field);
+    // console.log("column appended", columnName.field);
   });
 
   this.treegrid.refreshColumns();
@@ -1309,8 +1309,7 @@ contextMenuOpen(arg: any): void {
     }
   }
 
-  let row: Element = elem.closest(".e-row")!;
-  let uid: string = row && row.getAttribute("data-uid")!;
+
 
 
 }
@@ -1509,7 +1508,7 @@ ngAfterViewInit() {
 }
 
 
-checkboxChange(args: any) {
+checkboxChange(args: any) { 
   let count = 0;
   this.flagg = 0;
   console.log(
