@@ -25,6 +25,9 @@ import { NumericTextBoxAllModule } from '@syncfusion/ej2-angular-inputs';
 import { TreeGridAllModule, ContextMenuService, } from '@syncfusion/ej2-angular-treegrid';
 import { ColorPickerModule } from '@syncfusion/ej2-angular-inputs';
 import { FreezeService } from '@syncfusion/ej2-angular-treegrid';
+import { enableRipple } from '@syncfusion/ej2-base';
+
+enableRipple(true);
 
 @NgModule({
   declarations: [

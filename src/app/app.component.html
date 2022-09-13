@@ -1,24 +1,26 @@
-<!-- <div class="image-loader" *ngIf="imageLoader">
+<div class="image-loader" *ngIf="imageLoader">
   <img src="../assets/img/loader.gif" />
-</div> -->
+</div>
 <div id="loader-container" class = "custom-rolling"></div>
 <div class="control-section">
 </div>
 
   <div style="text-align: right; margin-right: 25px; font-weight: 80px">
     <div class="hidebtn" style="text-align: left; font-weight: 80px">
-      <span *ngIf="checkB"
-        ><button #btn1 ejs-button cssClass="e-flat" (click)="click($event)">
-          Cancel</button
-        >{{ timeLeft }}</span
-      >
+      <span *ngIf="checkB">
+        <!-- <ng-template #content>
+          <div id="dialogcontent"></div>
+        </ng-template> -->
+        <button #btn1 ejs-button cssClass="e-flat" (click)="click($event)">
+          Cancel</button>{{ timeLeft }}
+        </span>
     </div>
     User{{ ssid }}.Tab{{ tabID }}
   </div>
 
   
   <ejs-treegrid [dataSource]='data' [treeColumnIndex]='1' 
-  parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' 
+  parentIdMapping='parentID' [editSettings]='editSettings' [toolbar]='toolbar' allowEditing="true"
   idMapping='id' [columns]="column"
   [allowSorting]="true"  allowMultiSorting="allowMultSort"
   [selectionSettings]='selectionOptions' [allowSelection]='true'
@@ -32,28 +34,29 @@
   (select)="onSelect($event)" 
   [filterSettings]="filterSettings"
   [contextMenuItems]="contextMenuItems"
-      (contextMenuOpen)="contextMenuOpen($event)"
-      (contextMenuClick)="contextMenuClick($event)"
-      [allowReordering]='true'
-      [allowResizing]='true' 
-      (actionComplete)='actionComplete($event)' 
-      [allowRowDragAndDrop]='true'
-      (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
-      childMapping='Crew'
-      (rowClicked)='onRowClicked($event)'
-      [showColumnChooser]='true' 
-      (columnMenuClick)="onColumnClicked($event)"
-      [editSettings]="editSetting1"
-      (contextMenuOpen)="context($event)" 
-      [frozenColumns]="col2Freeze"
-      (beginEdit)="beginEdit($event)"
-      (rowSelected)="rowSelected($event)"
-      (rowSelecting)="rowSelectingClick($event)"
-      (dataBound)="dataBound($event)"
-      (rowDataBound)="rowBound($event)"
-      (checkboxChange)="checkboxChange($event)"
-      (actionComplete)="complete($event)"
-
+  (contextMenuOpen)="contextMenuOpen($event)"
+  (contextMenuClick)="contextMenuClick($event)"
+  [allowReordering]='true'
+  [allowResizing]='true' 
+  (actionComplete)='actionComplete($event)' 
+  [allowRowDragAndDrop]='true'
+  (rowDataBound)='rowDataBound($event)' (rowDragStartHelper)='rowDragStartHelper($event)' (rowDrop)='rowDrop($event)' (rowDragStart)='rowDragStart($event)' (rowDrag)='rowDrag($event)' 
+  childMapping='Crew'
+  (rowClicked)='onRowClicked($event)'
+  [showColumnChooser]='true' 
+  (columnMenuClick)="onColumnClicked($event)"
+  [editSettings]="editSetting1"
+  (contextMenuOpen)="context($event)" 
+  [frozenColumns]="col2Freeze"
+  (beginEdit)="beginEdit($event)"
+  (rowSelected)="rowSelected($event)"
+  (rowSelecting)="rowSelectingClick($event)"
+  (rowDeselecting)="rowDeselecting($event)"
+  (dataBound)="dataBound($event)"
+  (rowDataBound)="rowBound($event)"
+  (checkboxChange)="checkboxChange($event)"
+  (actionComplete)="complete($event)"
+  (actionBegin)= "actionBegin($event)"
   >
   <!-- 
       (actionComplete)="complete($event)"
@@ -71,7 +74,18 @@
     </div>
     </e-columns>
   </ejs-treegrid>
-
+  <!-- Select row timer with cancel button -->
+  <!-- <ejs-dialog
+  #dialog
+  [buttons]="alertDlgButtons"
+  [visible]="visible"
+  width="200px"
+  isModal="true"
+>
+  <ng-template #content>
+    <div id="dialogcontent"></div>
+  </ng-template>
+</ejs-dialog> -->
     <!-- row contextmenu1 -->
   <div>
   <ejs-contextmenu #headercontextmenu target='.e-gridheader'
@@ -270,7 +284,7 @@
               ejs-colorpicker
               type="color"
               id="element"
-              value="#FFFFFF"
+              value="{{ColFColor}}"
               (change)="changeFontColor($event)"
           id="valid" 
           id="colorpicker"
@@ -287,7 +301,7 @@
               ejs-colorpicker
               type="color"
               id="element"
-              value="#FFFFFF"
+              value="{{ColBColor}}"
               (change)="changeBackground($event)"
           id="valid" 
           id="colorpicker"
@@ -328,7 +342,7 @@
         <button
           id="Button1"
           class="e-control e-btn e-primary e-flat"
-          (click)="saveColumn($event)"
+          (click)="saveColumn()"
           data-ripple="true"
         >
 
@@ -766,7 +780,7 @@ width='300px' [position]="pos" showCloseIcon="true" [height]="500">
           name="stuRCId"          
           class='form-control'
           id="sclass"
-          [(ngModel)]="stuRCId"
+          [(ngModel)]="stuCid"
           disabled 
         />
         <span class="e-float-line"></span>

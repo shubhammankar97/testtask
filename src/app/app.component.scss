@@ -348,10 +348,7 @@ color: white !important;
 .e-treegrid .e-row {
 height: 2em;
 }
-// hsl(192, 91%, 79%) sky blue
-// tr{
-//   background-color: #f382c4;
-// }
+
 #loader-container{
   width:100%;
   height:100%;
@@ -390,29 +387,15 @@ height: 2em;
   background-color: var(ColBColor);
   color: var(ColFColor);
 }
-.headerText{
-  background-color: #ff0000 !important;
-}
-.newclass_add{
-  background-color: #85dffa;
-}
-// .disableRow{
-//   background-color: #85dffa;  
-// }
-.e-row .e-altrow .disableRow{
-  background-color: #85dffa;
-}
 
-.e-row .e-altrow .disableRow {
-  background-color: lightblue!important;
+th.e-headercell.e-leftalign.e-mousepointer{
+  background-color: var(value);
 }
-.resultRow{
-  background-color: lightblue;
+.e-treegrid .e-headercell.cssClassaa {
+  background-color: var(value)!important;
+  color: var(value)!important;
 }
-.ejs-treegrid{
-  background-color: rgb(177, 168, 168);
-}
-.bgcolorback td{
-  background-color: lightgrey;
-  color: black;
+th.e-headercell.cssClassaa.e-mousepointer {
+  background-color: var(value)!important;
+  color: var(value)!important;
 }
