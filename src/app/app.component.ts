@@ -357,7 +357,7 @@ export class AppComponent {
     })
   console.log("column", this.column);
   this.getFiltersSubscription();
-  
+  $('#dim').css('pointer-events', 'none');
     this.editSettings = {
       allowAdding: true,
       allowEditing: true,
@@ -955,15 +955,34 @@ onSelect(args: any) {
 
   if (args.item.text === "Delete Row") {
     console.log("delete", args);
-    this.showDeleteRow = true;
-    this.delete();
+    if(this.enabe){
+      console.log("enabEEEE");
+      args.cancel = false;
+      this.showDeleteRow = true;
+      this.delete();
+    }
+    else{
+      args.cancel = true;
+      alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
+    }
+   
+
+    // if(args.item.text=== "Delete Row"){
+    //   console.log("AgAin Delete row clicked");
+    //   alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
+    // }
   }
 
   if (args.item.text === "Copy As Next") {
     console.log("copy as Next");
+    if(this.enabe){
+      console.log("enabEEEECopy");
+      args.cancel = true;
+    }
     this.treeGridObj.copy();
     console.log(" copy may work check");
-    // this.timeLeft = 10
+    // this.timeLeft = 10    
+
     setInterval(() => {
       if (this.timeLeft > 0) {
         this.timeLeft--;
@@ -979,6 +998,10 @@ onSelect(args: any) {
 
   if (args.item.text === "Copy As Child") {
     console.log("copy as child");
+    if(this.enabe){
+      console.log("enabEEEE");
+      args.cancel = true;
+    }
     this.treeGridObj.copy();
   }
   if (args.item.text === "Move As Next") {
@@ -1105,33 +1128,7 @@ addChild(args: any) {
     console.log("addNext API working or not check first");
   })
   this.treeGridObj.endEdit;
-  // console.log("args indexxx", args.row.index);
-  // args.row.index.addClass([args.row], "newRow");
 
-//   if (args.item.text === "Edit Column") {
-//     this.checkNewEdit = "edit";
-//     this.showEditColumn = !this.showEditColumn;
-//     this.getCurrentField();
-//   }
-//   if (args.item.id === "addnext") {
-//     console.log("addnext");
-//     this.treegrid.editModule.addRecord();
-//   }
-//   this.editSetting1 = {
-//     allowAdding: true,
-//     mode: "Dialog",
-//     newRowPosition: "Below",
-//   };
-//   console.log("addChild clicked");
- 
-//   this.ejDialog.hide();
-//   args.disableRow = false;
-//   this.treeGridObj.endEdit;
-//   this.treeGridObj.refreshColumns();
-// //////////////resultant row after addNext
-// var last = this.data.length +1;
-// console.log(":batch changes",this.treeGridObj.getBatchChanges());
-// $('.e-rowcell .customcss .e-detailrowvisible[role ="gridcell"]').css('background-color','red');
 
 }
 ///////////////edit Row
@@ -1182,6 +1179,8 @@ delete(): void {
   var grid = (document.getElementsByClassName("e-grid")[0] as any)
     .ej2_instances[0];
   console.log("delete function ", grid.getSelectedRecords()[0].id);
+  alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
+
   this.api.deleteData(grid.getSelectedRecords()[0].id).subscribe(() => {
     console.log("deleteData api");
   });
@@ -1338,7 +1337,7 @@ actionBegin(args: SaveEventArgs):void {
 contextMenuOpen(arg: any): void {
   console.log("CMO", arg);
 
-  console.log("contextMenuOpen:", arg.column.index);
+  console.log("contextMenuOpen:", arg);
   this.freezeColId = arg.column.index;
   console.log("freezeColId", this.freezeColId);
 
@@ -1423,9 +1422,17 @@ contextMenuClick(args: any): void {
   ) {
     console.log("delete row");
     this.stuRCId = this.data.length + 1;
-    this.treeGridObj.deleteRecord("id", selectedRecord); // delete the selected row
-    this.treeGridObj.endEdit();
-    
+    if(this.enabe){
+      console.log("enabEEEE");
+      args.cancel = false;
+      this.treeGridObj.deleteRecord("id", selectedRecord); // delete the selected row
+      this.treeGridObj.endEdit();
+    }
+    else{
+      args.cancel = true;
+      alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
+    }
+
   } else if (args.item.id === "editrow") {
     console.log("edit row");
     this.showEditRow = true;
@@ -1566,7 +1573,7 @@ ngAfterViewInit() {
 
 }
 
-
+public enabe:boolean = false;
 checkboxChange(args: any) { 
   let count = 0;
   console.log(
@@ -1586,10 +1593,12 @@ checkboxChange(args: any) {
       
       if(this.timeLeft > 0){
         this.timeLeft--;
+        this.enabe = true;
       const checkedRows = this.treegrid.element.querySelectorAll(".e-check");
       Array.from(checkedRows).map((row) => {
         row?.closest("tr")?.classList.add("bgcolor");
       });
+      $('.e-menu-item').css('background-color', 'red')
       }
       else{
         console.log("else Interval");
