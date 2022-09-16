@@ -28,6 +28,20 @@ export class ApiService {
     return this.http.post(this.API_URL+'/add-Student',addNew, httpOptions)
   }
 
+  //Add Child
+
+  addChildData(addChild:any){
+    console.log("service data",addChild)
+    return this.http.post(this.API_URL+'/add-Child',addChild, httpOptions)
+  }
+
+// Add Next
+
+addNext(data:any){
+  console.log("service data",data)
+  return this.http.post(this.API_URL+'/add-Next',data, httpOptions)
+}
+
   // Update
   updateData(id: any, data: any){
     return this.http
@@ -35,12 +49,6 @@ export class ApiService {
       
   }
 
-// Update
-addNext(id: any, data: any){
-  return this.http
-    .post(this.API_URL+'/addNext-Student/'+id, data[0], httpOptions)
-    
-}
 
 
   addRecord(dataSourceChangedEvent: DataSourceChangedEventArgs){

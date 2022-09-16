@@ -90,8 +90,7 @@ exports.update=(req,res)=>{
 };
 // app.post('/addNext-Student',StudentController.next);
 
-exports.next=(req,res)=>{
-   var index = req.params.id
+exports.storeNext=(req,res)=>{
     console.log(req.body);
 var user = 
 {
@@ -102,15 +101,38 @@ var user =
  var data=fs.readFileSync("student.json") 
  data = data.toString();
  var Data = JSON.parse( data );
- var id=Data.length;
+ var id=Data.nextID;
 
- user["id"]=index+1;
+ user["nextID"]=id+1;
  console.log('+++',user);
  console.log('---',Data);
- Data.splice(index, 0, user);
 //  Data.join()
-//  Data.push(user);   
+ Data.push(user);   
 
  fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
  return res.json(Data)
 }
+
+exports.storeChild=(req,res)=>{
+    console.log(req.body);
+var user = 
+{
+       name : req.body.name,
+       class : req.body.class,
+       roll_no : req.body.roll_no,
+       parentID : req.body.parentID
+}
+ var data=fs.readFileSync("student.json") 
+ data = data.toString();
+ var Data = JSON.parse( data );
+ var id=Data.length;
+
+ user["id"]=id+1;
+ console.log('+++',user);
+ console.log('---',Data);
+ Data.push(user);
+
+ fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
+ return res.json(Data)
+}
+
