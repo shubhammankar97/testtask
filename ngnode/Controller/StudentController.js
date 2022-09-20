@@ -88,7 +88,7 @@ exports.update=(req,res)=>{
     }
     };
 };
-// app.post('/addNext-Student',StudentController.next);
+
 
 exports.storeNext=(req,res)=>{
     console.log(req.body);
@@ -101,13 +101,12 @@ var user =
  var data=fs.readFileSync("student.json") 
  data = data.toString();
  var Data = JSON.parse( data );
- var id=Data.nextID;
+ var id=Data.length;
 
- user["nextID"]=id+1;
+//  user["id"]=id+1;
  console.log('+++',user);
  console.log('---',Data);
-//  Data.join()
- Data.push(user);   
+ Data.push(user);
 
  fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
  return res.json(Data)
@@ -119,8 +118,7 @@ var user =
 {
        name : req.body.name,
        class : req.body.class,
-       roll_no : req.body.roll_no,
-       parentID : req.body.parentID
+       roll_no : req.body.roll_no
 }
  var data=fs.readFileSync("student.json") 
  data = data.toString();
@@ -135,4 +133,5 @@ var user =
  fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
  return res.json(Data)
 }
+
 
