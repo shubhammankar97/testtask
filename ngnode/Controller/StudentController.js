@@ -14,7 +14,7 @@ var user =
 {
        name : req.body.name,
        class : req.body.class,
-       roll_no : req.body.roll_no
+       rollNo : req.body.rollNo
 }
  var data=fs.readFileSync("student.json") 
  data = data.toString();
@@ -71,7 +71,7 @@ exports.update=(req,res)=>{
     {
            name : req.body.name,
            class : req.body.class,
-           roll_no : req.body.roll_no,
+           rollNo : req.body.rollNo,
            id      : id
     }
     data=fs.readFileSync("student.json")
@@ -96,7 +96,7 @@ var user =
 {
        name : req.body.name,
        class : req.body.class,
-       roll_no : req.body.roll_no
+       rollNo : req.body.rollNo
 }
  var data=fs.readFileSync("student.json") 
  data = data.toString();
@@ -118,7 +118,7 @@ var user =
 {
        name : req.body.name,
        class : req.body.class,
-       roll_no : req.body.roll_no
+       rollNo : req.body.rollNo
 }
  var data=fs.readFileSync("student.json") 
  data = data.toString();

@@ -19,7 +19,7 @@
     }
   },
   {
-    "field": "roll_no",
+    "field": "rollNo",
     "id": 3,
     "type": "number",
     "validation": {

@@ -1065,7 +1065,7 @@ addNext(dataSourceChangedEvent: DataSourceChangedEventArgs): void  {
   var data = {
     id: this.data.length + 1,
     name: this.stuRCName,
-    roll_no: this.stuRCRoll,
+    rollNo: this.stuRCRoll,
     class: this.stuRCClass,
   };
   this.stuRCId = this.data.length + 1;
@@ -1107,7 +1107,7 @@ addNextt(args: any) {
   var data = {
     id: this.data.length + 1,
     name: this.stuRCName,
-    roll_no: this.stuRCRoll,
+    rollNo: this.stuRCRoll,
     class: this.stuRCClass,
 
   };
@@ -1152,7 +1152,7 @@ editRow() {
     {
       id: grid.getSelectedRecords()[0].id,
       name: sn.value,
-      roll_no: sr.value,
+      rollNo: sr.value,
       class: sc.value,
     },
   ];
@@ -1161,7 +1161,7 @@ editRow() {
     {
       id: this.data.length + 1,
       name: this.stuName,
-      roll_no: this.stuRoll,
+      rollNo: this.stuRoll,
       class: this.stuClass,
     },
   ];
@@ -1276,7 +1276,7 @@ addChild(args: any) {
   var dataC = {
     id: this.data.length + 1,
     name: this.stuCName,
-    roll_no: this.stuCRoll,
+    rollNo: this.stuCRoll,
     class: this.stuCClass,
   };
   console.log("data child", dataC);
@@ -1386,13 +1386,13 @@ contextMenuClick(args: any): void {
   var data = {
     id: this.data.length + 1,
     name: this.stuName,
-    roll_no: this.stuRoll,
+    rollNo: this.stuRoll,
     class: this.stuClass,
   };
   var dataC = {
     id: this.data.length + 1,
     name: this.stuCName,
-    roll_no: this.stuCRoll,
+    rollNo: this.stuCRoll,
     class: this.stuCClass,
   };
 
@@ -1774,9 +1774,9 @@ complete(args:any) {
 
      //Add the background color
 
-    var selected_rowInfo = this.treegrid.getSelectedRows()[0]; // get the moved record row info
+    var selectedRowInfo = this.treegrid.getSelectedRows()[0]; // get the moved record row info
 
-    // selected_rowInfo.classList.add('newclass_add'); // add the background color
+    // selectedRowInfo.classList.add('newclass_add'); // add the background color
     // $('newclass_add').css('background-color', '#85dffa');
     setInterval(()=> {
       if(this.timeLeft > 0){
@@ -1800,7 +1800,7 @@ complete(args:any) {
 
     setTimeout(() => {
 
-        if (!isNullOrUndefined(selected_rowInfo?.classList.contains('resultRow'))
+        if (!isNullOrUndefined(selectedRowInfo?.classList.contains('resultRow'))
 
         ) {
           console.log("Moved under 10sec complete method");
@@ -1874,7 +1874,7 @@ stop(){
 // export interface ItaskModel{
 //   id?: Number;
 //   name?: String;
-//   roll_no?: Number;
+//   rollNo?: Number;
 //   class?: Number;
 //   fontcolor?: String; 
 //   bgcolor?: String;
