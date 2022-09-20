@@ -20,7 +20,8 @@ const io = require('socket.io')(http, {
   cors: {
     origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001', 'http://192.168.7.136:4001','https://pdptappsensor.elb.cisinlive.com']
   }
-});
+},{transports: ['websocket']}
+);
 app.get('/all-Column', ColumnController.index);
 app.post('/add-Column', ColumnController.store);
 app.delete('/delete-Column/:id', ColumnController.delete);
