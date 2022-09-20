@@ -284,7 +284,8 @@ export class AppComponent {
   public intervalID:any;
   public highlightChild:boolean = false;
   public highlightNext:boolean = false;
-
+  public parentId:any;
+  public childPid:boolean = false;
   /////////////////////////////////
   abc =  null;
   filtersLoaded!: Promise<boolean>;
@@ -1104,17 +1105,44 @@ addNextt(args: any) {
 
     this.j++;
   }
-
   var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+
   console.log("treegrid befORE addrecord working", index);
 
-  var data = {
-    id: this.data.length + 1,
-    name: this.stuRCName,
-    rollNo: this.stuRCRoll,
-    class: this.stuRCClass,
-    nextID: index
-  };
+  if(this.childPid){
+  var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+
+    console.log("Yes trueee")
+    let data = {
+      id: this.data.length + 1,
+      name: this.stuRCName,
+      rollNo: this.stuRCRoll,
+      class: this.stuRCClass,
+      nextID: index,
+      parentID: this.parentId,
+      check: true
+    };
+    this.api.addNext(data).subscribe(()=>{
+      console.log("addNext API working or not check first");
+    })
+  }
+  else{
+  var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+
+    console.log("yes its Falssse")
+    let data = {
+      id: this.data.length + 1,
+      name: this.stuRCName,
+      rollNo: this.stuRCRoll,
+      class: this.stuRCClass,
+      nextID: index,
+      check: false
+    };
+    this.api.addNext(data).subscribe(()=>{
+      console.log("addNext API working or not check first");
+    })
+  }
+  
   this.stuRCId = this.data.length + 1;
 
   // var q = args.splice(index, 0, data);
@@ -1126,9 +1154,7 @@ addNextt(args: any) {
   // this.treeGridObj.addRecord(data, index + 1, "Below"); // as Child
   console.log("treegrid addrecord working");
   
-  this.api.addNext(data).subscribe(()=>{
-    console.log("addNext API working or not check first");
-  })
+  
   this.treeGridObj.endEdit;
 
 }
@@ -1545,7 +1571,16 @@ showEditor(cell: any) {
 ///////////////row select
 
 rowSelected(args: any) {
-  console.log("rowSelected on active setInterval..........");
+  console.log("rowSelected on active setInterval..........", args);
+  console.log("BEFFF ParentID", args.data.parentID)
+  if(args.data.parentID !== undefined){
+    this.parentId = parseInt(args.data.parentID);
+    console.log("PARENT IDDD", this.parentId)
+    this.childPid = true;
+  }
+  else{
+    this.childPid = false;
+  }
   // if (this.treegrid.getSelectedRows().length == 1) {
   //   this.countdownClock(30, false); // here we set the timer
   //   this.alertDialog.show(); // show the dialog

@@ -91,27 +91,54 @@ exports.update=(req,res)=>{
 
 
 exports.storeNext=(req,res)=>{
-    console.log(req.body);
-var user = 
-{
-       name : req.body.name,
-       class : req.body.class,
-       rollNo : req.body.rollNo
-}
+  var user;
+    try{
+        console.log(req.body);
+        if(req.body.check){
+            var user1 = 
+            {
+                id : req.body.id,
+                name : req.body.name,
+                class : req.body.class,
+                rollNo : req.body.rollNo,
+                parentID : req.body.parentID
+            } 
+        }
+        else{
+            user = 
+            {
+                id : req.body.id,
+                name : req.body.name,
+                class : req.body.class,
+                rollNo : req.body.rollNo
+            }
+        }
+    }
+    catch (err) {
+        res.status(500).json({
+            err:err 
+        })
+        console.log("ERROR", err);
+    }
+
  var data=fs.readFileSync("student.json") 
  data = data.toString();
  var Data = JSON.parse( data );
  var id=Data.length;
-
- user["id"]=id+1;
- console.log('+++',user);
+ console.log("ID",id);
+ req.body.check?user1:user["id"]= id + 1;
+ console.log('+++',req.body.check?user1:user);
  console.log('---',Data);
  console.log("Test nextID",req.body.nextID)
- Data.splice(req.body.nextID+1, 0, user)
+ Data.splice(req.body.nextID+1, 0, req.body.check?user1:user)
 
  fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
  return res.json(Data)
 }
+
+
+
+
 
 exports.storeChild=(req,res)=>{
     console.log(req.body);
