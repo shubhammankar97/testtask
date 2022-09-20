@@ -44,6 +44,11 @@ app.all('*', function (req, res) {
     res.status(200).sendFile(`/`, {root: _app_folder});
 });
 
-http.listen(4001, () => {
-  console.log('listening on *:4001');
+http.listen(4001, (err) => {
+  if(err){
+    console.log('Not listening on *:4001 kindly check')
+  }
+  else{
+    console.log('listening on *:4001');
+  }
 });

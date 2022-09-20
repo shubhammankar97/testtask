@@ -553,7 +553,7 @@ this.contextMenuItems = [
         dialog.showCloseIcon = false;
         dialog.height = 400;
         // change the header of the dialog
-        dialog.data.id.value = this.data.length + 1;
+        // dialog.data = this.data.length + 1;
         dialog.header = args.requestType === 'beginEdit' ? 'Edit Record of ' + args.rowData['StudentID'].id(this.data.length) : 'Add Customer';
     }
     
@@ -1104,17 +1104,18 @@ addNextt(args: any) {
 
     this.j++;
   }
+
+  var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+  console.log("treegrid befORE addrecord working", index);
+
   var data = {
     id: this.data.length + 1,
     name: this.stuRCName,
     rollNo: this.stuRCRoll,
     class: this.stuRCClass,
-
+    nextID: index
   };
   this.stuRCId = this.data.length + 1;
-
-  var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
-  console.log("treegrid befORE addrecord working");
 
   // var q = args.splice(index, 0, data);
   // this.treegrid.setRowData(index -1,q); // optional
@@ -1122,7 +1123,7 @@ addNextt(args: any) {
   //   add: data,
   //   addIndex: index
   // });
-  this.treeGridObj.addRecord(data, index + 1, "Below"); // as Child
+  // this.treeGridObj.addRecord(data, index + 1, "Below"); // as Child
   console.log("treegrid addrecord working");
   
   this.api.addNext(data).subscribe(()=>{

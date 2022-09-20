@@ -103,10 +103,11 @@ var user =
  var Data = JSON.parse( data );
  var id=Data.length;
 
-//  user["id"]=id+1;
+ user["id"]=id+1;
  console.log('+++',user);
  console.log('---',Data);
- Data.push(user);
+ console.log("Test nextID",req.body.nextID)
+ Data.splice(req.body.nextID+1, 0, user)
 
  fs.writeFileSync("student.json",JSON.stringify(Data,null,2))
  return res.json(Data)
