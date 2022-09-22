@@ -312,13 +312,14 @@ export class AppComponent {
       this.imageLoader = true;
       this.data = res.filter((item: any) => item);
 
-      this.imageLoader = false;
 
       if (this.data.length) {
         this.imageLoader = false;
         hideSpinner(document.getElementById("loader-container") as HTMLElement);
       }
     });
+    this.imageLoader = false;
+
     //get the Grid model.
     this.value = localStorage.getItem("treegrid")!;
     console.log("locaL::", localStorage.getItem("treegrid"));
@@ -351,19 +352,6 @@ export class AppComponent {
       sessionStorage["closedLastTab"] = "1";
     });
   }
-  ///////////////////////////////////////////
-  // public alertDlgButtons: Object[] = [
-  //   {
-  //     buttonModel: {
-  //       content: 'Cancel',
-  //       cssClass: 'e-flat',
-  //     },
-  //     click: (() =>{
-  //       // this.countdownClock(0, true); // here we call the timer
-  //       // this.hide(); // hide the dialog using dialog's hide method
-  //     }),
-  //   },
-  // ];
 
   ////////////////////////////////////////////===================
 
@@ -552,7 +540,7 @@ export class AppComponent {
       var index: number = args.index.id;
       console.log("indexxxx", index);
       console.log("args.data", args.data.id);
-      var new_row = this.treegrid.selectRow(index + 1); // select the newly added row to scroll to it
+      var newrow = this.treegrid.selectRow(index + 1); // select the newly added row to scroll to it
       console.log("action complete!!!", this.treegrid.selectRow(index + 1));
     }
     hideSpinner(document.getElementById("loader-container") as HTMLElement);
@@ -605,7 +593,6 @@ export class AppComponent {
         console.log("highlightChildin", this.highlightChild);
         var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
         var y = this.treegrid.getRowByIndex(index - 1);
-        //  console.log("selected_rowInfo",selected_rowInfo);
         console.log("yyyyy", y);
         y.classList.add("newclass_add"); // add the background color
         setInterval(() => {
@@ -1843,7 +1830,6 @@ export class AppComponent {
         ) {
           console.log("Moved under 10sec complete method");
 
-          // selected_rowInfo.classList.remove('newclass_add'); // remove the background color
           // this.treeGridObj.getRowByIndex(this.data.length + 1).remove()
         }
       }, 10000);
@@ -1856,57 +1842,4 @@ export class AppComponent {
     clearInterval(this.interval);
   }
 
-  //here enable and disable the timer
-  // countdownClock(time:any, flag:any) {
-  //   var new_tiem = time;
-  //   if (new_tiem > 0) {
-  //     // enable the timer using setInterval method
-  //     this.intervalID = setInterval( () => {
-  //       //calculate minutes and seconds
-  //       let minutes: any = Math.floor(new_tiem / 60);
-  //       let seconds: any = new_tiem % 60;
-
-  //       minutes = minutes < 10 ? '0' + minutes : minutes;
-  //       seconds = seconds < 10 ? '0' + seconds : seconds;
-
-  //       // insert the minutes and seconds into the dialog content
-  //       $(document).getElementById('dialogcontent').innerHTML = `${minutes}:${seconds}`;
-
-  //       //disable the timer while timer has 0 value
-  //       if (new_tiem == 0 || new_tiem < 0) {
-  //         clearInterval(this.intervalID);
-
-  //         var treegrid:any = (document.getElementsByClassName('e-treegrid')[0] as any).ej2_instances[0];
-  //         treegrid.clearSelection();
-  //         var dialog:any = (document.getElementsByClassName('e-dialog')[0] as any).ej2_instances[0];
-  //         dialog.hide();
-  //       }
-  //       new_tiem--;
-  //     }, 1000);
-  //   }
-
-  //   // disable the timer while force stop of dialog
-  //   if (flag == true) {
-  //     var treegrid = (document.getElementsByClassName('e-treegrid')[0] as any).ej2_instances[0];
-  //     treegrid.clearSelection();
-  //     setTimeout(() => {
-  //       // reset the dialog content
-  //       $(document).getElementById('dialogcontent').innerHTML = '00:00';
-  //       // clear the timer
-  //       clearInterval(this.intervalID);
-  //     }, 100);
-  //   }
-  // }
 }
-
-// export interface ItaskModel{
-//   id?: Number;
-//   name?: String;
-//   rollNo?: Number;
-//   class?: Number;
-//   fontcolor?: String;
-//   bgcolor?: String;
-//   type?: String;
-// }
-// let row: Element = elem.closest(".e-row")!;
-// let uid: string = row && row.getAttribute("data-uid")!;
