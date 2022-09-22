@@ -297,6 +297,7 @@ export class AppComponent {
   public highlightChild: boolean = false;
   public highlightNext: boolean = false;
   public parentId: any;
+  public subChildId: any;
   public childPid: boolean = false;
   /////////////////////////////////
   abc = null;
@@ -565,9 +566,33 @@ export class AppComponent {
       this.ejDialog.hide();
       var a = this.treeGridObj.selectRow(args.index, true);
       console.log("selectRow", a);
+      console.log("", this.data);
+    }
+          //////////////////////Child New Row Highlight
+          if (this.highlightChild) {
+            console.log("highlightChildin", this.highlightChild);
+            var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+            var y = this.treegrid.getRowByIndex(index - 1);
+            console.log("yyyyy", y);
+            y.classList.add("newclass_add"); // add the background color
+            setInterval(() => {
+              if (this.timeRemain > 0) {
+                this.timeRemain--;
+                $(".newclass_add").css("background-color", "#85dffa");
+                console.log("timeRemain");
+              } else {
+                this.flagg = 1;
+                $(".newclass_add").css("background-color", "#fafafa");
+              }
+            }, 1000);
+            if (this.flagg == 1) {
+              this.stop();
+              $(".newclass_add").css("background-color", "#fafafa");
+            }
+          }
 
       //////////////////////Next New Row Highlight
-      if (this.highlightNext == true) {
+      if (this.highlightNext) {
         console.log("highlightNextin", this.highlightNext);
         var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
         var x = this.treegrid.getRowByIndex(args.index);
@@ -588,31 +613,6 @@ export class AppComponent {
           $(".newclass_add").css("background-color", "#fafafa");
         }
       }
-      //////////////////////Child New Row Highlight
-      if (this.highlightChild == true) {
-        console.log("highlightChildin", this.highlightChild);
-        var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
-        var y = this.treegrid.getRowByIndex(index - 1);
-        console.log("yyyyy", y);
-        y.classList.add("newclass_add"); // add the background color
-        setInterval(() => {
-          if (this.timeRemain > 0) {
-            this.timeRemain--;
-            $(".newclass_add").css("background-color", "#85dffa");
-            console.log("timeRemain");
-          } else {
-            this.flagg = 1;
-            $(".newclass_add").css("background-color", "#fafafa");
-          }
-        }, 1000);
-        if (this.flagg == 1) {
-          this.stop();
-          $(".newclass_add").css("background-color", "#fafafa");
-        }
-      }
-
-      console.log("", this.data);
-    }
   }
 
   public selectitem!: string[];
@@ -1287,6 +1287,7 @@ export class AppComponent {
     if (this.childPid) {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
       console.log("Yes trueee");
+      // currentID: this.subChildId,
       let dataC = {
         id: this.data.length + 1,
         name: this.stuCName,
@@ -1428,6 +1429,8 @@ export class AppComponent {
 
     var selectedRecord = this.selectedRecord;
     if (args.item.id === "addnextrow") {
+      console.log("ADDnextRow highlight");
+      
       this.showAddNext = true;
       this.highlightNext = true;
       args.cancel = true;
@@ -1573,7 +1576,10 @@ export class AppComponent {
     console.log("BEFFF ParentID", args.data.parentID);
     if (args.data.parentID !== undefined) {
       this.parentId = parseInt(args.data.parentID);
+      this.subChildId = parseInt(args.data.id)
       console.log("PARENT IDDD", this.parentId);
+      console.log("PARENT IDDD", this.subChildId);
+
       this.childPid = true;
     } else {
       this.childPid = false;
