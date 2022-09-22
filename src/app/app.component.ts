@@ -1293,7 +1293,10 @@ export class AppComponent {
     var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
     console.log("treegrid befORE addrecord working", index);
-
+    console.log("SelectedRECORDS ",this.treeGridObj.getSelectedRecords());
+    var currentDataId = this.treeGridObj.getSelectedRecords()
+    console.log("+++++++++++++++", this.treeGridObj.getSelectedRecords()[1])
+    console.log("++++++++======",currentDataId)
     if (this.childPid) {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
       console.log("Yes trueee");

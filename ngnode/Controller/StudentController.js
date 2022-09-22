@@ -131,41 +131,42 @@ exports.storeChild = (req, res) => {
   var user;
   try {
     console.log(req.body);
-    if (req.body.check) {
+    // if (req.body.check) {
       var user1 = {
         id: req.body.id,
         name: req.body.name,
         class: req.body.class,
         rollNo: req.body.rollNo,
-        parentID: req.body.currentID,
+        parentID: req.body.currentID.toString(),
       };
-    } else {
-      user = {
-        id: req.body.id,
-        name: req.body.name,
-        class: req.body.class,
-        rollNo: req.body.rollNo,
-        parentID: req.body.currentID,
-      };
-    }
-  } catch (err) {
-    res.status(500).json({
-      err: err,
-    });
-    console.log("ERROR", err);
-  }
+
+    // } else {
+    //   user = {
+    //     id: req.body.id,
+    //     name: req.body.name,
+    //     class: req.body.class,
+    //     rollNo: req.body.rollNo,
+    //     parentID: req.body.currentID,
+    //   };
+    // }
   var data = fs.readFileSync("student.json");
   data = data.toString();
-  console.log("Inverted",data)
   var Data = JSON.parse(data);
   var id = Data.length;
   console.log("ID", id);
-  (req.body.check ? user1 : user)["id"] = id + 1;
-  console.log("+++", req.body.check ? user1 : user);
+  user1["id"] = id + 1;
+  console.log("+++", user1);
   console.log("---", Data);
-  console.log("Test currentID", req.body.currentID + 1);
-  Data.splice(req.body.currentID + 1, 0, req.body.check ? user1 : user);
+  console.log("Test currentID", req.body.currentID);
+  // user.id = user.id.toString();
+  // user.parentID = user.parentID.toString();
+  Data.splice(req.body.currentID + 1, 0,  user1);
 
   fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
   return res.json(Data);
+  } catch (err) {
+    return res.json(err);
+    console.log("ERROR", err);
+  }
+  Object.values(obj)[0]
 };
