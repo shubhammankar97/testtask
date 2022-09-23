@@ -65,10 +65,11 @@ exports.getid = (req, res) => {
 exports.update = (req, res) => {
   id = req.params.id;
   var user = {
-    name: req.body.name,
-    class: req.body.class,
-    rollNo: req.body.rollNo,
     id: id,
+    name: req.body.name,
+    rollNo: req.body.rollNo,
+    class: req.body.class,
+    parentID: req.body.parentID
   };
   data = fs.readFileSync("student.json");
   var Data = JSON.parse(data);

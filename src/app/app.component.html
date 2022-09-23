@@ -1,15 +1,11 @@
-<div class="image-loader" *ngIf="imageLoader">
-  <img src="../assets/img/loader.gif" />
-</div>
+
 <div id="loader-container" class="custom-rolling"></div>
 <div class="control-section"></div>
 
 <div style="text-align: right; margin-right: 25px; font-weight: 80px">
   <div class="hidebtn" style="text-align: left; font-weight: 80px">
     <span *ngIf="checkB">
-      <!-- <ng-template #content>
-          <div id="dialogcontent"></div>
-        </ng-template> -->
+
       <button #btn1 ejs-button cssClass="e-flat" (click)="click($event)">
         Cancel</button
       >{{ timeLeft }}
@@ -18,7 +14,7 @@
   User{{ ssid }}.Tab{{ tabID }}
 </div>
 
-<ejs-treegrid
+<ejs-treegrid chi
   [dataSource]="data"
   [treeColumnIndex]="1"
   parentIdMapping="parentID"
@@ -59,7 +55,6 @@
   (rowClicked)="onRowClicked($event)"
   [showColumnChooser]="true"
   (columnMenuClick)="onColumnClicked($event)"
-  [editSettings]="editSetting1"
   (contextMenuOpen)="context($event)"
   [frozenColumns]="col2Freeze"
   (beginEdit)="beginEdit($event)"
@@ -74,6 +69,7 @@
 >
   <!-- 
       (actionComplete)="complete($event)"
+  [editSettings]="editSetting1"
 
    -->
   <e-columns>
@@ -129,19 +125,7 @@
     </div>
   </e-columns>
 </ejs-treegrid>
-<!-- Select row timer with cancel button -->
-<!-- <ejs-dialog
-  #dialog
-  [buttons]="alertDlgButtons"
-  [visible]="visible"
-  width="200px"
-  isModal="true"
->
-  <ng-template #content>
-    <div id="dialogcontent"></div>
-  </ng-template>
-</ejs-dialog> -->
-<!-- row contextmenu1 -->
+
 <div>
   <ejs-contextmenu
     #headercontextmenu
