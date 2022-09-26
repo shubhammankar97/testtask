@@ -174,8 +174,9 @@ export class AppComponent {
   public showAddchild: boolean = false;
 
   public ColType: string = "";
-  ColFColor: string = "";
-  ColBColor: string = "";
+  public ColFColor: string = "";
+  public ColBColor: string = "";
+  public ContextDim: string = "";
 
   @ViewChild("treegrid")
   public treegrid!: TreeGridComponent;
@@ -323,6 +324,7 @@ export class AppComponent {
 
     //get the Grid model.
     this.value = localStorage.getItem("treegrid")!;
+    $('.e-treegrid .e-headercell.cssClassaa').css("background-color", this.value + "!important")
     console.log("locaL::", localStorage.getItem("treegrid"));
     $(".e-treegrid .e-headercell.cssClassaa").css(
       "background-color",
@@ -718,14 +720,16 @@ export class AppComponent {
     if (args.item.text === "Freeze Column") {
       console.log("Freeze", args);
       console.log("ID freeze", this.freezeColId);
-      // this.treegrid.enableVirtualization = true;
-      this.treegrid.enableInfiniteScrolling = false;
+      
       // this.treegrid.frozenColumns = this.freezeColId.index;
       if (this.column.id == this.freezeColId) {
         console.log("under freeze IF");
 
         this.column.allowFreezing = true;
-        this.column.ColMinWidth = 70;
+        this.treegrid.enableVirtualization = false;
+        this.treegrid.enableInfiniteScrolling = true;
+        // this.column.frozenColumns = true;
+        this.treeGridObj.autoFitColumns();
       }
       this.column.freeze = "Left";
       this.col2Freeze = this.freezeColId;
@@ -890,6 +894,11 @@ export class AppComponent {
 
     if (args.item.text === "Delete Row") {
       console.log("delete", args);
+      if(this.alertOrphan){
+        console.log("AgAin Delete row clicked");
+        alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
+      }
+      else{
       if (this.enabe) {
         console.log("enabEEEE");
         args.cancel = false;
@@ -898,12 +907,9 @@ export class AppComponent {
       } else {
         args.cancel = true;
         alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
-      }
+      }}
+      
 
-      // if(args.item.text=== "Delete Row"){
-      //   console.log("AgAin Delete row clicked");
-      //   alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
-      // }
     }
 
     if (args.item.text === "Copy As Next") {
@@ -1474,6 +1480,12 @@ export class AppComponent {
     ) {
       console.log("delete row");
       this.stuRCId = this.data.length + 1;
+      if(this.alertOrphan){
+        console.log("AgAin Delete row clicked");
+        args.cancel = true;
+        alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
+      }
+      else{
       if (this.enabe) {
         console.log("enabEEEE");
         args.cancel = false;
@@ -1482,7 +1494,7 @@ export class AppComponent {
       } else {
         args.cancel = true;
         alert("Your current Move/DelRow(s) shall lead to Orphan row(s)");
-      }
+      }}
     } else if (args.item.id === "editrow") {
       console.log("edit row");
       this.showEditRow = true;
@@ -1639,6 +1651,7 @@ export class AppComponent {
   }
 
   public enabe: boolean = false;
+  public alertOrphan: boolean = false;
   checkboxChange(args: any) {
     let count = 0;
     console.log(
@@ -1656,21 +1669,39 @@ export class AppComponent {
     var intervalfree = setInterval(() => {
       console.log("checkbox change");
 
-      if (this.timeLeft > 0) {
-        this.timeLeft--;
-        this.enabe = true;
-        const checkedRows = this.treegrid.element.querySelectorAll(".e-check");
-        Array.from(checkedRows).map((row) => {
-          row?.closest("tr")?.classList.add("bgcolor");
-        });
-        $(".e-menu-item").css("background-color", "red");
-      } else {
-        console.log("else Interval");
-        clearInterval(intervalfree);
-        $("tr").removeClass("bgcolor");
-        this.checkB = false;
-        alert("Failed to Lock : Row");
-      }
+     
+        if(!this.checkB){
+          clearInterval(intervalfree);
+          this.stop();
+          console.log("CHECKB stops ");
+           
+          $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color","#f08080!important");
+          this.editSettings.showDeleteConfirmDialog = !this.editSettings.showDeleteConfirmDialog
+          this.alertOrphan = true;
+          
+        }
+        else{
+          if (this.timeLeft > 0) {
+            this.timeLeft--;
+            this.enabe = true;
+            const checkedRows = this.treegrid.element.querySelectorAll(".e-check");
+            Array.from(checkedRows).map((row) => {
+              row?.closest("tr")?.classList.add("bgcolor");
+            });
+            // $(".e-menu-item").css("background-color", "red");
+          $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color","red!important");
+
+            console.log("Yess this makes RED")
+        }else {
+          console.log("else Interval");
+          clearInterval(intervalfree);
+          $("tr").removeClass("bgcolor");
+          this.checkB = false;
+          // $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "lightcoral");
+  
+          alert("Failed to Lock : Row");
+        }
+      } 
     }, 1000);
 
     this.change = false;
@@ -1736,50 +1767,7 @@ export class AppComponent {
       treeObj.refreshRow(selectedItem.index);
     }
   }
-  // public saveColumn(args:any) {
-  //   console.log('saveColumn:');
-  //   if (this.checkNewEdit == 'edit') {
-  //     var catched = false;
 
-  //     console.log('edit:');
-  //     this.column.forEach((r:any) => {
-  //       console.log('R:', r);
-  //       if (!catched) {
-  //         console.log('catched:}}}}}>>>>>>>>>>>', catched);
-  //         catched = true;
-  //         // var style = document.createElement('style');
-  //         // style.type = 'text/css';
-  //         // style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor};
-  //         //   color:${this.ColFColor};
-  //         // }`;
-  //         // console.log("bg",style);
-  //         // document.body.append(style);
-
-  //         // $('.e-treegrid .e-headercell.cssClassaa').css('background-color', $(this.ColBColor));
-  //         // $('.e-treegrid .e-headercell.cssClassaa').css('color', $(this.ColFColor));
-  //         $('span.e-headertext').css('background-color', $(this.ColBColor));
-  //         $('span.e-headertext').css('color', $(this.ColFColor));
-  //         // $('.e-headertext').css('background-color', this.ColBColor)
-  //       }
-
-  //       if (r.field == this.columnField) {
-  //         console.log('r.field:', r.field, 'columnField:', this.columnField);
-  //         r.headerText = this.ColName;
-  //         r.type = this.ColType;
-  //         r.textAlign = this.ColAlign;
-  //         r.start = { class: 'cssClassaa' };
-  //       }
-  //     });
-
-  //     this.treegrid.refreshColumns();
-  //     this.textWrap = this.ColChecked;
-  //   }
-
-  //   this.showEditColumn = false;
-  //   this.treegrid.endEdit();
-  //   this.ejDialog.hide();
-  //   args.disableRow = false;
-  // }
   public saveColumn() {
     console.log("saveColumn:");
     if (this.checkNewEdit == "edit") {
@@ -1797,6 +1785,7 @@ export class AppComponent {
           color:${this.ColFColor};
         }`;
           document.body.append(style);
+          $('.e-treegrid .e-headercell.cssClassaa').css("background-color", this.ColBColor + "!important")
         }
         console.log("BGcolor", this.ColBColor);
         console.log("FontColor", this.ColFColor);
