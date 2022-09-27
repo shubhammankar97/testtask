@@ -171,3 +171,83 @@ exports.storeChild = (req, res) => {
   }
   Object.values(obj)[0]
 };
+
+
+// move Next
+
+exports.moveNext = (req, res) => {
+  var user;
+  try {
+    console.log(req.body);
+    if (req.body.check) {
+      var user1 = {
+        id: req.body.id,
+        name: req.body.name,
+        class: req.body.class,
+        rollNo: req.body.rollNo,
+        parentID: req.body.parentID,
+      };
+    } else {
+      user = {
+        id: req.body.id,
+        name: req.body.name,
+        class: req.body.class,
+        rollNo: req.body.rollNo,
+      };
+    }
+  } catch (err) {
+    res.status(500).json({
+      err: err,
+    });
+    console.log("ERROR", err);
+  }
+  console.log("DAta >>>", user1)
+  var data = fs.readFileSync("student.json");
+  data = data.toString();
+  var Data = JSON.parse(data);
+  var id = Data.length;
+  console.log("ID", id);
+  req.body.check ? user1 : (user["id"] = id + 1);
+  console.log("+++", req.body.check ? user1 : user);
+  console.log("---", Data);
+  console.log("Test next", req.body.nextt);
+  Data.splice(req.body.nextt + 1, 0, req.body.check ? user1 : user);
+
+  fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
+  return res.json(Data);
+};
+
+
+
+// move Child
+exports.moveChild = (req, res) => {
+  var user;
+  try {
+    console.log(req.body);
+      var user1 = {
+        id: req.body.id,
+        name: req.body.name,
+        class: req.body.class,
+        rollNo: req.body.rollNo,
+        parentID: req.body.current.toString(),
+      };
+
+  var data = fs.readFileSync("student.json");
+  data = data.toString();
+  var Data = JSON.parse(data);
+  var id = Data.length;
+  console.log("ID", id);
+  user1["id"] = id + 1;
+  console.log("+++", user1);
+  console.log("---", Data);
+  console.log("Test currentID", req.body.current);
+  Data.splice(req.body.current + 1, 0,  user1);
+
+  fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
+  return res.json(Data);
+  } catch (err) {
+    return res.json(err);
+    console.log("ERROR", err);
+  }
+  Object.values(obj)[0]
+};

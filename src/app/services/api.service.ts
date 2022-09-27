@@ -52,6 +52,20 @@ export class ApiService {
     return this.http.post(this.API_URL + "/add-Next", data, httpOptions);
   }
 
+  // Move Next
+
+  moveNext(data: any) {
+    console.log("service data", data);
+    return this.http.post(this.API_URL + "/move-Next", data, httpOptions);
+  }
+ 
+  //Add Child
+
+  moveChildData(mChild: any) {
+    console.log("service data", mChild);
+    return this.http.post(this.API_URL + "/move-Child", mChild, httpOptions);
+  }
+ 
   addRecord(dataSourceChangedEvent: DataSourceChangedEventArgs) {
     return this.http.post(
       this.API_URL + "/add-Student",

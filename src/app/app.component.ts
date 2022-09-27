@@ -180,7 +180,6 @@ export class AppComponent {
 
   @ViewChild("treegrid")
   public treegrid!: TreeGridComponent;
-  public copiedRecord: any;
   private moveRow: any = null;
   // Copy/Paste
   private clone: any = null;
@@ -305,7 +304,7 @@ export class AppComponent {
   filtersLoaded!: Promise<boolean>;
 
   constructor(private api: ApiService, private socketService: SocketioService) {
-    // console.log = function () {};
+    console.log = function () {};
     this.offCustom = this.customAttributes;
     this.imageLoader = true;
     showSpinner(document.getElementById("loader-container") as HTMLElement);
@@ -427,12 +426,12 @@ export class AppComponent {
       {
         text: "Copy As Next",
         target: ".e-content",
-        id: "customCopy dim",
+        id: "customCopyNext dim",
       },
       {
         text: "Copy As Child",
         target: ".e-content",
-        id: "customCopy dim",
+        id: "customCopyChild dim",
       },
       {
         text: "Move As Next",
@@ -1340,6 +1339,8 @@ export class AppComponent {
     this.treeGridObj.endEdit;
     this.ejDialog.hide();
     // args.disableRow = false;
+    this.treeGridObj.refresh();
+
     this.api.getAll().subscribe((res:any)=>{
       this.data = res.filter((item: any) => item);
     }) 
@@ -1507,6 +1508,8 @@ export class AppComponent {
       this.stuNamen = this.selectedRecord.name;
       this.stuClassn = this.selectedRecord.class;
       this.stuRolln = this.selectedRecord.rollNo;
+      this.treeGridObj.refresh();
+
       this.api.getAll().subscribe((res:any)=>{
         this.data = res.filter((item: any) => item);
       }) 
@@ -1520,21 +1523,64 @@ export class AppComponent {
 
       this.treeGridObj.refreshColumns();
       this.treeGridObj.endEdit();
-    } else if (args.item.id === "customCopy") {
+    } else if (args.item.text === "Copy As Next") {
+      console.log("Custom Copy Next clicked***************************");
       this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
       this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
-    } else if (args.item.id === "pastenextrow") {
+      console.log("Copied Text Record", this.selectedRecord);
+      console.log("Copied Text Index", this.selectedIndex);
+
+    }else if (args.item.text === "Copy As Child") {
+      console.log("Custom Copy Child clicked***************************");
+      this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
+      this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
+      console.log("Copied Text Record", this.selectedRecord);
+      console.log("Copied Text Index", this.selectedIndex);
+
+  
+    } else if (args.item.text === "Move As Next") {
       console.log("move as next");
+      var copiedRecord = this.selectedRecord;
+
+      console.log("nextID added", copiedRecord);
+
       // args.cancel = true;  //lock the current row
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0]; //delete the copied record
       var record = this.treeGridObj["getSelectedRecords"]()[0];
-      this.treeGridObj.deleteRecord("id", this.selectedRecord);
-      this.treeGridObj.addRecord(this.selectedRecord, index, "Below"); //Paste as Sibling or another separate row using Below, Above or Top newRowPosition
-    } else if (args.item.id === "pastechildrow") {
-      this.treeGridObj.deleteRecord("id", this.selectedRecord); //delete the copied record
-      var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+      // this.treeGridObj.deleteRecord("id", this.selectedRecord);
+      // this.treeGridObj.addRecord(this.selectedRecord, index, "Below"); //Paste as Sibling or another separate row using Below, Above or Top newRowPosition
+      copiedRecord.nextt = index;
+      if (this.childPid) {
+        copiedRecord.check = true;
+      }else{
+        copiedRecord.check = false;
+      }
+      this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
+      console.log("RECORD Move Next",this.selectedRecord)
+      copiedRecord.parentID = this.selectedRecord.parentID
 
-      this.treeGridObj.addRecord(this.selectedRecord, index - 1, "Child"); // paste as Child
+      this.api.moveNext(copiedRecord).subscribe(()=>{
+        console.log("Api Move Next Runned");
+      })
+      this.treeGridObj.refresh();
+
+      this.api.getAll().subscribe((res: any) => {
+        this.data = res.filter((item: any) => item);
+      });
+    } else if (args.item.text === "Move As Child") {
+      // this.treeGridObj.deleteRecord("id", this.selectedRecord); //delete the copied record
+      var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+      var copiedChild = this.selectedRecord;
+      copiedChild.current = index;
+      // this.treeGridObj.addRecord(this.selectedRecord, index - 1, "Child"); // paste as Child
+      this.api.moveChildData(copiedChild).subscribe(()=>{
+        console.log("Api move CHild runned");
+      })
+      this.treeGridObj.refresh();
+
+      this.api.getAll().subscribe((res: any) => {
+        this.data = res.filter((item: any) => item);
+      });
     }
     this.treegrid.endEdit;
   }
@@ -1675,7 +1721,7 @@ export class AppComponent {
           this.stop();
           console.log("CHECKB stops ");
            
-          $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color","#f08080!important");
+          $('li#customCopyNext\ dim,li#customCopyChild\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color","#f08080!important");
           this.editSettings.showDeleteConfirmDialog = !this.editSettings.showDeleteConfirmDialog
           this.alertOrphan = true;
           
