@@ -14,7 +14,7 @@
   User{{ ssid }}.Tab{{ tabID }}
 </div>
 
-<ejs-treegrid chi
+<ejs-treegrid
   [dataSource]="data"
   [treeColumnIndex]="1"
   parentIdMapping="parentID"
@@ -35,11 +35,10 @@
   height="1000"
   enableInfiniteScrolling="true"
   (actionComplete)="dataSourceChanged($event)"
-  (beforeOpen)="beforeOpen($event)"
   itemBeforeEvent="{this.itemBeforeEvent.bind(this)}"
   (select)="onSelect($event)"
   [filterSettings]="filterSettings"
-  [contextMenuItems]="contextMenuItems"
+  [contextMenuItems]="contextmenu"
   (contextMenuOpen)="contextMenuOpen($event)"
   (contextMenuClick)="contextMenuClick($event)"
   [allowReordering]="true"
@@ -67,11 +66,7 @@
   (actionComplete)="complete($event)"
   (actionBegin)="actionBegin($event)"
 >
-  <!-- 
-      (actionComplete)="complete($event)"
-  [editSettings]="editSetting1"
 
-   -->
   <e-columns>
     <e-column
       field="id"
@@ -135,6 +130,16 @@
     (select)="select($event)"
   ></ejs-contextmenu>
 </div>
+
+<div>
+  <ejs-contextmenu
+    #contextmenu
+    target=".e-content"
+    [items]="contextMenuItems"
+    (select)="contextMenuClick($event)"
+  ></ejs-contextmenu>
+</div>
+
 
 <!-- add col -->
 <div *ngIf="showAddColumn">

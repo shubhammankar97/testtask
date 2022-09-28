@@ -207,7 +207,7 @@ exports.moveNext = (req, res) => {
   var Data = JSON.parse(data);
   var id = Data.length;
   console.log("ID", id);
-  req.body.check ? user1 : (user["id"] = id + 1);
+  req.body.check ? user1["id"] = id + 1 : user["id"] = id + 1;
   console.log("+++", req.body.check ? user1 : user);
   console.log("---", Data);
   console.log("Test next", req.body.nextt);
