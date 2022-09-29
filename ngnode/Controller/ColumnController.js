@@ -29,7 +29,9 @@ exports.store = (req, res) => {
     user["id"] = id + 1;
     console.log('+++', user);
     console.log('---', Data);
-    Data.push(user);
+    // Data.push(user);
+    Data.splice(req.body.currentID , 0,  user);
+
 
     fs.writeFileSync("column.json", JSON.stringify(Data, null, 2))
     return res.json(Data)

@@ -161,7 +161,7 @@ exports.storeChild = (req, res) => {
   console.log("Test currentID", req.body.currentID);
   // user.id = user.id.toString();
   // user.parentID = user.parentID.toString();
-  Data.splice(req.body.currentID + 1, 0,  user1);
+  Data.splice(req.body.currentID , 0,  user1);
 
   fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
   return res.json(Data);

@@ -315,7 +315,7 @@ export class AppComponent {
   /////////////////////////////////
 
   constructor(private api: ApiService, private socketService: SocketioService) {
-    // console.log = function () {};
+    console.log = function () {};
     this.offCustom = this.customAttributes;
     this.imageLoader = true;
     showSpinner(document.getElementById("loader-container") as HTMLElement);
@@ -1008,6 +1008,35 @@ export class AppComponent {
       this.api.addNext(data).subscribe(() => {
         console.log("addNext API working or not check first");
       });
+
+      //////////////////////Next New Row Highlight
+
+      var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
+      console.log("NEw Row gettting rw", newRow);
+      console.log("NEw Row gettting rw", index + 1);
+
+      newRow.classList.add("nextNewRow");
+      console.log("classLIst added after through movable");
+      var time = 10;
+      setInterval(() => {
+        var newRow1 = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
+
+        if (time > 0) {
+          time--;
+
+          newRow1.style.backgroundColor = "#85dffa";
+          console.log("timeRemain");
+        } else {
+          this.flagg = 1;
+          newRow1.style.backgroundColor = "#fafafa";
+        }
+      }, 1000);
+      if (this.flagg == 1) {
+        this.stop();
+        newRow.style.backgroundColor = "#fafafa";
+      }
+
+
     } else {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
@@ -1023,35 +1052,33 @@ export class AppComponent {
       this.api.addNext(data).subscribe(() => {
         console.log("addNext API working or not check first");
       });
-
       //////////////////////Next New Row Highlight
-      if (this.highlightNext) {
-        console.log("highlightNextin", this.highlightNext);
 
-        let index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+      var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
+      console.log("NEw Row gettting rw", newRow);
+      console.log("NEw Row gettting rw", index + 1);
 
-        console.log("treegrid befORE highlight working", index);
+      newRow.classList.add("nextNewRow");
+      console.log("classLIst added after through movable");
+      var time = 10;
+      setInterval(() => {
+        var newRow1 = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
 
-        var x = this.treegrid.getRowByIndex(index + 1);
-        console.log("yyyyy", x);
-        x.classList.add("newclass_add"); // add the background color
-        console.log("after classlist addnext");
+        if (time > 0) {
+          time--;
 
-        setInterval(() => {
-          if (this.timeRemain > 0) {
-            this.timeRemain--;
-            $(".newclass_add").css("background-color", "#85dffa");
-            console.log("timeRemain");
-          } else {
-            this.flagg = 1;
-            $(".newclass_add").css("background-color", "#fafafa");
-          }
-        }, 1000);
-        if (this.flagg == 1) {
-          this.stop();
-          $(".newclass_add").css("background-color", "#fafafa");
+          newRow1.style.backgroundColor = "#85dffa";
+          console.log("timeRemain");
+        } else {
+          this.flagg = 1;
+          newRow1.style.backgroundColor = "#fafafa";
         }
+      }, 1000);
+      if (this.flagg == 1) {
+        this.stop();
+        newRow.style.backgroundColor = "#fafafa";
       }
+
     }
 
     this.stuRCId = this.data.length + 1;
@@ -1215,7 +1242,7 @@ export class AppComponent {
 
     console.log("treegrid befORE addrecord working", index);
     console.log("SelectedRECORDS ", this.treeGridObj.getSelectedRecords());
-    var currentDataId = this.treeGridObj.getSelectedRecords();
+    var currentDataId:any = this.treeGridObj["getSelectedRecords"]()[0]
     console.log("+++++++++++++++", this.treeGridObj.getSelectedRecords()[1]);
     console.log("++++++++======", currentDataId);
     if (this.childPid) {
@@ -1227,13 +1254,47 @@ export class AppComponent {
         name: this.stuCName,
         rollNo: this.stuCRoll,
         class: this.stuCClass,
-        currentID: index,
+        currentID: currentDataId.id,
         parentID: this.parentId,
         check: true,
       };
       this.api.addChildData(dataC).subscribe(() => {
         console.log("addChild API working or not check first");
       });
+
+
+      var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
+        console.log("NEw Row gettting rw", newRow);
+        console.log("NEw Row gettting rw", index + 1);
+
+        newRow.classList.add("nextNewRow");
+        console.log("classLIst added after through movable");
+        this.timeRemain = 10;
+        setInterval(() => {
+          var newRow1 = this.treeGridObj.getRowByIndex(
+            index + 1
+          ) as HTMLElement;
+
+          if (this.timeRemain > 0) {
+            this.timeRemain--;
+
+            newRow1.style.backgroundColor = "#85dffa";
+            console.log("timeRemain");
+          } else {
+            this.flagg = 1;
+            newRow1.style.backgroundColor = "#fafafa";
+          }
+        }, 1000);
+        if (this.flagg == 1) {
+          this.stop();
+          newRow.style.backgroundColor = "#fafafa";
+        }
+       else {
+        this.contextmenu.enableItems(["Move As Next"], false);
+      }
+
+
+
     } else {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
@@ -1243,35 +1304,71 @@ export class AppComponent {
         name: this.stuCName,
         rollNo: this.stuCRoll,
         class: this.stuCClass,
-        currentID: index,
+        currentID: currentDataId.id,
         check: false,
       };
       this.api.addChildData(dataC).subscribe(() => {
         console.log("addNext API working or not check first");
       });
-      //////////////////////Child New Row Highlight
-      if (this.highlightChild) {
-        console.log("highlightChildin", this.highlightChild);
-        let index = this.treeGridObj["getSelectedRowIndexes"]()[0];
-        console.log("#####", index);
-        var y = this.treegrid.getRowByIndex(index + 1);
-        console.log("yyyyy", y);
-        y.classList.add("newclass_add"); // add the background color
+      // //////////////////////Child New Row Highlight
+      // if (this.highlightChild) {
+      //   console.log("highlightChildin", this.highlightChild);
+      //   let index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+      //   console.log("#####", index);
+      //   var y = this.treegrid.getRowByIndex(index + 1);
+      //   console.log("yyyyy", y);
+      //   y.classList.add("newclass_add"); // add the background color
+      //   setInterval(() => {
+      //     if (this.timeRemain > 0) {
+      //       this.timeRemain--;
+      //       $(".newclass_add").css("background-color", "#85dffa");
+      //       console.log("timeRemain");
+      //     } else {
+      //       this.flagg = 1;
+      //       $(".newclass_add").css("background-color", "#fafafa");
+      //     }
+      //   }, 1000);
+      //   if (this.flagg == 1) {
+      //     this.stop();
+      //     $(".newclass_add").css("background-color", "#fafafa");
+      //   }
+      // }
+
+
+
+      var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
+        console.log("NEw Row gettting rw", newRow);
+        console.log("NEw Row gettting rw", index + 1);
+
+        newRow.classList.add("nextNewRow");
+        console.log("classLIst added after through movable");
+        this.timeRemain = 10;
         setInterval(() => {
+          var newRow1 = this.treeGridObj.getRowByIndex(
+            index + 1
+          ) as HTMLElement;
+
           if (this.timeRemain > 0) {
             this.timeRemain--;
-            $(".newclass_add").css("background-color", "#85dffa");
+
+            newRow1.style.backgroundColor = "#85dffa";
             console.log("timeRemain");
           } else {
             this.flagg = 1;
-            $(".newclass_add").css("background-color", "#fafafa");
+            newRow1.style.backgroundColor = "#fafafa";
           }
         }, 1000);
         if (this.flagg == 1) {
           this.stop();
-          $(".newclass_add").css("background-color", "#fafafa");
+          newRow.style.backgroundColor = "#fafafa";
         }
+       else {
+        this.contextmenu.enableItems(["Move As Next"], false);
       }
+
+
+
+
     }
     this.treegrid.refresh();
     // this.treeGridObj.addRecord(dataC, this.rowIndex, "Child"); //add child row
