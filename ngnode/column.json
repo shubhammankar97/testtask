@@ -1,5 +1,10 @@
 [
   {
+    "field": "City",
+    "type": "string",
+    "id": 5
+  },
+  {
     "field": "id",
     "id": 1,
     "type": "number",
