@@ -1136,7 +1136,42 @@ export class AppComponent {
     this.api.updateData(grid.getSelectedRecords()[0].id, data).subscribe(() => {
       console.log("edit Data api");
     });
+    this.treeGridObj.refresh();
+    this.api.getAll().subscribe((res: any) => {
+      this.data = res.filter((item: any) => item);
+    });
+
+
+
+var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
+      console.log("NEw Row gettting rw", newRow);
+      console.log("NEw Row gettting rw", index + 1);
+
+      newRow.classList.add("edittedRow");
+      console.log("classLIst added for edit row");
+      var time = 10;
+      setInterval(() => {
+        var newRow1 = this.treeGridObj.getRowByIndex(index) as HTMLElement;
+
+        if (time > 0) {
+          time--;
+
+          newRow1.style.backgroundColor = "#85dffa";
+          console.log("timeRemain");
+        } else {
+          this.flagg = 1;
+          newRow1.style.backgroundColor = "#fafafa";
+        }
+      }, 1000);
+      if (this.flagg == 1) {
+        this.stop();
+        newRow.style.backgroundColor = "#fafafa";
+      }
+
+
     this.ejDialog.hide();
+    this.showEditRow = false;
   }
 
 
@@ -1486,7 +1521,7 @@ export class AppComponent {
       }
     } else if (args.item.id === "editrow") {
       console.log("edit row");
-      this.showEditRow = true;
+      this.showEditRow = !this.showEditRow;
       args.cancel = true;
       this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
       // this.stuCid = Object.values(this.selectedRecord)[3];
@@ -1496,12 +1531,12 @@ export class AppComponent {
       this.stuNamen = this.selectedRecord.name;
       this.stuClassn = this.selectedRecord.class;
       this.stuRolln = this.selectedRecord.rollNo;
-      this.treeGridObj.refresh();
+      // this.treeGridObj.refresh();
 
-      this.api.getAll().subscribe((res: any) => {
-        this.data = res.filter((item: any) => item);
-      });
-      this.treeGridObj.dataSource = this.data;
+      // this.api.getAll().subscribe((res: any) => {
+      //   this.data = res.filter((item: any) => item);
+      // });
+      // this.treeGridObj.dataSource = this.data;
 
       this.startTimer();
     } else if (args.item.id === "multiselectrow") {
@@ -1533,7 +1568,7 @@ export class AppComponent {
         // args.cancel = true;  //lock the current row
         var index = this.treeGridObj["getSelectedRowIndexes"]()[0]; //delete the copied record
         var record = this.treeGridObj["getSelectedRecords"]()[0];
-       
+        console.log("IndexMove Next", index);
         copiedRecord.nextt = index;
         if (this.childPid) {
           copiedRecord.check = true;
