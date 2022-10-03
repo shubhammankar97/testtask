@@ -1426,10 +1426,6 @@ export class AppComponent {
       var checkbox = args.element.querySelector(".ejs-checkbox");
       checkbox.checked = !checkbox.checked;
     }
-    if (args.item.id === "multiselectrow") {
-      console.log("contexmenu select", args);
-      this.showChooseRow = true;
-    }
 
     var data = {
       id: this.data.length + 1,
@@ -1721,8 +1717,8 @@ export class AppComponent {
         console.log("CHECKB stops ");
 
         $(
-          "li#customCopyNext dim,li#customCopyChild dim, li#pastenextrow dim, li#pastechildrow dim, li#deleterow dim"
-        ).css("background-color", "#f08080!important");
+          "li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim"
+        ).css("background-color", "#f08080");
         this.editSettings.showDeleteConfirmDialog =
           !this.editSettings.showDeleteConfirmDialog;
         this.alertOrphan = true;
@@ -1735,10 +1731,8 @@ export class AppComponent {
           Array.from(checkedRows).map((row) => {
             row?.closest("tr")?.classList.add("bgcolor");
           });
-          // $(".e-menu-item").css("background-color", "red");
-          $(
-            "li#customCopy dim, li#pastenextrow dim, li#pastechildrow dim, li#deleterow dim"
-          ).css("background-color", "red!important");
+          $(".e-menu-item").css("background-color", "red");
+          $("li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim").css("background-color", "red!important");
 
           console.log("Yess this makes RED");
         } else {
