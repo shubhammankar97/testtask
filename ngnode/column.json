@@ -1,5 +1,4 @@
 [
-  null,
   {
     "field": "id",
     "id": 1,
@@ -22,6 +21,15 @@
   {
     "field": "rollNo",
     "id": 3,
+    "type": "number",
+    "validation": {
+      "required": true,
+      "number": true
+    }
+  },
+  {
+    "field": "class",
+    "id": 4,
     "type": "number",
     "validation": {
       "required": true,
