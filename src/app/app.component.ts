@@ -1296,7 +1296,12 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       this.api.addChildData(dataC).subscribe(() => {
         console.log("addChild API working or not check first");
       });
+      this.treeGridObj.refresh();
 
+      this.api.getAll().subscribe((res: any) => {
+        this.data = res.filter((item: any) => item);
+      });
+      this.treeGridObj.dataSource = this.data;
 
       var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
         console.log("NEw Row gettting rw", newRow);
@@ -1354,6 +1359,12 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
         newRow.classList.add("nextNewRow");
         console.log("classLIst added after through movable");
         this.timeRemain = 10;
+        this.treeGridObj.refresh();
+
+        this.api.getAll().subscribe((res: any) => {
+          this.data = res.filter((item: any) => item);
+        });
+        this.treeGridObj.dataSource = this.data;
         setInterval(() => {
           var newRow1 = this.treeGridObj.getRowByIndex(
             index + 1
@@ -1386,12 +1397,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     this.treeGridObj.endEdit;
     this.ejDialog.hide();
     // args.disableRow = false;
-    this.treeGridObj.refresh();
-
-    this.api.getAll().subscribe((res: any) => {
-      this.data = res.filter((item: any) => item);
-    });
-    this.treeGridObj.dataSource = this.data;
+   
   }
   validation(args: any) {
     this.treegrid.endEdit();
