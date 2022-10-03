@@ -31,14 +31,5 @@
       "required": true,
       "number": true
     }
-  },
-  {
-    "field": "class",
-    "id": 4,
-    "type": "number",
-    "validation": {
-      "required": true,
-      "number": true
-    }
   }
 ]
