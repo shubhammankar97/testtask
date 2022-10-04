@@ -6,7 +6,7 @@
   <div class="hidebtn" style="text-align: left; font-weight: 80px">
     <span *ngIf="checkB">
 
-      <button #btn1 ejs-button cssClass="e-flat" (click)="click($event)">
+      <button #btn1 ejs-button cssClass="e-flat" class="e-btn" (click)="click($event)">
         Cancel</button
       >{{ timeLeft }}
     </span>
@@ -142,10 +142,10 @@
 
 
 <!-- add col -->
-<div *ngIf="showAddColumn">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogAC
     allowDragging="true"
     header="Add Column"
     content="This is a Dialog with drag enabled"
@@ -154,6 +154,7 @@
     [height]="450"
     [position]="pos"
     showCloseIcon="true"
+    [visible]='visiAddCol'
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
@@ -223,10 +224,10 @@
 </div>
 <!--edit Column -->
 
-<div *ngIf="showEditColumn">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogEC
     [animationSettings]="animationSettings"
     header="Edit Column"
     [target]="targetElement"
@@ -235,6 +236,8 @@
     [height]="700"
     allowDragging="true"
     [position]="pos"
+    [visible]='visiEditCol'
+
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" validate>
@@ -429,10 +432,10 @@
 </div>
 
 <!--view dialog -->
-<div *ngIf="showViewColumn">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogVC
     [animationSettings]="animationSettings"
     header="View Column"
     [target]="targetElement"
@@ -441,6 +444,8 @@
     [height]="450"
     allowDragging="true"
     [position]="pos"
+    [visible]='visiViewCol'
+
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
@@ -554,10 +559,10 @@
   </ejs-dialog>
 </div>
 <!-- delete col -->
-<div *ngIf="showDelColumn">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogDC
     allowDragging="true"
     header="Delete Column"
     content="This is a Dialog with drag enabled"
@@ -566,6 +571,8 @@
     [height]="400"
     [position]="pos"
     showCloseIcon="true"
+    [visible]='visiDelCol'
+
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
@@ -612,16 +619,18 @@
 </div>
 
 <!-- Add Next -->
-<div *ngIf="showAddNext">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogAN
     allowDragging="true"
     header="Add Next"
     width="300px"
     [position]="pos"
     showCloseIcon="true"
     [height]="470"
+    [visible]='visiAddNext'
+
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" validate>
@@ -768,10 +777,10 @@
 </div>
 
 <!-- Delete Row dialog -->
-<div *ngIf="showDeleteRow">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogDR
     allowDragging="true"
     header="Delete Column"
     content="This is a Dialog with drag enabled"
@@ -780,6 +789,8 @@
     [height]="400"
     [position]="pos"
     showCloseIcon="true"
+    [visible]='visiDelRow'
+
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
@@ -860,16 +871,18 @@
 </div>
 
 <!-- Edit Row -->
-<div *ngIf="showEditRow">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogER
     allowDragging="true"
     header="Edit Row"
     width="300px"
     [position]="pos"
     showCloseIcon="true"
     [height]="500"
+    [visible]='visiEditRow'
+
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
@@ -894,7 +907,7 @@
               type="text"
               name="stuRCId"
               class="form-control"
-              id="sclass"
+              id="sid"
               [(ngModel)]="stuCid"
               disabled
             />
@@ -1012,16 +1025,18 @@
 </div>
 
 <!-- Add Child -->
-<div *ngIf="showAddchild">
+<div>
   <ejs-dialog
     id="dialog"
-    #ejDialog
+    #DialogACh
     allowDragging="true"
     header="Add Child"
     width="300px"
     [position]="pos"
     showCloseIcon="true"
     [height]="470"
+    [visible]='visiAddChild'
+
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>

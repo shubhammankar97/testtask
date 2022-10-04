@@ -165,16 +165,10 @@ export class AppComponent {
   columnField!: string;
   ColAlign: string = "";
   ColMinWidth!: number;
-  public showEditColumn: boolean = false;
-  public showDelColumn: boolean = false;
-  public showViewColumn: boolean = false;
-  public showAddColumn: boolean = false;
+
   public showChooseRow: boolean = false;
   public showNewColumn: boolean = false;
-  public showAddNext: boolean = false;
-  public showDeleteRow: boolean = false;
-  public showEditRow: boolean = false;
-  public showAddchild: boolean = false;
+
 
   public ColType: string = "";
   public ColFColor: string = "";
@@ -188,6 +182,26 @@ export class AppComponent {
   private clone: any = null;
 
   @ViewChild("ejDialog") ejDialog!: DialogComponent;
+  @ViewChild('DialogAC', {static : false}) ejDialogACol!: DialogComponent;
+  @ViewChild('DialogEC', {static : false}) ejDialogECol!: DialogComponent;
+  @ViewChild('DialogVC', {static : false}) ejDialogVCol!: DialogComponent;
+  @ViewChild('DialogDC', {static : false}) ejDialogDCol!: DialogComponent;
+  @ViewChild('DialogAN', {static : false}) ejDialogAN!: DialogComponent;
+  @ViewChild('DialogACh', {static : false}) ejDialogACh!: DialogComponent;
+  @ViewChild('DialogER', {static : false}) ejDialogERow!: DialogComponent;
+  @ViewChild('DialogDR', {static : false}) ejDialogDRow!: DialogComponent;
+
+
+  public visiAddCol:boolean =  false;
+  public visiEditCol:boolean = false;
+  public visiDelCol:boolean =  false;
+  public visiViewCol:boolean = false;
+  public visiAddNext:boolean = false;
+  public visiAddChild:boolean =false;
+  public visiDelRow:boolean =  false;
+  public visiEditRow:boolean = false;
+
+
 
   public textWrap: boolean = false;
 
@@ -309,7 +323,7 @@ export class AppComponent {
 
   public enabe: boolean = false;
   public alertOrphan: boolean = false;
-
+  public colIndex: any;
 
 
   /////////////////////////////////
@@ -695,13 +709,12 @@ export class AppComponent {
       console.log("error", this.lock);
       console.log("add", this.treegrid.getColumnFieldNames());
       console.log("column Field", this.columnField);
-
-      this.showAddColumn = !this.showAddColumn;
+      this.ejDialogACol.show();
     }
     this.isLock = true;
     if (args.item.text === "Edit Column") {
       console.log("edit");
-      this.showEditColumn = !this.showEditColumn;
+      this.ejDialogECol.show();
       this.checkNewEdit = "edit";
       this.getCurrentField();
       this.startTimer();
@@ -712,11 +725,11 @@ export class AppComponent {
     }
     if (args.item.text === "View Column") {
       console.log("view");
-      this.showViewColumn = !this.showViewColumn;
+      this.ejDialogVCol.show();
     }
     if (args.item.text === "Delete Column") {
       console.log("delete");
-      this.showDelColumn = !this.showDelColumn;
+      this.ejDialogDCol.show();
     }
     if (args.item.text === "Choose Column") {
       console.log("Choose");
@@ -749,16 +762,20 @@ export class AppComponent {
   }
   ////countdown
   startTimer() {
+    console.log("starts");
+    this.timeLeft = 30;
     this.interval = setInterval(() => {
       if (this.timeLeft > 0) {
         this.timeLeft--;
+        console.log("time running");
+        
       } else {
         this.flagg = 1;
       }
     }, 1000);
     if (this.flagg == 1) {
-      this.stop();
-      this.ejDialog.hide();
+      clearInterval(this.interval);
+      this.ejDialogERow.hide();
     }
   }
 
@@ -839,7 +856,7 @@ export class AppComponent {
 
     this.treegrid.refreshColumns();
     // this.treegrid.endEdit;
-    this.ejDialog.hide();
+    this.ejDialogACol.hide();
     // this.column[arg.column.index].lock = false;
   }
 
@@ -857,11 +874,12 @@ export class AppComponent {
         this.treegrid.refreshColumns();
       }
     }
-
+    console.log("DELETE Column REmoveColumn");
+    this.treeGridObj.columns.splice(this.colIndex, 1);
     // this.treegrid.columns.pop();
     this.treegrid.refreshColumns();
     this.treegrid.endEdit;
-    this.ejDialog.hide();
+    this.ejDialogDCol.hide();
     args.disableRow = false;
   }
   //////////////////
@@ -876,12 +894,13 @@ export class AppComponent {
       checkbox.checked = !checkbox.checked;
     }
     if (args.item.text === "Add Child") {
-      this.showAddchild = true;
+      this.ejDialogACh.show();
+      // this.showAddchild = true;
       this.stuCId = this.data.length + 1;
     }
     if (args.item.text === "Edit Row") {
       console.log("edit row");
-      this.showEditRow = true;
+      this.ejDialogERow.show();
       this.stuRCId = this.data.length + 1;
       if (this.grid.getSelectedRecords().length) {
         this.grid.startEdit(); // handle the grid actions as per your requirement here.
@@ -904,7 +923,7 @@ export class AppComponent {
         if (this.enabe) {
           console.log("enabEEEE");
           args.cancel = false;
-          this.showDeleteRow = true;
+          this.ejDialogDRow.show();
           this.delete();
         } else {
           args.cancel = true;
@@ -973,7 +992,7 @@ export class AppComponent {
 
   addNextt(args: any) {
     console.log("addNexttt");
-    this.ejDialog.hide();
+    this.ejDialogAN.hide();
     var i;
     var rec: any = [];
     if (this.flag == false) {
@@ -1090,52 +1109,59 @@ export class AppComponent {
     this.treeGridObj.dataSource = this.data;
 
     console.log("treegrid addrecord working");
+    this.ejDialogAN.hide();
 
     this.treeGridObj.endEdit;
   }
 
   ///////////////edit Row
   editRow() {
-    let si: HTMLInputElement = document
-      .getElementById("dialog")
-      ?.querySelector("#sid")!;
-    let sn: HTMLInputElement = document
-      .getElementById("dialog")
-      ?.querySelector("#sname")!;
-    let sr: HTMLInputElement = document
-      .getElementById("dialog")
-      ?.querySelector("#sroll")!;
-    let sc: HTMLInputElement = document
-      .getElementById("dialog")
-      ?.querySelector("#sclass")!;
-    console.log("sn val", sn.value);
+
+    let sn:string = (<HTMLInputElement> document
+      .getElementById("sname")).value
+    let sr:string = (<HTMLInputElement> document
+      .getElementById("sroll")).value;
+    let sc:string = (<HTMLInputElement> document
+      .getElementById("sclass")).value
+
     var grid = (document.getElementsByClassName("e-grid")[0] as any)
       .ej2_instances[0];
+      console.log("EditRow CHILD Pid##########", this.childPid);
+      if (this.childPid) {
     var data = [
       {
         id: grid.getSelectedRecords()[0].id,
-        name: sn.value,
-        rollNo: sr.value,
-        class: sc.value,
+        name: sn,
+        rollNo: sr,
+        class: sc,
         parentID: this.parentId,
+        check: true
       },
     ];
-
-    var dataa = [
-      {
-        id: this.data.length + 1,
-        name: this.stuName,
-        rollNo: this.stuRoll,
-        class: this.stuClass,
-      },
-    ];
-
-    console.log("ID::", si);
-
+    console.log("DATATAA", data)
     console.log("add next function ", grid.getSelectedRecords()[0].id);
     this.api.updateData(grid.getSelectedRecords()[0].id, data).subscribe(() => {
       console.log("edit Data api");
     });
+  }
+  else{
+    var dataa = [
+      {
+        id: grid.getSelectedRecords()[0].id,
+        name: sn,
+        rollNo: sr,
+        class: sc,
+        check: false
+      },
+    ];
+    console.log("add next function ", grid.getSelectedRecords()[0].id);
+    this.api.updateData(grid.getSelectedRecords()[0].id, dataa).subscribe(() => {
+      console.log("edit Data api");
+    });
+
+  }
+  clearInterval(this.interval);
+
     this.treeGridObj.refresh();
     this.api.getAll().subscribe((res: any) => {
       this.data = res.filter((item: any) => item);
@@ -1170,8 +1196,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       }
 
 
-    this.ejDialog.hide();
-    this.showEditRow = false;
+    
+    this.ejDialogERow.hide();
   }
 
 
@@ -1186,23 +1212,27 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     this.api.deleteData(grid.getSelectedRecords()[0].id).subscribe(() => {
       console.log("deleteData api");
     });
-    this.ejDialog.hide();
+    this.ejDialogDRow.hide();
   }
 
   checkNewEdit!: string;
 
   btnclick(args: any) {
     this.hideDialog.bind(args);
-    this.ejDialog.hide();
+    this.ejDialogVCol.hide()
     args.disableRow = false;
-    this.showEditColumn = false;
+    this.ejDialogECol.hide();
+    this.ejDialogDCol.hide();
     this.stop();
   }
   btnclick3(args: any) {
     this.close = true;
     this.stop();
-    this.ejDialog.hide();
+    this.ejDialogAN.hide();
+    this.ejDialogDRow.hide();
     this.hideDialog3.bind(args);
+    this.ejDialogERow.hide();
+    this.ejDialogACh.hide();
   }
 
   ////////////row drag and drop
@@ -1272,7 +1302,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
   //adding child record
   addChild(args: any) {
     console.log("ADDChild", args);
-    this.ejDialog.hide();
+    this.ejDialogACh.hide();
     var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
     console.log("treegrid befORE addrecord working", index);
@@ -1395,8 +1425,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     this.treegrid.refresh();
     // this.treeGridObj.addRecord(dataC, this.rowIndex, "Child"); //add child row
     this.treeGridObj.endEdit;
-    this.ejDialog.hide();
-    // args.disableRow = false;
+    this.ejDialogACh.hide();
+
    
   }
   validation(args: any) {
@@ -1460,7 +1490,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
     if (args.item.id === "editCol") {
       this.checkNewEdit = "edit";
-      this.showEditColumn = !this.showEditColumn;
+      this.ejDialogECol.show()
       this.getCurrentField();
     }
     if (args.event.target.classList.contains("ejs-checkboxspan")) {
@@ -1485,7 +1515,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     if (args.item.id === "addnextrow") {
       console.log("ADDnextRow highlight");
 
-      this.showAddNext = true;
+      this.ejDialogAN.show();
       this.highlightNext = true;
       args.cancel = true;
       args.disabled = true;
@@ -1498,11 +1528,12 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       var a = this.treegrid.getBatchChanges();
     } else if (args.item.id === "addchildrow") {
       console.log("adding child");
+      this.ejDialogACh.show();
       this.highlightChild = true;
       args.cancel = true;
 
       this.startTimer();
-      this.showAddchild = true;
+      // this.showAddchild = true;
       this.stuCId = this.data.length + 1;
     } else if (
       args.item.id === "deleterow" ||
@@ -1527,7 +1558,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       }
     } else if (args.item.id === "editrow") {
       console.log("edit row");
-      this.showEditRow = !this.showEditRow;
+      this.ejDialogERow.show();
       args.cancel = true;
       this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
       // this.stuCid = Object.values(this.selectedRecord)[3];
@@ -1716,7 +1747,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     } else {
       this.childPid = false;
     }
-
+    this.colIndex = args.target.closest("td").getAttribute("aria-colindex");
+    console.log("COLUMN Index????>>>>", this.colIndex);
   }
 
   onColumnClicked(args: any) {
@@ -1900,9 +1932,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       this.textWrap = this.ColChecked;
     }
 
-    this.showEditColumn = false;
+    this.ejDialogECol.hide();
 
-    this.ejDialog.hide();
   }
   ////////////////////////////////////////////////////////////////////////////
 

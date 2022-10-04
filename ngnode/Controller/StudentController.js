@@ -64,20 +64,31 @@ exports.getid = (req, res) => {
 
 exports.update = (req, res) => {
   id = req.params.id;
-  var user = {
+  var user;
+  if (req.body.check) {
+  var user1 = {
     id: id,
     name: req.body.name,
     rollNo: req.body.rollNo,
     class: req.body.class,
     parentID: req.body.parentID
   };
+}
+else{
+  var user = {
+    id: id,
+    name: req.body.name,
+    rollNo: req.body.rollNo,
+    class: req.body.class
+  };
+}
   data = fs.readFileSync("student.json");
   var Data = JSON.parse(data);
   for (var i in Data) {
     console.log(Data);
     if (Data[i] != null) {
       if (Data[i]["id"] == id) {
-        Data[i] = user;
+        Data[i] = req.body.check ? user1 : user;
         fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
         console.log(Data);
         res.json(Data);
@@ -141,21 +152,13 @@ exports.storeChild = (req, res) => {
         parentID: req.body.currentID.toString(),
       };
 
-    // } else {
-    //   user = {
-    //     id: req.body.id,
-    //     name: req.body.name,
-    //     class: req.body.class,
-    //     rollNo: req.body.rollNo,
-    //     parentID: req.body.currentID,
-    //   };
-    // }
   var data = fs.readFileSync("student.json");
   data = data.toString();
   var Data = JSON.parse(data);
-  var id = Data.length;
+  var id = req.body.currentID.parseInt;
   console.log("ID", id);
-  user1["id"] = id + 1;
+  var local=id+0.1;
+  user1["id"] = local;
   console.log("+++", user1);
   console.log("---", Data);
   console.log("Test currentID", req.body.currentID);
