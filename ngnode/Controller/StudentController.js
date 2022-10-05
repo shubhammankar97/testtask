@@ -71,7 +71,7 @@ exports.update = (req, res) => {
     name: req.body.name,
     rollNo: req.body.rollNo,
     class: req.body.class,
-    parentID: req.body.parentID
+    parentID: req.body.parentID.toString()
   };
 }
 else{

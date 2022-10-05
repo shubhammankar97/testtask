@@ -774,8 +774,9 @@ export class AppComponent {
       }
     }, 1000);
     if (this.flagg == 1) {
-      clearInterval(this.interval);
-      this.ejDialogERow.hide();
+      // clearInterval(this.interval);
+      // this.ejDialogERow.hide();
+      stop();
     }
   }
 
@@ -1977,5 +1978,6 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     console.log("Timer stopped");
     clearInterval(this.timeLeft);
     clearInterval(this.interval);
+    this.ejDialogERow.hide();
   }
 }
