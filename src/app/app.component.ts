@@ -679,37 +679,34 @@ export class AppComponent {
     }
 
     if (args.item.text == "Add Column") {
+      this.ejDialogACol.show();
       this.isLock = false;
       this.offCustom = "";
       console.log("message", this.lock, args);
       this.lock = true;
       this.start = this.customAttributes;
       var s = setInterval(() => {
-        console.log("werwerwrwrwer");
         if (!this.close) {
           if (this.timeLeft > 0) {
             this.timeLeft--;
             console.log("timer start");
             console.log("close if out");
-          }
-        } else {
-          this.flagg = 1;
-          this.stop();
+          } else {
+            this.ejDialogACol.hide();
+            clearInterval(s);
+            alert("Failed to lock Column");
+            console.log("{{");
+            args.disableRow = false;
+            this.lock = false;
+        }
         }
       }, 1000);
-      if (this.flagg == 1) {
-        this.stop();
-        this.ejDialog.hide();
-        console.log("{{", this.ejDialog.hide());
-        args.disableRow = false;
-        this.lock = false;
-      }
-      alert("Failed to lock Column");
+
+      
 
       console.log("error", this.lock);
       console.log("add", this.treegrid.getColumnFieldNames());
       console.log("column Field", this.columnField);
-      this.ejDialogACol.show();
     }
     this.isLock = true;
     if (args.item.text === "Edit Column") {
@@ -849,7 +846,8 @@ export class AppComponent {
   }
   /////////////Add Column Event
   clicked(): void {
-    let columnName = { field: this.ColName, type: this.ColType };
+    console.log("COLUMN Index",this.colIndex);
+    let columnName = { field: this.ColName, type: this.ColType, currentColID: this.freezeColId };
     this.treegrid.columns.splice(this.column.length + 1, 0, columnName); //Add the columns
     this.api.addColumn(columnName).subscribe((res: any) => {
       // console.log("column appended", columnName.field);
@@ -1748,7 +1746,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     } else {
       this.childPid = false;
     }
-    this.colIndex = args.target.closest("td").getAttribute("aria-colindex");
+    this.colIndex = parseInt(args.target.closest("td").getAttribute("aria-colindex"));
     console.log("COLUMN Index????>>>>", this.colIndex);
   }
 

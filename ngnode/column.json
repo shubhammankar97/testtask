@@ -35,5 +35,14 @@
       "required": true,
       "number": true
     }
+  },
+  {
+    "field": "City",
+    "id": 5,
+    "type": "number",
+    "validation": {
+      "required": true,
+      "number": true
+    }
   }
 ]

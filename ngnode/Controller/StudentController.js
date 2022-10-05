@@ -66,22 +66,21 @@ exports.update = (req, res) => {
   id = req.params.id;
   var user;
   if (req.body.check) {
-  var user1 = {
-    id: id,
-    name: req.body.name,
-    rollNo: req.body.rollNo,
-    class: req.body.class,
-    parentID: req.body.parentID.toString()
-  };
-}
-else{
-  var user = {
-    id: id,
-    name: req.body.name,
-    rollNo: req.body.rollNo,
-    class: req.body.class
-  };
-}
+    var user1 = {
+      id: id,
+      name: req.body.name,
+      rollNo: req.body.rollNo,
+      class: req.body.class,
+      parentID: req.body.parentID.toString(),
+    };
+  } else {
+    var user = {
+      id: id,
+      name: req.body.name,
+      rollNo: req.body.rollNo,
+      class: req.body.class,
+    };
+  }
   data = fs.readFileSync("student.json");
   var Data = JSON.parse(data);
   for (var i in Data) {
@@ -140,42 +139,42 @@ exports.storeNext = (req, res) => {
 };
 
 exports.storeChild = (req, res) => {
-  var user;
-  try {
-    console.log(req.body);
-    // if (req.body.check) {
-      var user1 = {
-        id: req.body.id,
-        name: req.body.name,
-        class: req.body.class,
-        rollNo: req.body.rollNo,
-        parentID: req.body.currentID.toString(),
-      };
 
+  try {
+  console.log(req.body);
+  // if (req.body.check) {
+  var user1 = {
+  id: req.body.id,
+  name: req.body.name,
+  class: req.body.class,
+  rollNo: req.body.rollNo,
+  parentID: req.body.currentID.toString(),
+  };
+  
   var data = fs.readFileSync("student.json");
   data = data.toString();
   var Data = JSON.parse(data);
-  var id = req.body.currentID.parseInt;
+  var id = Data.length;
   console.log("ID", id);
-  var local=id+0.1;
-  user1["id"] = local;
+
+  user1["id"] = id + 1;
   console.log("+++", user1);
   console.log("---", Data);
   console.log("Test currentID", req.body.currentID);
   // user.id = user.id.toString();
   // user.parentID = user.parentID.toString();
-  Data.splice(req.body.currentID , 0,  user1);
-
+  Data.splice(req.body.currentID , 0, user1);
+  
   fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
   return res.json(Data);
   } catch (err) {
-    return res.json(err);
-    console.log("ERROR", err);
+  return res.json(err);
+  console.log("ERROR", err);
   }
   Object.values(obj)[0]
-};
+  };
 
-
+  
 // move Next
 
 exports.moveNext = (req, res) => {
@@ -204,13 +203,13 @@ exports.moveNext = (req, res) => {
     });
     console.log("ERROR", err);
   }
-  console.log("DAta >>>", user1)
+  console.log("DAta >>>", user1);
   var data = fs.readFileSync("student.json");
   data = data.toString();
   var Data = JSON.parse(data);
   var id = Data.length;
   console.log("ID", id);
-  req.body.check ? user1["id"] = id + 1 : user["id"] = id + 1;
+  req.body.check ? (user1["id"] = id + 1) : (user["id"] = id + 1);
   console.log("+++", req.body.check ? user1 : user);
   console.log("---", Data);
   console.log("Test next", req.body.nextt);
@@ -220,37 +219,35 @@ exports.moveNext = (req, res) => {
   return res.json(Data);
 };
 
-
-
 // move Child
 exports.moveChild = (req, res) => {
   var user;
   try {
     console.log(req.body);
-      var user1 = {
-        id: req.body.id,
-        name: req.body.name,
-        class: req.body.class,
-        rollNo: req.body.rollNo,
-        parentID: req.body.current.toString(),
-      };
+    var user1 = {
+      id: req.body.id,
+      name: req.body.name,
+      class: req.body.class,
+      rollNo: req.body.rollNo,
+      parentID: req.body.current.toString(),
+    };
 
-  var data = fs.readFileSync("student.json");
-  data = data.toString();
-  var Data = JSON.parse(data);
-  var id = Data.length;
-  console.log("ID", id);
-  user1["id"] = id + 1;
-  console.log("+++", user1);
-  console.log("---", Data);
-  console.log("Test currentID", req.body.current);
-  Data.splice(req.body.current + 1, 0,  user1);
+    var data = fs.readFileSync("student.json");
+    data = data.toString();
+    var Data = JSON.parse(data);
+    var id = Data.length;
+    console.log("ID", id);
+    user1["id"] = id + 1;
+    console.log("+++", user1);
+    console.log("---", Data);
+    console.log("Test currentID", req.body.current);
+    Data.splice(req.body.current + 1, 0, user1);
 
-  fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
-  return res.json(Data);
+    fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
+    return res.json(Data);
   } catch (err) {
     return res.json(err);
     console.log("ERROR", err);
   }
-  Object.values(obj)[0]
+  Object.values(obj)[0];
 };
