@@ -324,27 +324,33 @@ export class AppComponent {
   public enabe: boolean = false;
   public alertOrphan: boolean = false;
   public colIndex: any;
-
+  public colFields:any;
 
   /////////////////////////////////
-
   constructor(private api: ApiService, private socketService: SocketioService) {
     console.log = function () {};
     this.offCustom = this.customAttributes;
     this.imageLoader = true;
     showSpinner(document.getElementById("loader-container") as HTMLElement);
+
     this.api.getAll().subscribe((res: any) => {
       showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.imageLoader = true;
-      this.data = res.filter((item: any) => item);
-
+     this.data = res.filter((item: any) => item);
+      console.log(this.data)
       if (this.data.length) {
         this.imageLoader = false;
         hideSpinner(document.getElementById("loader-container") as HTMLElement);
       }
     });
     this.imageLoader = false;
+    setTimeout(async () => {
+      console.log('**************************');
+      console.log(this.data)
 
+      this.colFields = Object.keys(this.data[0]);
+      console.log("KEYS value", this.colFields);
+    },1400);
     //get the Grid model.
     this.value = localStorage.getItem("treegrid")!;
     $(".e-treegrid .e-headercell.cssClassaa").css(
@@ -385,12 +391,12 @@ export class AppComponent {
   ////////////////////////////////////////////===================
 
   ngOnInit(): void {
+    
     this.imageLoader = true;
     this.api.getAllCol().subscribe((res: any) => {
       this.column = res;
       this.imageLoader = false;
     });
-    console.log("column", this.column);
     this.getFiltersSubscription();
     $("#dim").css("pointer-events", "none");
     this.editSettings = {
@@ -689,13 +695,10 @@ export class AppComponent {
         if (!this.close) {
           if (this.timeLeft > 0) {
             this.timeLeft--;
-            console.log("timer start");
-            console.log("close if out");
           } else {
             this.ejDialogACol.hide();
             clearInterval(s);
             alert("Failed to lock Column");
-            console.log("{{");
             args.disableRow = false;
             this.lock = false;
         }
@@ -849,10 +852,13 @@ export class AppComponent {
     console.log("COLUMN Index",this.colIndex);
     let columnName = { field: this.ColName, type: this.ColType, currentColID: this.freezeColId };
     this.treegrid.columns.splice(this.column.length + 1, 0, columnName); //Add the columns
-    this.api.addColumn(columnName).subscribe((res: any) => {
-      // console.log("column appended", columnName.field);
-    });
+    // this.api.addColumn(columnName).subscribe((res: any) => {
+    //   // console.log("column appended", columnName.field);
+    // });
 
+    this.api.addCol(columnName).subscribe((res:any)=>{
+      console.log("add Column API");
+    })
     this.treegrid.refreshColumns();
     // this.treegrid.endEdit;
     this.ejDialogACol.hide();
@@ -867,9 +873,12 @@ export class AppComponent {
       console.log("yess", i);
       if (i.field == args) {
         console.log("ID:", i.id);
-        this.api.deleteColumn(i.id).subscribe((res: any) => {
-          console.log("delete column", res);
-        });
+        // this.api.deleteColumn(i.id).subscribe((res: any) => {
+        //   console.log("delete column", res);
+        // });
+        this.api.deleteCol(i.id).subscribe((res:any)=>{
+          console.log("RemoveCOLUMN", res)
+        })
         this.treegrid.refreshColumns();
       }
     }

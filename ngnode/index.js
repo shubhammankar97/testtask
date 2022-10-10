@@ -18,6 +18,8 @@ app.post('/add-Next',StudentController.storeNext);
 app.post('/add-Child',StudentController.storeChild);
 app.post('/move-Next',StudentController.moveNext);
 app.post('/move-Child',StudentController.moveChild);
+app.post('/add-Col',StudentController.storeColumn);
+app.delete('/delete-Col/:id',StudentController.deleteCol);
 const io = require('socket.io')(http, {
   cors: {
     origins: ['http://localhost:4200', 'http://localhost:3000', 'http://localhost:3001', 'http://192.168.7.136:4001','https://pdptappsensor.elb.cisinlive.com']

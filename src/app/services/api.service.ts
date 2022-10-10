@@ -101,4 +101,15 @@ export class ApiService {
       httpOptions
     );
   }
+// add column
+  addCol(col:any){
+    console.log("ADDCOL API", col);
+    return this.http.post(this.API_URL + "/add-Col", col, httpOptions);
+  }
+
+  // delete column
+  deleteCol(col:any){
+    console.log("DELCOL API", col);
+    return this.http.delete(this.API_URL + "/delete-Col" + col, httpOptions)
+  }
 }

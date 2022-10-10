@@ -251,3 +251,45 @@ exports.moveChild = (req, res) => {
   }
   Object.values(obj)[0];
 };
+
+
+// add column
+exports.storeColumn = (req, res) => {
+
+
+  var data = fs.readFileSync("student.json");
+  console.log(data);
+  console.log("Response", req.body.field)
+  data = data.toString();
+  var Data = JSON.parse(data);
+
+  const newd = Data.map(col => {
+    col[req.body.field] = "";
+    return col;
+})
+console.log("NewD", res.body)
+
+fs.writeFileSync("student.json", JSON.stringify(newd, null, 2))
+console.log("WRITTEN in JSON")
+  return res.json(newd);
+
+
+}
+
+// delete column
+exports.deleteCol = (req, res) => {
+  id = req.params.id
+  data = fs.readFileSync("student.json")
+  var Data = JSON.parse(data);
+  for (var i in Data) {
+      console.log(Data);
+      if (Data[i] != null) {
+          if (Data[i]["id"] == id) {
+              delete Data[i]
+              fs.writeFileSync("column.json", JSON.stringify(Data, null, 2))
+              console.log(Data)
+              res.json(Data)
+          };
+      }
+  };
+};

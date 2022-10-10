@@ -116,6 +116,8 @@
         [lockColumn]="lock"
         [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null"
         [isFrozen]="true"
+        [showCheckbox]="showChooseRow"
+        [edit]="editparams"
       ></e-column>
     </div>
   </e-columns>
@@ -619,6 +621,80 @@
 </div>
 
 <!-- Add Next -->
+<!-- <div>
+  <ejs-dialog
+    id="dialog"
+    #DialogAN
+    allowDragging="true"
+    header="Add Next"
+    width="300px"
+    [position]="pos"
+    showCloseIcon="true"
+    [height]="470"
+    [visible]='visiAddNext'
+
+  > -->
+    
+
+    <!-- <ng-template #content>
+      <form id="template_driven" #userForm="ngForm" validate>
+        <p>(Timer: {{ timeLeft }})</p>
+
+        <div
+          class="form-group"
+          style="padding-top: 11px"
+          *ngFor="let col of colFields; let i = index"
+        > 
+          <div *ngIf="col !== 'parentID'" class="e-float-input">
+            <input
+              type="text"
+              name="stuRCId"
+              class="form-control"
+              id="sclass"
+              [(ngModel)]="stuRCId"
+              id="valid"
+              disabled
+            />
+            <span class="e-float-line"></span>
+            <label class="e-float-text e-label-top" for="name">{{
+              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
+            }}</label> -->
+          <!-- </div>
+          </div>
+          </form>
+          </ng-template>
+
+    <ng-template #footerTemplate>
+      <div>
+        <button
+          id="Button1"
+          class="e-control e-btn e-primary e-flat"
+          (click)="addNextt($event)"
+          data-ripple="true"
+        >
+          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
+        </button> -->
+        <!-- <button
+          id="Button2"
+          class="e-control e-btn e-flat"
+          (click)="btnclick3($event)"
+          data-ripple="true"
+        >
+          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+          >Cancel
+        </button> -->
+      <!-- </div>
+    </ng-template>
+  </ejs-dialog>
+</div> --> 
+
+
+
+
+
+
+
+<!-- Add Next -->
 <div>
   <ejs-dialog
     id="dialog"
@@ -632,149 +708,137 @@
     [visible]='visiAddNext'
 
   >
-    <ng-template #content>
-      <form id="template_driven" #userForm="ngForm" validate>
-        <p>(Timer: {{ timeLeft }})</p>
-        <!-- <div class="form-group" style="padding-top: 11px;" *ngFor="let col of column">
-      <div class="e-float-input">
-        <input
-          type="text"
-          name="rowColdata"
-          class='form-control'
-          id="sclass"
-        />
-        <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top required" for="name">{{col.field.substr(0,1).toUpperCase() + col.field.substr(1)}}</label>
-      </div>
-    </div> -->
-        <!-- #ColumnName="ngModel"
-  [(ngModel)]="rowColdata" -->
 
-        <!-- ------------- -->
+<ng-template #content>
+<form id="template_driven" #userForm="ngForm" validate>
+<p>(Timer: {{ timeLeft }})</p>
 
-        <div
-          class="form-group"
-          style="padding-top: 11px"
-          *ngFor="let col of column; let i = index"
-        >
-          <div *ngIf="i == 0" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCId"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCId"
-              id="valid"
-              disabled
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
-          </div>
-          <div *ngIf="i == 1" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCName"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCName"
-              id="valid"
-              #StudentClass="ngModel"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
-            <div
-              *ngIf="
-                StudentClass.invalid &&
-                (StudentClass.dirty || StudentClass.touched)
-              "
-            >
-              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
-                * Enter student name
-              </div>
-            </div>
-          </div>
-          <div *ngIf="i == 2" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCRoll"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCRoll"
-              id="valid"
-              #StudentClass="ngModel"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
-            <div
-              *ngIf="
-                StudentClass.invalid &&
-                (StudentClass.dirty || StudentClass.touched)
-              "
-            >
-              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
-                * Enter roll number
-              </div>
-            </div>
-          </div>
-          <div *ngIf="i == 3" class="e-float-input">
-            <input
-              type="text"
-              name="stuRCClass"
-              class="form-control"
-              id="sclass"
-              [(ngModel)]="stuRCClass"
-              id="valid"
-              #StudentClass="ngModel"
-            />
-            <span class="e-float-line"></span>
-            <label class="e-float-text e-label-top" for="name">{{
-              col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
-            }}</label>
-            <div
-              *ngIf="
-                StudentClass.invalid &&
-                (StudentClass.dirty || StudentClass.touched)
-              "
-            >
-              <div class="e-error" *ngIf="StudentClass.errors?.['required']">
-                * Enter class
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- ------------------------ -->
-      </form>
-    </ng-template>
-
-    <ng-template #footerTemplate>
-      <div>
-        <button
-          id="Button1"
-          class="e-control e-btn e-primary e-flat"
-          (click)="addNextt($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
-        </button>
-        <button
-          id="Button2"
-          class="e-control e-btn e-flat"
-          (click)="btnclick3($event)"
-          data-ripple="true"
-        >
-          <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
-          >Cancel
-        </button>
-      </div>
-    </ng-template>
-  </ejs-dialog>
+<div
+class="form-group"
+style="padding-top: 11px"
+*ngFor="let col of column; let i = index"
+>
+<div *ngIf="i == 0" class="e-float-input">
+<input
+type="text"
+name="stuRCId"
+class="form-control"
+id="sclass"
+[(ngModel)]="stuRCId"
+id="valid"
+disabled
+/>
+<span class="e-float-line"></span>
+<label class="e-float-text e-label-top" for="name">{{
+col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
+}}</label>
 </div>
+<div *ngIf="i == 1" class="e-float-input">
+<input
+type="text"
+name="stuRCName"
+class="form-control"
+id="sclass"
+[(ngModel)]="stuRCName"
+id="valid"
+#StudentClass="ngModel"
+/>
+<span class="e-float-line"></span>
+<label class="e-float-text e-label-top" for="name">{{
+col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
+}}</label>
+<div
+*ngIf="
+StudentClass.invalid &&
+(StudentClass.dirty || StudentClass.touched)
+"
+>
+<div class="e-error" *ngIf="StudentClass.errors?.['required']">
+* Enter student name
+</div>
+</div>
+</div>
+<div *ngIf="i == 2" class="e-float-input">
+<input
+type="text"
+name="stuRCRoll"
+class="form-control"
+id="sclass"
+[(ngModel)]="stuRCRoll"
+id="valid"
+#StudentClass="ngModel"
+/>
+<span class="e-float-line"></span>
+<label class="e-float-text e-label-top" for="name">{{
+col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
+}}</label>
+<div
+*ngIf="
+StudentClass.invalid &&
+(StudentClass.dirty || StudentClass.touched)
+"
+>
+<div class="e-error" *ngIf="StudentClass.errors?.['required']">
+* Enter roll number
+</div>
+</div>
+</div>
+<div *ngIf="i == 3" class="e-float-input">
+<input
+type="text"
+name="stuRCClass"
+class="form-control"
+id="sclass"
+[(ngModel)]="stuRCClass"
+id="valid"
+#StudentClass="ngModel"
+/>
+<span class="e-float-line"></span>
+<label class="e-float-text e-label-top" for="name">{{
+col.field.substr(0, 1).toUpperCase() + col.field.substr(1)
+}}</label>
+<div
+*ngIf="
+StudentClass.invalid &&
+(StudentClass.dirty || StudentClass.touched)
+"
+>
+<div class="e-error" *ngIf="StudentClass.errors?.['required']">
+* Enter class
+</div>
+</div>
+</div>
+</div>
+</form>
+</ng-template>
+<ng-template #footerTemplate>
+  <div>
+    <button
+      id="Button1"
+      class="e-control e-btn e-primary e-flat"
+      (click)="addNextt($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-ok-icon e-icon-left"></span>Add
+    </button> 
+    <button
+      id="Button2"
+      class="e-control e-btn e-flat"
+      (click)="btnclick3($event)"
+      data-ripple="true"
+    >
+      <span class="e-btn-icon e-icons e-close-icon e-icon-left"></span
+      >Cancel
+    </button>
+ </div>
+</ng-template>
+</ejs-dialog>
+</div>
+
+
+
+
+
 
 <!-- Delete Row dialog -->
 <div>
@@ -887,20 +951,7 @@
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
         <p>(Timer: {{ timeLeft }})</p>
-        <!-- <div class="form-group" style="padding-top: 11px;">
-      <div class="e-float-input">
-        <input
-        type="text"
-        name="stuId"
-        required
-        [(ngModel)]="stuId"
-        class='form-control' 
-        id="sid"
-        />
-        <span class="e-float-line"></span>
-        <label class="e-float-text e-label-top required" for="name">Student ID</label>
-      </div>
-    </div> -->
+
         <div class="form-group" style="padding-top: 11px">
           <div class="e-float-input">
             <input
