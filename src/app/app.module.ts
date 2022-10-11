@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TreeGridModule, VirtualScrollService } from '@syncfusion/ej2-angular-treegrid';
+import { ColumnChooserService, TreeGridModule, VirtualScrollService } from '@syncfusion/ej2-angular-treegrid';
 import { PageService, SortService, FilterService } from '@syncfusion/ej2-angular-treegrid';
 import { AppComponent } from './app.component';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
@@ -54,7 +54,7 @@ enableRipple(true);
     DropDownListModule,
     MultiSelectAllModule,
   ],
-  providers: [ApiService, PageService, SortService, FilterService, SocketioService, FreezeService, ContextMenuService,VirtualScrollService],
+  providers: [ApiService, PageService, SortService, FilterService, SocketioService, FreezeService, ContextMenuService,VirtualScrollService, ColumnChooserService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

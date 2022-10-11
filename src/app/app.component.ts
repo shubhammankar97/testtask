@@ -27,6 +27,7 @@ import {
   extendArray,
   CommandColumnService,
   CellSaveEventArgs,
+  FilterType,
 } from "@syncfusion/ej2-angular-treegrid";
 import { ApiService } from "./services/api.service";
 import {
@@ -40,6 +41,7 @@ import {
   GridComponent,
   RowSelectEventArgs,
   parentsUntil,
+  IFilterUI
 } from "@syncfusion/ej2-angular-grids";
 import { Dialog } from "@syncfusion/ej2-popups";
 import { SocketioService } from "./socketio.service";
@@ -60,12 +62,8 @@ import { ReorderService } from "@syncfusion/ej2-angular-treegrid";
 import { ResizeService } from "@syncfusion/ej2-angular-treegrid";
 import { ButtonComponent } from "@syncfusion/ej2-angular-buttons";
 import { Student } from "./student";
-import { BeforeOpenCloseEventArgs } from "@syncfusion/ej2-angular-inputs";
 import { EmitType } from "@syncfusion/ej2-base";
-import { Query, DataManager, JsonAdaptor } from "@syncfusion/ej2-data";
 import { Internationalization, isNullOrUndefined } from "@syncfusion/ej2-base";
-import { TreeClipboard } from "@syncfusion/ej2-angular-treegrid";
-import { ClickEventArgs } from "@syncfusion/ej2-angular-navigations";
 import {
   createSpinner,
   showSpinner,
@@ -111,7 +109,7 @@ export class AppComponent {
   public editSettings!: EditSettingsModel;
   // public selectionSettings!: SelectionSettingsModel;
   public toolbar!: ToolbarItems[];
-
+  public toolbarCol!:string[];
   public editOptions!: Object;
   public selectionOptions!: object;
   public contextMenuSettings: any;
@@ -325,7 +323,9 @@ export class AppComponent {
   public alertOrphan: boolean = false;
   public colIndex: any;
   public colFields:any;
-
+  public templateOptions!: IFilterUI;
+  public timerLaddC: number = 30;
+  public colChooser:boolean = false;
   /////////////////////////////////
   constructor(private api: ApiService, private socketService: SocketioService) {
     console.log = function () {};
@@ -502,6 +502,7 @@ export class AppComponent {
       type: "FilterBar",
       hierarchyMode: "Parent",
       mode: "Immediate",
+      immediatemodedelay: 1400
     };
     //filter functioning
     this.filterBarTemplate = {
@@ -691,10 +692,11 @@ export class AppComponent {
       console.log("message", this.lock, args);
       this.lock = true;
       this.start = this.customAttributes;
+      this.timerLaddC = 30;
       var s = setInterval(() => {
         if (!this.close) {
-          if (this.timeLeft > 0) {
-            this.timeLeft--;
+          if (this.timerLaddC > 0) {
+            this.timerLaddC--;
           } else {
             this.ejDialogACol.hide();
             clearInterval(s);
@@ -733,7 +735,10 @@ export class AppComponent {
     }
     if (args.item.text === "Choose Column") {
       console.log("Choose");
-      this.treegrid.openColumnChooser();
+      this.toolbarCol = ["ColumnChooser"];
+      this.colChooser = true
+      // this.treeGridObj.showColumnChooser = true;
+      this.treeGridObj.showColumnMenu = true;
     }
     if (args.item.text === "Freeze Column") {
       console.log("Freeze", args);
@@ -770,13 +775,21 @@ export class AppComponent {
         console.log("time running");
         
       } else {
+        clearInterval(this.interval);
+        this.ejDialogERow.hide();
+        this.ejDialogAN.hide();
+        this.ejDialogACh.hide();
+        this.ejDialogECol.hide();
+        console.log("hideEditDialog");
         this.flagg = 1;
       }
     }, 1000);
     if (this.flagg == 1) {
+      console.log("hideEditDialog flagg");
+
       // clearInterval(this.interval);
       // this.ejDialogERow.hide();
-      stop();
+      // this.stop();
     }
   }
 
@@ -1163,9 +1176,16 @@ export class AppComponent {
       },
     ];
     console.log("add next function ", grid.getSelectedRecords()[0].id);
-    this.api.updateData(grid.getSelectedRecords()[0].id, dataa).subscribe(() => {
+    if(this.timeLeft !== 0){
+      console.log("timeLeft", this.timeLeft);
+      
+      this.api.updateData(grid.getSelectedRecords()[0].id, dataa).subscribe(() => {
       console.log("edit Data api");
     });
+  }
+  else{
+    this.ejDialogERow.hide();
+  }
 
   }
   clearInterval(this.interval);
@@ -1982,9 +2002,15 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
   }
 
   stop() {
+    this.ejDialogERow.hide();
     console.log("Timer stopped");
     clearInterval(this.timeLeft);
     clearInterval(this.interval);
-    this.ejDialogERow.hide();
+    
   }
+  public onChange(e: ChangeEventArgs): void {
+    console.log("OnChnage Working");
+    this.grid.filterSettings.type = <FilterType>e.value;
+    this.grid.clearFiltering();
+}
 }

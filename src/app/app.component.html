@@ -52,7 +52,7 @@
   (rowDrag)="rowDrag($event)"
   childMapping="Crew"
   (rowClicked)="onRowClicked($event)"
-  [showColumnChooser]="true"
+  [showColumnChooser]="colChooser"
   (columnMenuClick)="onColumnClicked($event)"
   (contextMenuOpen)="context($event)"
   [frozenColumns]="col2Freeze"
@@ -160,7 +160,7 @@
   >
     <ng-template #content>
       <form id="template_driven" #userForm="ngForm" novalidate>
-        <p>(Timer: {{ timeLeft }})</p>
+        <p>(Timer: {{ timerLaddC }})</p>
         <div class="form-group" style="padding-top: 11px">
           <div class="e-float-input chex">
             <input
