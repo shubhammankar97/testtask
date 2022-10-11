@@ -325,21 +325,25 @@ export class AppComponent {
   public templateOptions!: IFilterUI;
   public timerLaddC: number = 30;
   public colChooser:boolean = false;
+  public delColName:any;
   /////////////////////////////////
   constructor(private api: ApiService, private socketService: SocketioService) {
     console.log = function () {};
     this.offCustom = this.customAttributes;
     this.imageLoader = true;
-    showSpinner(document.getElementById("loader-container") as HTMLElement);
+    // showSpinner(document.getElementById("loader-container") as HTMLElement);
 
     this.api.getAll().subscribe((res: any) => {
       showSpinner(document.getElementById("loader-container") as HTMLElement);
+      this.treeGridObj.showSpinner();
       this.imageLoader = true;
      this.data = res.filter((item: any) => item);
+    
       console.log(this.data)
       if (this.data.length) {
         this.imageLoader = false;
-        hideSpinner(document.getElementById("loader-container") as HTMLElement);
+        this.treeGridObj.hideSpinner();
+        // hideSpinner(document.getElementById("loader-container") as HTMLElement);
       }
     });
     this.imageLoader = false;
@@ -349,7 +353,7 @@ export class AppComponent {
 
       this.colFields = Object.keys(this.data[0]);
       console.log("KEYS value", this.colFields);
-    },1400);
+    },1600);
     //get the Grid model.
     this.value = localStorage.getItem("treegrid")!;
     $(".e-treegrid .e-headercell.cssClassaa").css(
@@ -842,20 +846,20 @@ export class AppComponent {
   ///////
   removeColumn(args: any) {
     console.log("removecol", args);
-
-    for (let i of this.column) {
-      console.log("yess", i);
-      if (i.field == args) {
-        console.log("ID:", i.id);
+    console.log("Column Index", this.delColName);
+    // for (let i of this.column) {
+    //   console.log("yess", i);
+    //   if (i.field == args) {
+    //     console.log("ID:", i.id);
         // this.api.deleteColumn(i.id).subscribe((res: any) => {
         //   console.log("delete column", res);
         // });
-        this.api.deleteCol(i.id).subscribe((res:any)=>{
+        this.api.deleteCol(this.freezeColId).subscribe((res:any)=>{
           console.log("RemoveCOLUMN", res)
         })
         this.treegrid.refreshColumns();
-      }
-    }
+      // }
+    // }
     console.log("DELETE Column REmoveColumn");
     this.treeGridObj.columns.splice(this.colIndex, 1);
     // this.treegrid.columns.pop();
@@ -1449,7 +1453,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
   contextMenuOpen(arg: any): void {
     console.log("CMO", arg);
-
+    console.log("Field Name of SElected Column",arg.column.field);
+    this.delColName = arg.column.field;
     console.log("contextMenuOpen:", arg);
     this.freezeColId = arg.column.index;
     console.log("freezeColId", this.freezeColId);
@@ -1566,8 +1571,10 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
       this.startTimer();
     } else if (args.item.id === "multiselectrow") {
+      console.log("bef showChooseRow", this.showChooseRow)
       console.log("select mult");
       this.showChooseRow = true;
+      console.log("ChooseRow", this.showChooseRow)
       this.treeGridObj.selectionSettings.type = "Multiple"; //enable multiselection
       this.selectRowEnabe = true;
       this.treeGridObj.refreshColumns();
@@ -1777,10 +1784,11 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
         clearInterval(intervalfree);
         this.stop();
         console.log("CHECKB stops ");
-
+        this.showChooseRow = false;
         $(
           "li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim"
-        ).css("background-color", "#f08080");
+        ).css("background-color", "#f08080!important");
+        $(".e-menu-item").css("background-color", "");
         this.editSettings.showDeleteConfirmDialog =
           !this.editSettings.showDeleteConfirmDialog;
         this.alertOrphan = true;
@@ -1802,13 +1810,13 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
           clearInterval(intervalfree);
           $("tr").removeClass("bgcolor");
           this.checkB = false;
-          // $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "lightcoral");
+          $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "lightcoral!important");
 
           alert("Failed to Lock : Row");
         }
       }
     }, 1000);
-
+    $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "#f08080!important");
     this.change = false;
   }
 
@@ -1828,6 +1836,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
   can: any;
   rowSelectingClick(RowSelectingtArgs: any) {
     console.log("row click before event");
+    this.showChooseRow = false;
+    $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "#f08080!important");
     //   if (!isNullOrUndefined(RowSelectingtArgs.row)) {
     //     RowSelectingtArgs.row.classList.add('bgcolor');
     // }

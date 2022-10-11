@@ -277,19 +277,39 @@ console.log("WRITTEN in JSON")
 }
 
 // delete column
-exports.deleteCol = (req, res) => {
-  id = req.params.id
+// exports.deleteCol = (req, res) => {
+//   id = req.params.id
+//   data = fs.readFileSync("student.json")
+//   var Data = JSON.parse(data);
+//   for (var i in Data) {
+//       console.log(Data);
+//       if (Data[i] != null) {
+//           if (Data[i] == id) {
+//               delete Data[i]
+//               fs.writeFileSync("column.json", JSON.stringify(Data, null, 2))
+//               console.log(Data)
+//               res.json(Data)
+//           };
+//       }
+//   };
+// };
+
+
+// delete column
+exports.deleteCol = (req, res) =>{
+  colName = req.params
+  console.log("ColIndex", colName)
   data = fs.readFileSync("student.json")
   var Data = JSON.parse(data);
-  for (var i in Data) {
-      console.log(Data);
-      if (Data[i] != null) {
-          if (Data[i]["id"] == id) {
-              delete Data[i]
-              fs.writeFileSync("column.json", JSON.stringify(Data, null, 2))
-              console.log(Data)
-              res.json(Data)
-          };
-      }
-  };
-};
+
+  const delCol = Data.map( col => {
+    delete col.colName;
+    return col;
+  })
+  console.log("delCol", delCol)
+
+  fs.writeFileSync("student.json", JSON.stringify(delCol, null, 2))
+  console.log("WRITTEN in JSON")
+  return res.json(Data)
+
+}

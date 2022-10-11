@@ -110,6 +110,6 @@ export class ApiService {
   // delete column
   deleteCol(col:any){
     console.log("DELCOL API", col);
-    return this.http.delete(this.API_URL + "/delete-Col" + col, httpOptions)
+    return this.http.delete(this.API_URL + "/delete-Col/" + col, httpOptions)
   }
 }
