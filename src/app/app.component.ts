@@ -107,7 +107,6 @@ export class AppComponent {
   public sortSettings!: SortSettingsModel;
   public pageSettings!: PageSettingsModel;
   public editSettings!: EditSettingsModel;
-  // public selectionSettings!: SelectionSettingsModel;
   public toolbar!: ToolbarItems[];
   public toolbarCol!:string[];
   public editOptions!: Object;
@@ -504,45 +503,7 @@ export class AppComponent {
       mode: "Immediate",
       immediatemodedelay: 1400
     };
-    //filter functioning
-    this.filterBarTemplate = {
-      create: (args: { element: Element; column: Column }) => {
-        let dd: HTMLInputElement = document.createElement("input");
-        dd.id = "duration";
-        return dd;
-      },
-      write: (args: { element: Element; column: Column }) => {
-        let dataSource: string[] = [
-          "All",
-          "1",
-          "3",
-          "4",
-          "5",
-          "10",
-          "11",
-          "12",
-          "13",
-          "14",
-          "15",
-        ];
-        this.dropDownFilter = new DropDownList({
-          dataSource: dataSource,
-          value: "All",
-          change: (e: ChangeEventArgs) => {
-            let valuenum: any = +e.value;
-            let id: any = <string>this.dropDownFilter.element.id;
-            let value: any = <string>e.value;
-            if (value !== "All") {
-              this.treeGridObj.filterByColumn(id, "equal", valuenum);
-            } else {
-              this.treeGridObj.removeFilteredColsByField(id);
-            }
-          },
-        });
-        this.dropDownFilter.appendTo("#duration");
-      },
-    };
-
+  
     this.d1data = [
       { id: "CellEditing", name: "Cell Editing" },
       { id: "RowEditing", name: "Row Editing" },

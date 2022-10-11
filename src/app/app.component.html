@@ -73,9 +73,9 @@
       headerText="Student ID"
       textAlign="Centre"
       [isPrimaryKey]="true"
-      type="number"
       [customAttributes]="offCustom"
       [lockColumn]="isLock"
+      [filterBarTemplate]="filterBarTemplate"
       [edit]="editparams"
     ></e-column>
     <e-column
@@ -91,8 +91,8 @@
       field="rollNo"
       headerText="Roll Number"
       textAlign="Left"
-      type="number"
       [validationRules]="studentidrules"
+      [filterBarTemplate]="filterBarTemplate"
       [edit]="editparams"
     ></e-column>
     <e-column
