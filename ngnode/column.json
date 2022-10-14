@@ -6,7 +6,6 @@
     "isPrimaryKey": true,
     "validation": {
       "required": true,
-      "number": true,
       "lockColumn": true
     }
   },
@@ -19,12 +18,16 @@
     }
   },
   {
+    "field": "name",
+    "type": "boolean",
+    "id": 5
+  },
+  {
     "field": "rollNo",
     "id": 3,
     "type": "number",
     "validation": {
-      "required": true,
-      "number": true
+      "required": true
     }
   },
   {
@@ -32,8 +35,7 @@
     "id": 4,
     "type": "number",
     "validation": {
-      "required": true,
-      "number": true
+      "required": true
     }
   }
 ]

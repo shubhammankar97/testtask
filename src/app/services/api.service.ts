@@ -101,7 +101,7 @@ export class ApiService {
       httpOptions
     );
   }
-// add column
+  // add column
   addCol(col:any){
     console.log("ADDCOL API", col);
     return this.http.post(this.API_URL + "/add-Col", col, httpOptions);

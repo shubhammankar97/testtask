@@ -41,7 +41,7 @@ import {
   GridComponent,
   RowSelectEventArgs,
   parentsUntil,
-  IFilterUI
+  IFilterUI,
 } from "@syncfusion/ej2-angular-grids";
 import { Dialog } from "@syncfusion/ej2-popups";
 import { SocketioService } from "./socketio.service";
@@ -76,6 +76,7 @@ import {
 } from "@syncfusion/ej2-grids";
 import { addClass, removeClass, loadCldr } from "@syncfusion/ej2-base";
 import { interval } from "rxjs";
+import { FormGroup } from "@angular/forms";
 declare var $: any;
 
 @Component({
@@ -108,7 +109,7 @@ export class AppComponent {
   public pageSettings!: PageSettingsModel;
   public editSettings!: EditSettingsModel;
   public toolbar!: ToolbarItems[];
-  public toolbarCol!:string[];
+  public toolbarCol!: string[];
   public editOptions!: Object;
   public selectionOptions!: object;
   public contextMenuSettings: any;
@@ -166,7 +167,6 @@ export class AppComponent {
   public showChooseRow: boolean = false;
   public showNewColumn: boolean = false;
 
-
   public ColType: string = "";
   public ColFColor: string = "";
   public ColBColor: string = "";
@@ -179,26 +179,23 @@ export class AppComponent {
   private clone: any = null;
 
   @ViewChild("ejDialog") ejDialog!: DialogComponent;
-  @ViewChild('DialogAC', {static : false}) ejDialogACol!: DialogComponent;
-  @ViewChild('DialogEC', {static : false}) ejDialogECol!: DialogComponent;
-  @ViewChild('DialogVC', {static : false}) ejDialogVCol!: DialogComponent;
-  @ViewChild('DialogDC', {static : false}) ejDialogDCol!: DialogComponent;
-  @ViewChild('DialogAN', {static : false}) ejDialogAN!: DialogComponent;
-  @ViewChild('DialogACh', {static : false}) ejDialogACh!: DialogComponent;
-  @ViewChild('DialogER', {static : false}) ejDialogERow!: DialogComponent;
-  @ViewChild('DialogDR', {static : false}) ejDialogDRow!: DialogComponent;
+  @ViewChild("DialogAC", { static: false }) ejDialogACol!: DialogComponent;
+  @ViewChild("DialogEC", { static: false }) ejDialogECol!: DialogComponent;
+  @ViewChild("DialogVC", { static: false }) ejDialogVCol!: DialogComponent;
+  @ViewChild("DialogDC", { static: false }) ejDialogDCol!: DialogComponent;
+  @ViewChild("DialogAN", { static: false }) ejDialogAN!: DialogComponent;
+  @ViewChild("DialogACh", { static: false }) ejDialogACh!: DialogComponent;
+  @ViewChild("DialogER", { static: false }) ejDialogERow!: DialogComponent;
+  @ViewChild("DialogDR", { static: false }) ejDialogDRow!: DialogComponent;
 
-
-  public visiAddCol:boolean =  false;
-  public visiEditCol:boolean = false;
-  public visiDelCol:boolean =  false;
-  public visiViewCol:boolean = false;
-  public visiAddNext:boolean = false;
-  public visiAddChild:boolean =false;
-  public visiDelRow:boolean =  false;
-  public visiEditRow:boolean = false;
-
-
+  public visiAddCol: boolean = false;
+  public visiEditCol: boolean = false;
+  public visiDelCol: boolean = false;
+  public visiViewCol: boolean = false;
+  public visiAddNext: boolean = false;
+  public visiAddChild: boolean = false;
+  public visiDelRow: boolean = false;
+  public visiEditRow: boolean = false;
 
   public textWrap: boolean = false;
 
@@ -321,11 +318,14 @@ export class AppComponent {
   public enabe: boolean = false;
   public alertOrphan: boolean = false;
   public colIndex: any;
-  public colFields:any;
+  public colFields: any;
   public templateOptions!: IFilterUI;
   public timerLaddC: number = 30;
-  public colChooser:boolean = false;
-  public delColName:any;
+  public colChooser: boolean = false;
+  public delColName: any;
+  public editColTimer: number = 30;
+  public colData: any = {};
+  public childData: any = {};
   /////////////////////////////////
   constructor(private api: ApiService, private socketService: SocketioService) {
     console.log = function () {};
@@ -337,9 +337,9 @@ export class AppComponent {
       showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.treeGridObj.showSpinner();
       this.imageLoader = true;
-     this.data = res.filter((item: any) => item);
-    
-      console.log(this.data)
+      this.data = res.filter((item: any) => item);
+
+      console.log(this.data, "response==========");
       if (this.data.length) {
         this.imageLoader = false;
         this.treeGridObj.hideSpinner();
@@ -348,12 +348,12 @@ export class AppComponent {
     });
     this.imageLoader = false;
     setTimeout(async () => {
-      console.log('**************************');
-      console.log(this.data)
+      console.log("**************************");
+      console.log(this.data);
 
       this.colFields = Object.keys(this.data[0]);
       console.log("KEYS value", this.colFields);
-    },1600);
+    }, 1600);
     //get the Grid model.
     this.value = localStorage.getItem("treegrid")!;
     $(".e-treegrid .e-headercell.cssClassaa").css(
@@ -394,12 +394,17 @@ export class AppComponent {
   ////////////////////////////////////////////===================
 
   ngOnInit(): void {
-    
     this.imageLoader = true;
     this.api.getAllCol().subscribe((res: any) => {
       this.column = res;
+
       this.imageLoader = false;
+      console.log("API COL", this.column);
     });
+    setTimeout(async () => {
+      console.log("Column Data", this.column);
+    }, 1000);
+
     this.getFiltersSubscription();
     $("#dim").css("pointer-events", "none");
     this.editSettings = {
@@ -505,9 +510,9 @@ export class AppComponent {
       type: "FilterBar",
       hierarchyMode: "Parent",
       mode: "Immediate",
-      immediatemodedelay: 1400
+      immediatemodedelay: 1400,
     };
-  
+
     this.d1data = [
       { id: "CellEditing", name: "Cell Editing" },
       { id: "RowEditing", name: "Row Editing" },
@@ -517,10 +522,8 @@ export class AppComponent {
     this.nextRow = this.data?.length + 1;
   }
 
+  ///////////method
 
-    ///////////method
-
-    
   getFiltersSubscription() {
     this.imageLoader = true;
     this.api.getAllCol().subscribe((res: any) => {
@@ -566,7 +569,6 @@ export class AppComponent {
       console.log("", this.data);
     }
   }
-
 
   ////////////cruds
   public dataSourceChanged(
@@ -668,11 +670,9 @@ export class AppComponent {
             alert("Failed to lock Column");
             args.disableRow = false;
             this.lock = false;
-        }
+          }
         }
       }, 1000);
-
-      
 
       console.log("error", this.lock);
       console.log("add", this.treegrid.getColumnFieldNames());
@@ -684,7 +684,23 @@ export class AppComponent {
       this.ejDialogECol.show();
       this.checkNewEdit = "edit";
       this.getCurrentField();
-      this.startTimer();
+      // this.startTimer();
+      this.editColTimer = 30;
+      this.interval = setInterval(() => {
+        if (this.editColTimer > 0) {
+          this.editColTimer--;
+          console.log("time running");
+        } else {
+          clearInterval(this.interval);
+          this.ejDialogECol.hide();
+          console.log("hideEditDialog");
+          this.flagg = 1;
+        }
+      }, 1200);
+      if (this.flagg == 1) {
+        console.log("hideEditDialog flagg");
+      }
+
       this.isLock = false;
       this.offCustom = "";
       this.lock = true;
@@ -701,7 +717,7 @@ export class AppComponent {
     if (args.item.text === "Choose Column") {
       console.log("Choose");
       this.toolbarCol = ["ColumnChooser"];
-      this.colChooser = true
+      this.colChooser = true;
       // this.treeGridObj.showColumnChooser = true;
       this.treeGridObj.showColumnMenu = true;
     }
@@ -738,7 +754,6 @@ export class AppComponent {
       if (this.timeLeft > 0) {
         this.timeLeft--;
         console.log("time running");
-        
       } else {
         clearInterval(this.interval);
         this.ejDialogERow.hide();
@@ -751,10 +766,6 @@ export class AppComponent {
     }, 1000);
     if (this.flagg == 1) {
       console.log("hideEditDialog flagg");
-
-      // clearInterval(this.interval);
-      // this.ejDialogERow.hide();
-      // this.stop();
     }
   }
 
@@ -827,42 +838,42 @@ export class AppComponent {
   }
   /////////////Add Column Event
   clicked(): void {
-    console.log("COLUMN Index",this.colIndex);
-    let columnName = { field: this.ColName, type: this.ColType, currentColID: this.freezeColId };
+    console.log("COLUMN Index", this.colIndex);
+    let columnName = {
+      field: this.ColName,
+      type: this.ColType,
+      currentColID: this.freezeColId,
+    };
     this.treegrid.columns.splice(this.column.length + 1, 0, columnName); //Add the columns
-    // this.api.addColumn(columnName).subscribe((res: any) => {
-    //   // console.log("column appended", columnName.field);
-    // });
+    this.api.addColumn(columnName).subscribe((res: any) => {
+      // console.log("column appended", columnName.field);
+    });
 
-    this.api.addCol(columnName).subscribe((res:any)=>{
-      console.log("add Column API");
-    })
+
     this.treegrid.refreshColumns();
-    // this.treegrid.endEdit;
     this.ejDialogACol.hide();
-    // this.column[arg.column.index].lock = false;
+
   }
 
   ///////
   removeColumn(args: any) {
+    debugger;
     console.log("removecol", args);
     console.log("Column Index", this.delColName);
-    // for (let i of this.column) {
-    //   console.log("yess", i);
-    //   if (i.field == args) {
-    //     console.log("ID:", i.id);
-        // this.api.deleteColumn(i.id).subscribe((res: any) => {
-        //   console.log("delete column", res);
-        // });
-        this.api.deleteCol(this.freezeColId).subscribe((res:any)=>{
-          console.log("RemoveCOLUMN", res)
-        })
+    for (let i of this.column) {
+      console.log("yess", i);
+      if (i.field == args) {
+        console.log("ID:", i.id);
+        this.api.deleteColumn(i.id).subscribe((res: any) => {
+          this.ngOnInit();
+          console.log("delete column", res);
+        });
+
         this.treegrid.refreshColumns();
-      // }
-    // }
+      }
+    }
     console.log("DELETE Column REmoveColumn");
     this.treeGridObj.columns.splice(this.colIndex, 1);
-    // this.treegrid.columns.pop();
     this.treegrid.refreshColumns();
     this.treegrid.endEdit;
     this.ejDialogDCol.hide();
@@ -970,16 +981,12 @@ export class AppComponent {
     console.log("add next function after ", grid.getSelectedRecords()[0]);
   }
 
-  
-
- 
-
   ////////Add Next
-
+  public inVal: any;
   addNextt(args: any) {
-    console.log("addNexttt");
     this.ejDialogAN.hide();
     var i;
+    console.log(this.colData);
     var rec: any = [];
     if (this.flag == false) {
       i = this.treeGridObj.flatData.length;
@@ -990,27 +997,28 @@ export class AppComponent {
       if (rec?.addedRecords) {
         i = rec.addedRecords[0].id;
       }
-
       this.j++;
     }
-    var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
+    var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
     console.log("treegrid befORE addrecord working", index);
 
+    // console.log("colDAta", this.colData);
+
+    console.log("Data:~~~~~~~~~~~~~~~~", this.colData);
     if (this.childPid) {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
       console.log("Yes trueee");
-      let data = {
-        id: this.data.length + 1,
-        name: this.stuRCName,
-        rollNo: this.stuRCRoll,
-        class: this.stuRCClass,
-        nextID: index,
-        parentID: this.parentId,
-        check: true,
-      };
-      this.api.addNext(data).subscribe(() => {
+
+      this.column.map((res: any) => {
+        console.log("_________", this.colData);
+      });
+      this.colData.id = this.data.length + 1;
+      this.colData.nextID = index;
+      this.colData.parentID = this.parentId;
+      this.colData.check = true;
+      this.api.addNext(this.colData).subscribe(() => {
         console.log("addNext API working or not check first");
       });
 
@@ -1040,21 +1048,22 @@ export class AppComponent {
         this.stop();
         newRow.style.backgroundColor = "#fafafa";
       }
-
-
     } else {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
       console.log("yes its Falssse");
-      let data = {
-        id: this.data.length + 1,
-        name: this.stuRCName,
-        rollNo: this.stuRCRoll,
-        class: this.stuRCClass,
-        nextID: index,
-        check: false,
-      };
-      this.api.addNext(data).subscribe(() => {
+
+      this.column.map((res: any) => {
+        console.log("_________", this.colData);
+      });
+      this.colData.id = this.data.length + 1;
+      this.colData.nextID = index;
+      this.colData.check = false;
+      this.api.addNext(this.colData).subscribe(() => {
+        console.log("addNext API working or not check first");
+      });
+      console.log("Data", this);
+      this.api.addNext(this.colData).subscribe(() => {
         console.log("addNext API working or not check first");
       });
       //////////////////////Next New Row Highlight
@@ -1083,7 +1092,6 @@ export class AppComponent {
         this.stop();
         newRow.style.backgroundColor = "#fafafa";
       }
-
     }
 
     this.stuRCId = this.data.length + 1;
@@ -1102,101 +1110,95 @@ export class AppComponent {
 
   ///////////////edit Row
   editRow() {
-
-    let sn:string = (<HTMLInputElement> document
-      .getElementById("sname")).value
-    let sr:string = (<HTMLInputElement> document
-      .getElementById("sroll")).value;
-    let sc:string = (<HTMLInputElement> document
-      .getElementById("sclass")).value
+    console.log("EditRoww", this.colData);
+    let sn: string = (<HTMLInputElement>document.getElementById("sname")).value;
+    let sr: string = (<HTMLInputElement>document.getElementById("sroll")).value;
+    let sc: string = (<HTMLInputElement>document.getElementById("sclass"))
+      .value;
 
     var grid = (document.getElementsByClassName("e-grid")[0] as any)
       .ej2_instances[0];
-      console.log("EditRow CHILD Pid##########", this.childPid);
-      if (this.childPid) {
-    var data = [
-      {
-        id: grid.getSelectedRecords()[0].id,
-        name: sn,
-        rollNo: sr,
-        class: sc,
-        parentID: this.parentId,
-        check: true
-      },
-    ];
-    console.log("DATATAA", data)
-    console.log("add next function ", grid.getSelectedRecords()[0].id);
-    this.api.updateData(grid.getSelectedRecords()[0].id, data).subscribe(() => {
-      console.log("edit Data api");
-    });
-  }
-  else{
-    var dataa = [
-      {
-        id: grid.getSelectedRecords()[0].id,
-        name: sn,
-        rollNo: sr,
-        class: sc,
-        check: false
-      },
-    ];
-    console.log("add next function ", grid.getSelectedRecords()[0].id);
-    if(this.timeLeft !== 0){
-      console.log("timeLeft", this.timeLeft);
-      
-      this.api.updateData(grid.getSelectedRecords()[0].id, dataa).subscribe(() => {
-      console.log("edit Data api");
-    });
-  }
-  else{
-    this.ejDialogERow.hide();
-  }
+    console.log("EditRow CHILD Pid##########", this.childPid);
+    if (this.childPid) {
+      var data = [
+        {
+          id: grid.getSelectedRecords()[0].id,
+          name: sn,
+          rollNo: sr,
+          class: sc,
+          parentID: this.parentId,
+          check: true,
+        },
+      ];
+      console.log("DATATAA", data);
+      console.log("add next function ", grid.getSelectedRecords()[0].id);
+      this.api
+        .updateData(grid.getSelectedRecords()[0].id, data)
+        .subscribe(() => {
+          console.log("edit Data api");
+        });
+    } else {
+      var dataa = [
+        {
+          id: grid.getSelectedRecords()[0].id,
+          name: sn,
+          rollNo: sr,
+          class: sc,
+          check: false,
+        },
+      ];
+      console.log("add next function ", grid.getSelectedRecords()[0].id);
+      if (this.timeLeft !== 0) {
+        console.log("timeLeft", this.timeLeft);
 
-  }
-  clearInterval(this.interval);
+        this.api
+          .updateData(grid.getSelectedRecords()[0].id, this.colData)
+          .subscribe(() => {
+            console.log("edit Data api");
+          });
+      } else {
+        this.ejDialogERow.hide();
+      }
+    }
+    clearInterval(this.interval);
 
     this.treeGridObj.refresh();
     this.api.getAll().subscribe((res: any) => {
       this.data = res.filter((item: any) => item);
     });
 
+    var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
+    var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
+    console.log("NEw Row gettting rw", newRow);
+    console.log("NEw Row gettting rw", index + 1);
 
+    newRow.classList.add("edittedRow");
+    console.log("classLIst added for edit row");
+    var time = 10;
+    setInterval(() => {
+      var newRow1 = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
-var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
-var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
-      console.log("NEw Row gettting rw", newRow);
-      console.log("NEw Row gettting rw", index + 1);
+      if (time > 0) {
+        time--;
 
-      newRow.classList.add("edittedRow");
-      console.log("classLIst added for edit row");
-      var time = 10;
-      setInterval(() => {
-        var newRow1 = this.treeGridObj.getRowByIndex(index) as HTMLElement;
-
-        if (time > 0) {
-          time--;
-
-          newRow1.style.backgroundColor = "#85dffa";
-          console.log("timeRemain");
-        } else {
-          this.flagg = 1;
-          newRow1.style.backgroundColor = "#fafafa";
-        }
-      }, 1000);
-      if (this.flagg == 1) {
-        this.stop();
-        newRow.style.backgroundColor = "#fafafa";
+        newRow1.style.backgroundColor = "#85dffa";
+        console.log("timeRemain");
+      } else {
+        this.flagg = 1;
+        newRow1.style.backgroundColor = "#fafafa";
       }
+    }, 1000);
+    if (this.flagg == 1) {
+      this.stop();
+      newRow.style.backgroundColor = "#fafafa";
+    }
 
-
-    
     this.ejDialogERow.hide();
   }
 
-
-
   /////////////delete Row
   delete(): void {
+    console.log("Data", this.colData);
     var grid = (document.getElementsByClassName("e-grid")[0] as any)
       .ej2_instances[0];
     console.log("delete function ", grid.getSelectedRecords()[0].id);
@@ -1212,7 +1214,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
   btnclick(args: any) {
     this.hideDialog.bind(args);
-    this.ejDialogVCol.hide()
+    this.ejDialogVCol.hide();
     args.disableRow = false;
     this.ejDialogECol.hide();
     this.ejDialogDCol.hide();
@@ -1294,29 +1296,25 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
   //adding child record
   addChild(args: any) {
-    console.log("ADDChild", args);
+    console.log("ADDChild", this.childData);
     this.ejDialogACh.hide();
     var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
     console.log("treegrid befORE addrecord working", index);
     console.log("SelectedRECORDS ", this.treeGridObj.getSelectedRecords());
-    var currentDataId:any = this.treeGridObj["getSelectedRecords"]()[0]
+    var currentDataId: any = this.treeGridObj["getSelectedRecords"]()[0];
     console.log("+++++++++++++++", this.treeGridObj.getSelectedRecords()[1]);
     console.log("++++++++======", currentDataId);
     if (this.childPid) {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
       console.log("Yes trueee");
-      // currentID: this.subChildId,
-      let dataC = {
-        id: this.data.length + 1,
-        name: this.stuCName,
-        rollNo: this.stuCRoll,
-        class: this.stuCClass,
-        currentID: currentDataId.id,
-        parentID: this.parentId,
-        check: true,
-      };
-      this.api.addChildData(dataC).subscribe(() => {
+
+      this.childData.id = this.data.length + 1;
+      this.childData.currentID = currentDataId.id;
+      this.childData.parentID = this.parentId;
+      this.childData.check = true;
+
+      this.api.addChildData(this.childData).subscribe(() => {
         console.log("addChild API working or not check first");
       });
       this.treeGridObj.refresh();
@@ -1327,37 +1325,29 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       this.treeGridObj.dataSource = this.data;
 
       var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
-        console.log("NEw Row gettting rw", newRow);
-        console.log("NEw Row gettting rw", index + 1);
+      console.log("NEw Row gettting rw", newRow);
+      console.log("NEw Row gettting rw", index + 1);
 
-        newRow.classList.add("nextNewRow");
-        console.log("classLIst added after through movable");
-        this.timeRemain = 10;
-        setInterval(() => {
-          var newRow1 = this.treeGridObj.getRowByIndex(
-            index + 1
-          ) as HTMLElement;
+      newRow.classList.add("nextNewRow");
+      console.log("classLIst added after through movable");
+      this.timeRemain = 10;
+      setInterval(() => {
+        var newRow1 = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
 
-          if (this.timeRemain > 0) {
-            this.timeRemain--;
+        if (this.timeRemain > 0) {
+          this.timeRemain--;
 
-            newRow1.style.backgroundColor = "#85dffa";
-            console.log("timeRemain");
-          } else {
-            this.flagg = 1;
-            newRow1.style.backgroundColor = "#fafafa";
-          }
-        }, 1000);
-        if (this.flagg == 1) {
-          this.stop();
-          newRow.style.backgroundColor = "#fafafa";
+          newRow1.style.backgroundColor = "#85dffa";
+          console.log("timeRemain");
+        } else {
+          this.flagg = 1;
+          newRow1.style.backgroundColor = "#fafafa";
         }
-       else {
-        this.contextmenu.enableItems(["Move As Next"], false);
+      }, 1000);
+      if (this.flagg == 1) {
+        this.stop();
+        newRow.style.backgroundColor = "#fafafa";
       }
-
-
-
     } else {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
@@ -1374,53 +1364,41 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
         console.log("addNext API working or not check first");
       });
 
-
       var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
-        console.log("NEw Row gettting rw", newRow);
-        console.log("NEw Row gettting rw", index + 1);
+      console.log("NEw Row gettting rw", newRow);
+      console.log("NEw Row gettting rw", index + 1);
 
-        newRow.classList.add("nextNewRow");
-        console.log("classLIst added after through movable");
-        this.timeRemain = 10;
-        this.treeGridObj.refresh();
+      newRow.classList.add("nextNewRow");
+      console.log("classLIst added after through movable");
+      this.timeRemain = 10;
+      this.treeGridObj.refresh();
 
-        this.api.getAll().subscribe((res: any) => {
-          this.data = res.filter((item: any) => item);
-        });
-        this.treeGridObj.dataSource = this.data;
-        setInterval(() => {
-          var newRow1 = this.treeGridObj.getRowByIndex(
-            index + 1
-          ) as HTMLElement;
+      this.api.getAll().subscribe((res: any) => {
+        this.data = res.filter((item: any) => item);
+      });
+      this.treeGridObj.dataSource = this.data;
+      setInterval(() => {
+        var newRow1 = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
 
-          if (this.timeRemain > 0) {
-            this.timeRemain--;
+        if (this.timeRemain > 0) {
+          this.timeRemain--;
 
-            newRow1.style.backgroundColor = "#85dffa";
-            console.log("timeRemain");
-          } else {
-            this.flagg = 1;
-            newRow1.style.backgroundColor = "#fafafa";
-          }
-        }, 1000);
-        if (this.flagg == 1) {
-          this.stop();
-          newRow.style.backgroundColor = "#fafafa";
+          newRow1.style.backgroundColor = "#85dffa";
+          console.log("timeRemain");
+        } else {
+          this.flagg = 1;
+          newRow1.style.backgroundColor = "#fafafa";
         }
-       else {
-        this.contextmenu.enableItems(["Move As Next"], false);
+      }, 1000);
+      if (this.flagg == 1) {
+        this.stop();
+        newRow.style.backgroundColor = "#fafafa";
       }
-
-
-
-
     }
     this.treegrid.refresh();
     // this.treeGridObj.addRecord(dataC, this.rowIndex, "Child"); //add child row
     this.treeGridObj.endEdit;
     this.ejDialogACh.hide();
-
-   
   }
   validation(args: any) {
     this.treegrid.endEdit();
@@ -1443,7 +1421,6 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     }
   }
 
-
   actionBegin(args: SaveEventArgs): void {
     // if (args.requestType === "beginEdit" || args.requestType == 'add') {
     //   this.taskData = Object.assign({}, args.rowData)
@@ -1453,7 +1430,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
   contextMenuOpen(arg: any): void {
     console.log("CMO", arg);
-    console.log("Field Name of SElected Column",arg.column.field);
+    console.log("Field Name of SElected Column", arg.column.field);
     this.delColName = arg.column.field;
     console.log("contextMenuOpen:", arg);
     this.freezeColId = arg.column.index;
@@ -1469,13 +1446,13 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       if (arg.column.field === item.field) {
         this.columnValue = item.id;
         this.columnField = item.field;
-        this.ColName =
-          item.field.substr(0, 1).toUpperCase() + item.field.substr(1);
+        this.ColName = item.field;
         this.ColType = item.type;
         this.ColAlign = item.align;
       } else {
       }
     }
+    // .substr(0, 1).toUpperCase() + item.field.substr(1);
   }
 
   //contextmenu 2 events
@@ -1484,7 +1461,7 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
 
     if (args.item.id === "editCol") {
       this.checkNewEdit = "edit";
-      this.ejDialogECol.show()
+      this.ejDialogECol.show();
       this.getCurrentField();
     }
     if (args.event.target.classList.contains("ejs-checkboxspan")) {
@@ -1555,42 +1532,53 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
       this.ejDialogERow.show();
       args.cancel = true;
       this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
-      // this.stuCid = Object.values(this.selectedRecord)[3];
+   
+      console.log("Coll", this.colData);
+      this.column.map((res: any) => {
+        this.colData[res.field] = this.selectedRecord[res.field];
+        console.log("####333333", this.colData[res.field]);
+      });
+
+      console.log("Runned........", this.colData);
+
       this.stuCid = this.selectedRecord.id;
 
       console.log("edit rowwww", this.selectedRecord);
       this.stuNamen = this.selectedRecord.name;
       this.stuClassn = this.selectedRecord.class;
       this.stuRolln = this.selectedRecord.rollNo;
-      // this.treeGridObj.refresh();
-
-      // this.api.getAll().subscribe((res: any) => {
-      //   this.data = res.filter((item: any) => item);
-      // });
-      // this.treeGridObj.dataSource = this.data;
 
       this.startTimer();
     } else if (args.item.id === "multiselectrow") {
-      console.log("bef showChooseRow", this.showChooseRow)
+      console.log("bef showChooseRow", this.showChooseRow);
       console.log("select mult");
       this.showChooseRow = true;
-      console.log("ChooseRow", this.showChooseRow)
+      console.log("ChooseRow", this.showChooseRow);
       this.treeGridObj.selectionSettings.type = "Multiple"; //enable multiselection
       this.selectRowEnabe = true;
       this.treeGridObj.refreshColumns();
       this.treeGridObj.endEdit();
+      $(
+        ".e-contextmenu-wrapper ul .e-menu-item.e-focused, .e-contextmenu-container ul .e-menu-item.e-focused "
+      ).css("background-color", "black");
     } else if (args.item.text === "Copy As Next") {
-      console.log("Custom Copy Next clicked***************************");
-      this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
-      this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
-      console.log("Copied Text Record", this.selectedRecord);
-      console.log("Copied Text Index", this.selectedIndex);
+      if (!this.selectRowEnabe) {
+        console.log("Custom Copy Next clicked***************************");
+
+        this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
+        this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
+
+        console.log("Copied Text Record", this.selectedRecord);
+        console.log("Copied Text Index", this.selectedIndex);
+      }
     } else if (args.item.text === "Copy As Child") {
-      console.log("Custom Copy Child clicked***************************");
-      this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
-      this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
-      console.log("Copied Text Record", this.selectedRecord);
-      console.log("Copied Text Index", this.selectedIndex);
+      if (!this.selectRowEnabe) {
+        console.log("Custom Copy Child clicked***************************");
+        this.selectedIndex = this.treeGridObj["getSelectedRowIndexes"]()[0]; // select the records on perform Copy action
+        this.selectedRecord = this.treeGridObj["getSelectedRecords"]()[0];
+        console.log("Copied Text Record", this.selectedRecord);
+        console.log("Copied Text Index", this.selectedIndex);
+      }
     } else if (args.item.text === "Move As Next") {
       console.log("move as next");
 
@@ -1646,11 +1634,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
           this.stop();
           newRow.style.backgroundColor = "#fafafa";
         }
-      } else {
-        this.contextmenu.enableItems(["Move As Next"], false);
       }
     } else if (args.item.text === "Move As Child") {
-
       var getChildParent = this.treeGridObj["getSelectedRecords"]()[0];
 
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
@@ -1698,6 +1683,22 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     }
     this.treegrid.endEdit;
   }
+  onCreated() {
+    console.log("selectrowEnabe", this.selectRowEnabe);
+    if (!this.checkB) {
+      console.log("Disabling the copy & move items");
+      this.contextmenu.enableItems(["Copy As Next"], true);
+      this.contextmenu.enableItems(["Move As Next"], true);
+      this.contextmenu.enableItems(["Copy As Child"], true);
+      this.contextmenu.enableItems(["Move As Child"], true);
+    } else {
+      console.log("Disabling the copy & move items");
+      this.contextmenu.enableItems(["Copy As Next"], false);
+      this.contextmenu.enableItems(["Move As Next"], false);
+      this.contextmenu.enableItems(["Copy As Child"], false);
+      this.contextmenu.enableItems(["Move As Child"], false);
+    }
+  }
 
   cancel() {
     console.log("cancel");
@@ -1726,8 +1727,6 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     }
   }
 
-
-
   ///////////////row select
 
   rowSelected(args: any) {
@@ -1743,7 +1742,9 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     } else {
       this.childPid = false;
     }
-    this.colIndex = parseInt(args.target.closest("td").getAttribute("aria-colindex"));
+    this.colIndex = parseInt(
+      args.target.closest("td").getAttribute("aria-colindex")
+    );
     console.log("COLUMN Index????>>>>", this.colIndex);
   }
 
@@ -1786,13 +1787,14 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
         console.log("CHECKB stops ");
         this.showChooseRow = false;
         $(
-          "li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim"
+          "li#customCopy dim, li#pastenextrow dim, li#pastechildrow dim, li#deleterow dim"
         ).css("background-color", "#f08080!important");
         $(".e-menu-item").css("background-color", "");
         this.editSettings.showDeleteConfirmDialog =
           !this.editSettings.showDeleteConfirmDialog;
         this.alertOrphan = true;
       } else {
+        $(".e-menu-item.e-focused").css("background-color", "black");
         if (this.timeLeft > 0) {
           this.timeLeft--;
           this.enabe = true;
@@ -1802,21 +1804,27 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
             row?.closest("tr")?.classList.add("bgcolor");
           });
           $(".e-menu-item").css("background-color", "red");
-          $("li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim").css("background-color", "red!important");
 
+          $(
+            "li#customCopy dim, li#pastenextrow dim, li#pastechildrow dim, li#deleterow dim"
+          ).css("background-color", "red!important");
           console.log("Yess this makes RED");
         } else {
           console.log("else Interval");
           clearInterval(intervalfree);
           $("tr").removeClass("bgcolor");
           this.checkB = false;
-          $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "lightcoral!important");
+          $(
+            "li#customCopy dim, li#pastenextrow dim, li#pastechildrow dim, li#deleterow dim"
+          ).css("background-color", "lightcoral!important");
 
           alert("Failed to Lock : Row");
         }
       }
     }, 1000);
-    $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "#f08080!important");
+    $(
+      "li#customCopy dim, li#pastenextrow dim, li#pastechildrow dim, li#deleterow dim"
+    ).css("background-color", "#f08080!important");
     this.change = false;
   }
 
@@ -1837,10 +1845,9 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
   rowSelectingClick(RowSelectingtArgs: any) {
     console.log("row click before event");
     this.showChooseRow = false;
-    $('li#customCopy\ dim, li#pastenextrow\ dim, li#pastechildrow\ dim, li#deleterow\ dim').css("background-color", "#f08080!important");
-    //   if (!isNullOrUndefined(RowSelectingtArgs.row)) {
-    //     RowSelectingtArgs.row.classList.add('bgcolor');
-    // }
+    $(
+      "li#customCopy dim, li#pastenextrow dim, li#pastechildrow dim, li#deleterow dim"
+    ).css("background-color", "#f08080!important");
   }
 
   // rowDeselecting
@@ -1907,8 +1914,6 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
         console.log("FontColor", this.ColFColor);
         //get the Grid model.
         localStorage.setItem("treegrid", this.ColBColor);
-        // this.value = window.localStorage.getItem(this.ColBColor)!; //"gridGrid" is component name + component id.
-        // this.model = JSON.parse(this.value);
 
         $(".e-treegrid .e-headercell.cssClassaa").css(
           "background-color",
@@ -1932,10 +1937,8 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     }
 
     this.ejDialogECol.hide();
-
   }
   ////////////////////////////////////////////////////////////////////////////
-
 
   complete(args: any) {
     if (args.requestType == "save") {
@@ -1977,11 +1980,10 @@ var newRow = this.treeGridObj.getRowByIndex(index) as HTMLElement;
     console.log("Timer stopped");
     clearInterval(this.timeLeft);
     clearInterval(this.interval);
-    
   }
   public onChange(e: ChangeEventArgs): void {
     console.log("OnChnage Working");
     this.grid.filterSettings.type = <FilterType>e.value;
     this.grid.clearFiltering();
-}
+  }
 }

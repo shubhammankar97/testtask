@@ -8,7 +8,7 @@ exports.index = (req, res) => {
 };
 
 exports.store = (req, res) => {
-  console.log(req.body);
+  console.log('test11');
   var user = {
     name: req.body.name,
     class: req.body.class,
@@ -18,10 +18,22 @@ exports.store = (req, res) => {
   data = data.toString();
   var Data = JSON.parse(data);
   var id = Data.length;
-
+console.log('++++',data);
+console.log('---id',id)
+ var col_data=fs.readFileSync("column.json");
+ col_data=col_data.toString();
+ var Col_Data=JSON.parse(col_data)
+ console.log(Col_Data)
+ for (var i in Col_Data) {
+  if (Col_Data[i]['id'] >3 ) {
+    var extra_field=Col_Data[i]["field"]
+    user[extra_field]=req.body[extra_field]
+  }
+ }
+  
   user["id"] = id + 1;
   console.log("+++", user);
-  console.log("---", Data);
+ console.log("---", Data);
   Data.push(user);
 
   fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
@@ -31,14 +43,15 @@ exports.store = (req, res) => {
 exports.delete = (req, res) => {
   id = req.params.id;
   data = fs.readFileSync("student.json");
+  data=data.toString();
   var Data = JSON.parse(data);
   for (var i in Data) {
-    console.log(Data);
+  //  console.log(Data);
     if (Data[i] != null) {
       if (Data[i]["id"] == id) {
         delete Data[i];
         fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
-        console.log(Data);
+    //    console.log(Data);
         res.json(Data);
       }
     }
@@ -54,7 +67,7 @@ exports.getid = (req, res) => {
   for (var i in Data) {
     if (Data[i] != null) {
       if (Data[i]["id"] == id) {
-        console.log(Data[i]);
+    //    console.log(Data[i]);
         mainData.push(Data[i]);
       }
     }
@@ -84,12 +97,26 @@ exports.update = (req, res) => {
   data = fs.readFileSync("student.json");
   var Data = JSON.parse(data);
   for (var i in Data) {
-    console.log(Data);
     if (Data[i] != null) {
       if (Data[i]["id"] == id) {
+        
+        var col_data=fs.readFileSync("column.json");
+        col_data=col_data.toString();
+        var Col_Data=JSON.parse(col_data)
+        for (var f in Col_Data) {
+          if (Col_Data[f]['id'] >3 ) {
+            var extra_field=Col_Data[f]["field"]
+            if (req.body.check){
+            user1[extra_field]=req.body[extra_field]
+            }
+            else{
+              user[extra_field]=req.body[extra_field]
+            }
+          }
+        } 
+
         Data[i] = req.body.check ? user1 : user;
         fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
-        console.log(Data);
         res.json(Data);
       }
     }
@@ -99,7 +126,7 @@ exports.update = (req, res) => {
 exports.storeNext = (req, res) => {
   var user;
   try {
-    console.log(req.body);
+ //   console.log(req.body);
     if (req.body.check) {
       var user1 = {
         id: req.body.id,
@@ -127,10 +154,27 @@ exports.storeNext = (req, res) => {
   data = data.toString();
   var Data = JSON.parse(data);
   var id = Data.length;
-  console.log("ID", id);
+  //console.log("ID", id);
   req.body.check ? user1 : (user["id"] = id + 1);
-  console.log("+++", req.body.check ? user1 : user);
-  console.log("---", Data);
+  //console.log("+++", req.body.check ? user1 : user);
+  //console.log("---", Data);
+ 
+//new code
+  var col_data=fs.readFileSync("column.json");
+  col_data=col_data.toString();
+  var Col_Data=JSON.parse(col_data)
+  for (var f in Col_Data) {
+    if (Col_Data[f]['id'] >3 ) {
+      var extra_field=Col_Data[f]["field"]
+      if (req.body.check){
+      user1[extra_field]=req.body[extra_field]
+      }
+      else{
+        user[extra_field]=req.body[extra_field]
+      }
+    }
+  } 
+//
   console.log("Test nextID", req.body.nextID);
   Data.splice(req.body.nextID + 1, 0, req.body.check ? user1 : user);
 
@@ -141,7 +185,7 @@ exports.storeNext = (req, res) => {
 exports.storeChild = (req, res) => {
 
   try {
-  console.log(req.body);
+  //console.log(req.body);
   // if (req.body.check) {
   var user1 = {
   id: req.body.id,
@@ -160,6 +204,19 @@ exports.storeChild = (req, res) => {
   user1["id"] = id + 1;
   console.log("+++", user1);
   console.log("---", Data);
+
+  //new code
+  var col_data=fs.readFileSync("column.json");
+  col_data=col_data.toString();
+  var Col_Data=JSON.parse(col_data)
+  for (var f in Col_Data) {
+    if (Col_Data[f]['id'] >3 ) {
+      var extra_field=Col_Data[f]["field"]
+      
+      user1[extra_field]=req.body[extra_field]
+    }
+  } 
+//
   console.log("Test currentID", req.body.currentID);
   // user.id = user.id.toString();
   // user.parentID = user.parentID.toString();
@@ -180,7 +237,7 @@ exports.storeChild = (req, res) => {
 exports.moveNext = (req, res) => {
   var user;
   try {
-    console.log(req.body);
+  //  console.log(req.body);
     if (req.body.check) {
       var user1 = {
         id: req.body.id,
@@ -213,6 +270,22 @@ exports.moveNext = (req, res) => {
   console.log("+++", req.body.check ? user1 : user);
   console.log("---", Data);
   console.log("Test next", req.body.nextt);
+  var col_data=fs.readFileSync("column.json");
+  col_data=col_data.toString();
+  var Col_Data=JSON.parse(col_data)
+  for (var f in Col_Data) {
+    if (Col_Data[f]['id'] >3 ) {
+      var extra_field=Col_Data[f]["field"]
+      if (req.body.check){
+      user1[extra_field]=req.body[extra_field]
+      }
+      else{
+        user[extra_field]=req.body[extra_field]
+      }
+    }
+  } 
+
+
   Data.splice(req.body.nextt + 1, 0, req.body.check ? user1 : user);
 
   fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
@@ -223,7 +296,7 @@ exports.moveNext = (req, res) => {
 exports.moveChild = (req, res) => {
   var user;
   try {
-    console.log(req.body);
+  //  console.log(req.body);
     var user1 = {
       id: req.body.id,
       name: req.body.name,
@@ -240,6 +313,18 @@ exports.moveChild = (req, res) => {
     user1["id"] = id + 1;
     console.log("+++", user1);
     console.log("---", Data);
+    var col_data=fs.readFileSync("column.json");
+    col_data=col_data.toString();
+    var Col_Data=JSON.parse(col_data)
+    for (var f in Col_Data) {
+      if (Col_Data[f]['id'] >3 ) {
+        var extra_field=Col_Data[f]["field"]
+        
+        user1[extra_field]=req.body[extra_field]
+      }
+    } 
+
+
     console.log("Test currentID", req.body.current);
     Data.splice(req.body.current + 1, 0, user1);
 
@@ -253,30 +338,26 @@ exports.moveChild = (req, res) => {
 };
 
 
-// add column
-exports.storeColumn = (req, res) => {
+// // add column
+// exports.storeColumn = (req, res) => {
+// var data = fs.readFileSync("student.json");
+//   console.log(data);
+//   console.log("Response", req.body.field)
+//   data = data.toString();
+//   var Data = JSON.parse(data);
 
+//   const newd = Data.map(col => {
+//     col[req.body.field] = "";
+//     return col;
+// })
+// console.log("NewD", res.body)
 
-  var data = fs.readFileSync("student.json");
-  console.log(data);
-  console.log("Response", req.body.field)
-  data = data.toString();
-  var Data = JSON.parse(data);
+// fs.writeFileSync("student.json", JSON.stringify(newd, null, 2))
+// console.log("WRITTEN in JSON")
+//   return res.json(newd);
+// }
 
-  const newd = Data.map(col => {
-    col[req.body.field] = "";
-    return col;
-})
-console.log("NewD", res.body)
-
-fs.writeFileSync("student.json", JSON.stringify(newd, null, 2))
-console.log("WRITTEN in JSON")
-  return res.json(newd);
-
-
-}
-
-// delete column
+// // delete column
 // exports.deleteCol = (req, res) => {
 //   id = req.params.id
 //   data = fs.readFileSync("student.json")
@@ -284,7 +365,7 @@ console.log("WRITTEN in JSON")
 //   for (var i in Data) {
 //       console.log(Data);
 //       if (Data[i] != null) {
-//           if (Data[i] == id) {
+//           if (Data[i]["id"] == id) {
 //               delete Data[i]
 //               fs.writeFileSync("column.json", JSON.stringify(Data, null, 2))
 //               console.log(Data)
@@ -293,23 +374,3 @@ console.log("WRITTEN in JSON")
 //       }
 //   };
 // };
-
-
-// delete column
-exports.deleteCol = (req, res) =>{
-  colName = req.params
-  console.log("ColIndex", colName)
-  data = fs.readFileSync("student.json")
-  var Data = JSON.parse(data);
-
-  const delCol = Data.map( col => {
-    delete col.colName;
-    return col;
-  })
-  console.log("delCol", delCol)
-
-  fs.writeFileSync("student.json", JSON.stringify(delCol, null, 2))
-  console.log("WRITTEN in JSON")
-  return res.json(Data)
-
-}
