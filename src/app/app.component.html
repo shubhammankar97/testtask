@@ -67,11 +67,10 @@
   (dataBound)="dataBound($event)"
   (rowDataBound)="rowBound($event)"
   (checkboxChange)="checkboxChange($event)"
-  (actionComplete)="complete($event)"
   (actionBegin)="actionBegin($event)"
 >
   <e-columns>
-    <e-column
+    <!-- <e-column
       field="id"
       headerText="Student ID"
       textAlign="Centre"
@@ -105,13 +104,13 @@
       [filterBarTemplate]="filterBarTemplate"
       [validationRules]="studentidrules"
       [edit]="editparams"
-    ></e-column>
+    ></e-column> -->
 
     <!-- dynamic  -->
     <div *ngFor="let item of column">
-      <div *ngIf="item.field == 'name'">
+      <div *ngIf="item.field == 'name';else other">
         <e-column
-          [field]="item.field"
+          [field]="item.field.substr(0, 1).toUpperCase() + item.field.substr(1)"
           id="name"
           headerText="Student Name"
           textAlign="Left"
@@ -120,25 +119,19 @@
           [showCheckbox]="showChooseRow"
         ></e-column>
       </div>
-      <div *ngIf="item.field !== 'name'">
+      <ng-template #other>
         <e-column
-          [field]="item.field"
+          [field]="item.field.substr(0, 1).toUpperCase() + item.field.substr(1)"
           [headerText]="
-            item.field.substr(0, 1).toUpperCase() + item.field.substr(1)
-          "
-          [width]="item.width"
-          [type]="item.type"
+          item.field.substr(0, 1).toUpperCase() + item.field.substr(1)"
           [edit]="editparams"
           textAlign="Left"
-          [validationRules]="item.validation"
-          [customAttributes]="offCustom"
           [lockColumn]="lock"
-          [isPrimaryKey]="item.isPrimaryKey != null ? item.isPrimaryKey : null"
           [isFrozen]="true"
           [edit]="editparams"
           [filterBarTemplate]="filterBarTemplate"
         ></e-column>
-      </div>
+      </ng-template>
     </div>
   </e-columns>
 </ejs-treegrid>
@@ -183,7 +176,7 @@
       <form id="template_driven" #userForm="ngForm" novalidate>
         <p>(Timer: {{ timerLaddC }})</p>
         <div class="form-group" style="padding-top: 11px">
-          <div class="e-float-input chex">
+          <div class="e-float-input">
             <input
               type="text"
               name="ColName"

@@ -235,6 +235,7 @@ export class AppComponent {
   public targetElement3!: HTMLElement;
 
   // Create element reference for dialog target element.
+  // @ViewChild('container', {static: true}) element: ElementRef;
   @ViewChild("container", { read: ElementRef, static: true })
   container!: ElementRef;
   // Dialog animation
@@ -326,6 +327,7 @@ export class AppComponent {
   public editColTimer: number = 30;
   public colData: any = {};
   public childData: any = {};
+  public toolAddTimer:number = 30;
   /////////////////////////////////
   constructor(private api: ApiService, private socketService: SocketioService) {
     console.log = function () {};
@@ -351,7 +353,7 @@ export class AppComponent {
       console.log("**************************");
       console.log(this.data);
 
-      this.colFields = Object.keys(this.data[0]);
+      // this.colFields = Object.keys(this.data[0]);
       console.log("KEYS value", this.colFields);
     }, 1600);
     //get the Grid model.
@@ -399,12 +401,28 @@ export class AppComponent {
       this.column = res;
 
       this.imageLoader = false;
-      console.log("API COL", this.column);
+      console.log("API COL", res);
     });
     setTimeout(async () => {
       console.log("Column Data", this.column);
     }, 1000);
-
+var th = this;
+$(document).ready(function(){
+      if( $(".e-emptyrow").hasClass("e-emptyrow") ){
+        console.log("exist");
+        th.treeGridObj.refresh();        
+      }else{
+        console.log('not exist')
+      }
+});
+    
+    var noRec:HTMLTableRowElement | null  = document.querySelector('tr');
+    console.log("after no Records");
+    if(noRec?.classList.contains('e-emptyrow')){
+      console.log("noRecords")
+      this.treeGridObj.refresh();
+      this.treeGridObj.refresh();
+    }
     this.getFiltersSubscription();
     $("#dim").css("pointer-events", "none");
     this.editSettings = {
@@ -545,7 +563,7 @@ export class AppComponent {
       console.log("action complete!!!", this.treegrid.selectRow(index + 1));
     }
     hideSpinner(document.getElementById("loader-container") as HTMLElement);
-    if (args.requestType === "beginEdit" || args.requestType === "add") {
+    if (args.requestType === "add") {
       const dialog = args.dialog;
       const StudentID = "StudentID";
       dialog.showCloseIcon = false;
@@ -561,13 +579,46 @@ export class AppComponent {
     if (args.requestType == "refreshDataSource") {
       console.log("check--------->", this.treegrid.getCurrentViewRecords);
     }
-    if (args.requestType == "save") {
-      console.log("action ADDD");
-      this.ejDialog.hide();
-      var a = this.treeGridObj.selectRow(args.index, true);
-      console.log("selectRow", a);
-      console.log("", this.data);
+
+  // runs here
+  console.log("RUns Here");
+  if (args.requestType == "save") {
+    //Add the background color
+    console.log("action ADDD");
+    this.ejDialog.hide();
+    var a = this.treeGridObj.selectRow(args.index, true);
+    console.log("selectRow", a);
+    console.log("", this.data);
+    var selectedRowInfo = this.treegrid.getSelectedRows()[0]; // get the moved record row info
+    this.toolAddTimer = 30;
+    setInterval(() => {
+      if (this.toolAddTimer > 0) {
+        console.log(this.timeLeft);
+        this.toolAddTimer--;
+        var rowrs = this.treeGridObj.getRowByIndex(this.data.length + 1);
+        rowrs?.classList.add("resultRow");
+      } else {
+        this.flagg = 1;
+      }
+    });
+    if (this.flagg == 1) {
+      this.stop();
+      // this.treeGridObj.getRowByIndex(this.data.length + 1).remove()
     }
+
+    // Remove the background color
+
+    setTimeout(() => {
+      if (
+        !isNullOrUndefined(selectedRowInfo?.classList.contains("resultRow"))
+      ) {
+        console.log("Moved under 10sec complete method");
+
+        // this.treeGridObj.getRowByIndex(this.data.length + 1).remove()
+      }
+    }, 10000);
+  }
+  
   }
 
   ////////////cruds
@@ -839,25 +890,30 @@ export class AppComponent {
   /////////////Add Column Event
   clicked(): void {
     console.log("COLUMN Index", this.colIndex);
+    
     let columnName = {
       field: this.ColName,
       type: this.ColType,
       currentColID: this.freezeColId,
     };
-    this.treegrid.columns.splice(this.column.length + 1, 0, columnName); //Add the columns
     this.api.addColumn(columnName).subscribe((res: any) => {
-      // console.log("column appended", columnName.field);
+      console.log("column appended", columnName.field);
     });
+    
+    this.treegrid.refresh();
+    this.treeGridObj.refreshHeader();
 
-
-    this.treegrid.refreshColumns();
+    this.api.getAllCol().subscribe((res)=>{
+      console.log("getAllcol", res);
+      this.column = res;
+    })
+    this.treeGridObj.refresh();
     this.ejDialogACol.hide();
 
   }
 
   ///////
   removeColumn(args: any) {
-    debugger;
     console.log("removecol", args);
     console.log("Column Index", this.delColName);
     for (let i of this.column) {
@@ -865,19 +921,22 @@ export class AppComponent {
       if (i.field == args) {
         console.log("ID:", i.id);
         this.api.deleteColumn(i.id).subscribe((res: any) => {
-          this.ngOnInit();
           console.log("delete column", res);
         });
-
         this.treegrid.refreshColumns();
       }
     }
     console.log("DELETE Column REmoveColumn");
-    this.treeGridObj.columns.splice(this.colIndex, 1);
-    this.treegrid.refreshColumns();
-    this.treegrid.endEdit;
+    this.treegrid.refresh();
+    this.treeGridObj.refreshHeader();
+
+    this.api.getAllCol().subscribe((res)=>{
+      console.log("getAllcol", res);
+      this.column = res;
+    })
+    this.treegrid.refresh();
     this.ejDialogDCol.hide();
-    args.disableRow = false;
+    // args.disableRow = false;
   }
   //////////////////
 
@@ -1063,9 +1122,7 @@ export class AppComponent {
         console.log("addNext API working or not check first");
       });
       console.log("Data", this);
-      this.api.addNext(this.colData).subscribe(() => {
-        console.log("addNext API working or not check first");
-      });
+
       //////////////////////Next New Row Highlight
 
       var newRow = this.treeGridObj.getRowByIndex(index + 1) as HTMLElement;
@@ -1352,15 +1409,21 @@ export class AppComponent {
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
       console.log("yes its Falssse");
-      let dataC = {
-        id: this.data.length + 1,
-        name: this.stuCName,
-        rollNo: this.stuCRoll,
-        class: this.stuCClass,
-        currentID: currentDataId.id,
-        check: false,
-      };
-      this.api.addChildData(dataC).subscribe(() => {
+      // let dataC = {
+      //   id: this.data.length + 1,
+      //   name: this.stuCName,
+      //   rollNo: this.stuCRoll,
+      //   class: this.stuCClass,
+      //   currentID: currentDataId.id,
+      //   check: false,
+      // };
+
+      this.childData.id = this.data.length + 1;
+      this.childData.currentID = currentDataId.id;
+      this.childData.parentID = this.parentId;
+      this.childData.check = false;
+
+      this.api.addChildData(this.childData).subscribe(() => {
         console.log("addNext API working or not check first");
       });
 
@@ -1404,16 +1467,7 @@ export class AppComponent {
     this.treegrid.endEdit();
   }
 
-  actioncomplete(args: any) {
-    console.log("action complete");
-    if (args.requestType == "save") {
-      var index = args.index;
-      console.log("indexxxx", index);
 
-      this.treegrid.selectRow(index); // select the newly added row to scroll to it
-      console.log("action complete!!!", this.treegrid.selectRow(index));
-    }
-  }
 
   toolabarclickHandler(args: any) {
     if (args.item.id === "savebutton") {
@@ -1685,19 +1739,19 @@ export class AppComponent {
   }
   onCreated() {
     console.log("selectrowEnabe", this.selectRowEnabe);
-    if (!this.checkB) {
-      console.log("Disabling the copy & move items");
-      this.contextmenu.enableItems(["Copy As Next"], true);
-      this.contextmenu.enableItems(["Move As Next"], true);
-      this.contextmenu.enableItems(["Copy As Child"], true);
-      this.contextmenu.enableItems(["Move As Child"], true);
-    } else {
-      console.log("Disabling the copy & move items");
-      this.contextmenu.enableItems(["Copy As Next"], false);
-      this.contextmenu.enableItems(["Move As Next"], false);
-      this.contextmenu.enableItems(["Copy As Child"], false);
-      this.contextmenu.enableItems(["Move As Child"], false);
-    }
+    // if (!this.checkB) {
+    //   console.log("Disabling the copy & move items");
+    //   this.contextmenu.enableItems(["Copy As Next"], true);
+    //   this.contextmenu.enableItems(["Move As Next"], true);
+    //   this.contextmenu.enableItems(["Copy As Child"], true);
+    //   this.contextmenu.enableItems(["Move As Child"], true);
+    // } else {
+    //   console.log("Disabling the copy & move items");
+    //   this.contextmenu.enableItems(["Copy As Next"], false);
+    //   this.contextmenu.enableItems(["Move As Next"], false);
+    //   this.contextmenu.enableItems(["Copy As Child"], false);
+    //   this.contextmenu.enableItems(["Move As Child"], false);
+    // }
   }
 
   cancel() {
@@ -1940,46 +1994,12 @@ export class AppComponent {
   }
   ////////////////////////////////////////////////////////////////////////////
 
-  complete(args: any) {
-    if (args.requestType == "save") {
-      //Add the background color
-
-      var selectedRowInfo = this.treegrid.getSelectedRows()[0]; // get the moved record row info
-
-      setInterval(() => {
-        if (this.timeLeft > 0) {
-          console.log(this.timeLeft);
-          this.timeLeft--;
-          var rowrs = this.treeGridObj.getRowByIndex(this.data.length + 1);
-          rowrs?.classList.add("resultRow");
-        } else {
-          this.flagg = 1;
-        }
-      });
-      if (this.flagg == 1) {
-        this.stop();
-        // this.treeGridObj.getRowByIndex(this.data.length + 1).remove()
-      }
-
-      // Remove the background color
-
-      setTimeout(() => {
-        if (
-          !isNullOrUndefined(selectedRowInfo?.classList.contains("resultRow"))
-        ) {
-          console.log("Moved under 10sec complete method");
-
-          // this.treeGridObj.getRowByIndex(this.data.length + 1).remove()
-        }
-      }, 10000);
-    }
-  }
-
   stop() {
     this.ejDialogERow.hide();
     console.log("Timer stopped");
     clearInterval(this.timeLeft);
     clearInterval(this.interval);
+    clearInterval(this.toolAddTimer);
   }
   public onChange(e: ChangeEventArgs): void {
     console.log("OnChnage Working");
