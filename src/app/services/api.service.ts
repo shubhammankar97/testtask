@@ -34,8 +34,9 @@ export class ApiService {
 
   // Update
   updateData(id: any, data: any) {
+    console.log("service update row data",data);
     return this.http.put(
-      this.API_URL + "/update-Student/" + id, data[0], httpOptions);
+      this.API_URL + "/update-Student/" + id, data, httpOptions);
   }
 
   //Add Child
@@ -67,6 +68,7 @@ export class ApiService {
   }
  
   addRecord(dataSourceChangedEvent: DataSourceChangedEventArgs) {
+    console.log("SDD STudent DATASOurceChangedAPI service", dataSourceChangedEvent);
     return this.http.post(
       this.API_URL + "/add-Student",
       dataSourceChangedEvent.data,

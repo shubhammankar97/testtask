@@ -103,7 +103,6 @@ declare var $: any;
 })
 export class AppComponent {
   title = "testaskk";
-  public imageLoader: boolean = false;
   public data: Object[] = [];
   public sortSettings!: SortSettingsModel;
   public pageSettings!: PageSettingsModel;
@@ -332,23 +331,20 @@ export class AppComponent {
   constructor(private api: ApiService, private socketService: SocketioService) {
     console.log = function () {};
     this.offCustom = this.customAttributes;
-    this.imageLoader = true;
     // showSpinner(document.getElementById("loader-container") as HTMLElement);
 
     this.api.getAll().subscribe((res: any) => {
-      showSpinner(document.getElementById("loader-container") as HTMLElement);
+      
+      // showSpinner(document.getElementById("loader-container") as HTMLElement);
       this.treeGridObj.showSpinner();
-      this.imageLoader = true;
       this.data = res.filter((item: any) => item);
 
       console.log(this.data, "response==========");
       if (this.data.length) {
-        this.imageLoader = false;
         this.treeGridObj.hideSpinner();
         // hideSpinner(document.getElementById("loader-container") as HTMLElement);
       }
     });
-    this.imageLoader = false;
     setTimeout(async () => {
       console.log("**************************");
       console.log(this.data);
@@ -396,26 +392,36 @@ export class AppComponent {
   ////////////////////////////////////////////===================
 
   ngOnInit(): void {
-    this.imageLoader = true;
     this.api.getAllCol().subscribe((res: any) => {
-      this.column = res;
+      console.log("NGoninit start")
+      this.column = res.field.substr(0, 1).toUpperCase() + res.field.substr(1);
 
-      this.imageLoader = false;
-      console.log("API COL", res);
+      console.log("API COL", res.field.substr(0, 1).toUpperCase() + res.field.substr(1));
     });
     setTimeout(async () => {
       console.log("Column Data", this.column);
     }, 1000);
 var th = this;
-$(document).ready(function(){
-      if( $(".e-emptyrow").hasClass("e-emptyrow") ){
+$(this.treeGridObj).ready(function(){
+      if($(".e-emptyrow").hasClass("e-emptyrow") ){
         console.log("exist");
+        th.treeGridObj.showSpinner();
         th.treeGridObj.refresh();        
       }else{
         console.log('not exist')
+        th.treeGridObj.showSpinner();
       }
+      th.treeGridObj.hideSpinner();
 });
-    
+  
+var colcolorval = window.localStorage.getItem("colcolor");
+
+// if ($(".customcssa")[0]){
+//   $('.customcssa').css('backgroundColor',colcolorval);
+// } else {
+//   console.log('workiiii csss');
+// }
+
     var noRec:HTMLTableRowElement | null  = document.querySelector('tr');
     console.log("after no Records");
     if(noRec?.classList.contains('e-emptyrow')){
@@ -528,7 +534,7 @@ $(document).ready(function(){
       type: "FilterBar",
       hierarchyMode: "Parent",
       mode: "Immediate",
-      immediatemodedelay: 1400,
+      immediatemodedelay: 1800,
     };
 
     this.d1data = [
@@ -543,15 +549,12 @@ $(document).ready(function(){
   ///////////method
 
   getFiltersSubscription() {
-    this.imageLoader = true;
     this.api.getAllCol().subscribe((res: any) => {
       this.column = res;
-      // this.imageLoader = false;
     });
   }
 
   public async actionComplete(args: any) {
-    // this.imageLoader = false
     console.log("action complete 1-------------", args);
     if (args.requestType == "save") {
       console.log("Save Clicked");
@@ -564,12 +567,16 @@ $(document).ready(function(){
     }
     hideSpinner(document.getElementById("loader-container") as HTMLElement);
     if (args.requestType === "add") {
+      
+      console.log("Request Type Add");
       const dialog = args.dialog;
+      dialog.allowEditing = false;
       const StudentID = "StudentID";
+      dialog.column.id.allowEditing = false;
       dialog.showCloseIcon = false;
       dialog.height = 400;
       // change the header of the dialog
-      // dialog.data = this.data.length + 1;
+      dialog.data = this.data.length + 1;
       dialog.header =
         args.requestType === "beginEdit"
           ? "Edit Record of " + args.rowData["StudentID"].id(this.data.length)
@@ -584,7 +591,7 @@ $(document).ready(function(){
   console.log("RUns Here");
   if (args.requestType == "save") {
     //Add the background color
-    console.log("action ADDD");
+    console.log("action save");
     this.ejDialog.hide();
     var a = this.treeGridObj.selectRow(args.index, true);
     console.log("selectRow", a);
@@ -619,6 +626,7 @@ $(document).ready(function(){
     }, 10000);
   }
   
+ 
   }
 
   ////////////cruds
@@ -626,6 +634,8 @@ $(document).ready(function(){
     dataSourceChangedEvent: DataSourceChangedEventArgs
   ): void {
     if (dataSourceChangedEvent.action === "add") {
+      console.log("DataSourceChangedEvent line 627 ::", dataSourceChangedEvent);
+      dataSourceChangedEvent
       this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
         dataSourceChangedEvent.endEdit;
       });
@@ -747,7 +757,7 @@ $(document).ready(function(){
           console.log("hideEditDialog");
           this.flagg = 1;
         }
-      }, 1200);
+      }, 1000);
       if (this.flagg == 1) {
         console.log("hideEditDialog flagg");
       }
@@ -918,13 +928,21 @@ $(document).ready(function(){
     console.log("Column Index", this.delColName);
     for (let i of this.column) {
       console.log("yess", i);
-      if (i.field == args) {
-        console.log("ID:", i.id);
-        this.api.deleteColumn(i.id).subscribe((res: any) => {
-          console.log("delete column", res);
-        });
-        this.treegrid.refreshColumns();
+      if(i.field !== "id"){
+        console.log("not equals to id")
+        if (i.field == args) {
+          console.log("ID:", i.id);
+          this.api.deleteColumn(i.id).subscribe((res: any) => {
+            console.log("delete column", res);
+          });
+          this.treegrid.refreshColumns();
+       
+      } }else{
+        console.log("equals to id")
+        alert("ID column Can't be deleted");
+        this.ejDialogDCol.hide();
       }
+      
     }
     console.log("DELETE Column REmoveColumn");
     this.treegrid.refresh();
@@ -1168,42 +1186,48 @@ $(document).ready(function(){
   ///////////////edit Row
   editRow() {
     console.log("EditRoww", this.colData);
-    let sn: string = (<HTMLInputElement>document.getElementById("sname")).value;
-    let sr: string = (<HTMLInputElement>document.getElementById("sroll")).value;
-    let sc: string = (<HTMLInputElement>document.getElementById("sclass"))
-      .value;
+    // let sn: string = (<HTMLInputElement>document.getElementById("sname")).value;
+    // let sr: string = (<HTMLInputElement>document.getElementById("sroll")).value;
+    // let sc: string = (<HTMLInputElement>document.getElementById("sclass"))
+    //   .value;
 
     var grid = (document.getElementsByClassName("e-grid")[0] as any)
       .ej2_instances[0];
     console.log("EditRow CHILD Pid##########", this.childPid);
     if (this.childPid) {
-      var data = [
-        {
-          id: grid.getSelectedRecords()[0].id,
-          name: sn,
-          rollNo: sr,
-          class: sc,
-          parentID: this.parentId,
-          check: true,
-        },
-      ];
-      console.log("DATATAA", data);
+      // var data = [
+      //   {
+      //     id: grid.getSelectedRecords()[0].id,
+      //     name: sn,
+      //     rollNo: sr,
+      //     class: sc,
+      //     parentID: this.parentId,
+      //     check: true,
+      //   },
+      // ];
+      this.colData.id = grid.getSelectedRecords()[0].id;
+      this.colData.parentID = this.parentId;
+      this.colData.check = true;
+      console.log("DATATAA", this.colData);
+      
       console.log("add next function ", grid.getSelectedRecords()[0].id);
       this.api
-        .updateData(grid.getSelectedRecords()[0].id, data)
+        .updateData(grid.getSelectedRecords()[0].id, this.colData)
         .subscribe(() => {
           console.log("edit Data api");
         });
     } else {
-      var dataa = [
-        {
-          id: grid.getSelectedRecords()[0].id,
-          name: sn,
-          rollNo: sr,
-          class: sc,
-          check: false,
-        },
-      ];
+      // var dataa = [
+      //   {
+      //     id: grid.getSelectedRecords()[0].id,
+      //     name: sn,
+      //     rollNo: sr,
+      //     class: sc,
+      //     check: false,
+      //   },
+      // ];
+      this.colData.id = grid.getSelectedRecords()[0].id;
+      this.colData.check = false;
       console.log("add next function ", grid.getSelectedRecords()[0].id);
       if (this.timeLeft !== 0) {
         console.log("timeLeft", this.timeLeft);
@@ -1409,18 +1433,9 @@ $(document).ready(function(){
       var index = this.treeGridObj["getSelectedRowIndexes"]()[0];
 
       console.log("yes its Falssse");
-      // let dataC = {
-      //   id: this.data.length + 1,
-      //   name: this.stuCName,
-      //   rollNo: this.stuCRoll,
-      //   class: this.stuCClass,
-      //   currentID: currentDataId.id,
-      //   check: false,
-      // };
 
       this.childData.id = this.data.length + 1;
       this.childData.currentID = currentDataId.id;
-      this.childData.parentID = this.parentId;
       this.childData.check = false;
 
       this.api.addChildData(this.childData).subscribe(() => {
@@ -1459,7 +1474,6 @@ $(document).ready(function(){
       }
     }
     this.treegrid.refresh();
-    // this.treeGridObj.addRecord(dataC, this.rowIndex, "Child"); //add child row
     this.treeGridObj.endEdit;
     this.ejDialogACh.hide();
   }
@@ -1956,6 +1970,7 @@ $(document).ready(function(){
           var style = document.createElement("style");
           style.type = "text/css";
           style.innerHTML = `.e-treegrid .e-headercell.cssClassaa { background-color: ${this.ColBColor}; 
+          
           color:${this.ColFColor};
         }`;
           document.body.append(style);
@@ -1964,6 +1979,8 @@ $(document).ready(function(){
             this.ColBColor + "!important"
           );
         }
+          window.localStorage.setItem("colcolor", this.ColBColor);
+
         console.log("BGcolor", this.ColBColor);
         console.log("FontColor", this.ColFColor);
         //get the Grid model.
@@ -1973,6 +1990,9 @@ $(document).ready(function(){
           "background-color",
           this.ColBColor
         );
+        // if($(document).hasClass('cssClassaa')){
+        //   console.log('not exist');
+        // }
         $(".e-treegrid .e-headercell.cssClassaa").css(
           "background-color",
           this.ColFColor

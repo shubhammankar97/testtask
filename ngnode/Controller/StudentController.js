@@ -13,13 +13,15 @@ exports.store = (req, res) => {
     name: req.body.name,
     class: req.body.class,
     rollNo: req.body.rollNo,
+    parentID: 1
   };
   var data = fs.readFileSync("student.json");
   data = data.toString();
   var Data = JSON.parse(data);
   var id = Data.length;
+  // var id = req.body.id;
 console.log('++++',data);
-console.log('---id',id)
+console.log('---id',id);
  var col_data=fs.readFileSync("column.json");
  col_data=col_data.toString();
  var Col_Data=JSON.parse(col_data)
@@ -31,10 +33,11 @@ console.log('---id',id)
   }
  }
   
-  user["id"] = id + 1;
-  console.log("+++", user);
+ user["id"] = id + 1;
+ console.log("+++", user);
  console.log("---", Data);
-  Data.push(user);
+  // Data.push(user);
+  Data.splice(2, 0, user);
 
   fs.writeFileSync("student.json", JSON.stringify(Data, null, 2));
   return res.json(Data);
@@ -78,14 +81,16 @@ exports.getid = (req, res) => {
 exports.update = (req, res) => {
   id = req.params.id;
   var user;
+  console.log("update row",req.body)
   if (req.body.check) {
-    var user1 = {
-      id: id,
-      name: req.body.name,
-      rollNo: req.body.rollNo,
-      class: req.body.class,
-      parentID: req.body.parentID.toString(),
-    };
+      var user1 = {
+        id: id,
+        name: req.body.name,
+        rollNo: req.body.rollNo,
+        class: req.body.class,
+        parentID: req.body.parentID.toString(),
+      };
+
   } else {
     var user = {
       id: id,

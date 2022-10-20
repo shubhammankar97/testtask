@@ -3,10 +3,8 @@
     "field": "id",
     "id": 1,
     "type": "number",
-    "isPrimaryKey": true,
     "validation": {
-      "required": true,
-      "lockColumn": true
+      "required": true
     }
   },
   {

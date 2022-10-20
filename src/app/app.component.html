@@ -68,9 +68,10 @@
   (rowDataBound)="rowBound($event)"
   (checkboxChange)="checkboxChange($event)"
   (actionBegin)="actionBegin($event)"
+  
 >
   <e-columns>
-    <!-- <e-column
+    <e-column
       field="id"
       headerText="Student ID"
       textAlign="Centre"
@@ -104,31 +105,40 @@
       [filterBarTemplate]="filterBarTemplate"
       [validationRules]="studentidrules"
       [edit]="editparams"
-    ></e-column> -->
+    ></e-column>
+<!--  
+    <div *ngIf="column.field === 'name'">
+      <e-column
+      field="name"
+      id="name"
+      headerText="Student Name"
+      textAlign="Left"
+      [validationRules]="studentnamerules"
+      [edit]="editparams"
+      [showCheckbox]="showChooseRow"
+    ></e-column>
+    </div> -->
+    
 
     <!-- dynamic  -->
     <div *ngFor="let item of column">
-      <div *ngIf="item.field == 'name';else other">
-        <e-column
-          [field]="item.field.substr(0, 1).toUpperCase() + item.field.substr(1)"
+      <div *ngIf="item.field === 'name';else other">
+          <e-column
+          field="item.field"
           id="name"
           headerText="Student Name"
           textAlign="Left"
-          [validationRules]="studentnamerules"
           [edit]="editparams"
-          [showCheckbox]="showChooseRow"
+          [displayAsCheckBox]="showChooseRow"
         ></e-column>
       </div>
       <ng-template #other>
         <e-column
-          [field]="item.field.substr(0, 1).toUpperCase() + item.field.substr(1)"
-          [headerText]="
-          item.field.substr(0, 1).toUpperCase() + item.field.substr(1)"
+          field="item.field"
+          headerText = "item.fields.substr(0, 1).toUpperCase() + col.field.substr(1)"
           [edit]="editparams"
           textAlign="Left"
           [lockColumn]="lock"
-          [isFrozen]="true"
-          [edit]="editparams"
           [filterBarTemplate]="filterBarTemplate"
         ></e-column>
       </ng-template>
@@ -720,7 +730,7 @@
     id="dialog"
     #DialogDR
     allowDragging="true"
-    header="Delete Column"
+    header="Delete Row"
     content="This is a Dialog with drag enabled"
     [target]="targetElement"
     width="300px"
