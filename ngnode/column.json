@@ -24,11 +24,41 @@
     }
   },
   {
+    "field": "Branch",
+    "type": "string",
+    "id": 5
+  },
+  {
     "field": "class",
     "id": 4,
     "type": "number",
     "validation": {
       "required": true
     }
+  },
+  {
+    "field": "Branch",
+    "type": "string",
+    "id": 6
+  },
+  {
+    "field": "Branch",
+    "type": "string",
+    "id": 7
+  },
+  {
+    "field": "Branch",
+    "type": "string",
+    "id": 8
+  },
+  {
+    "field": "Branch",
+    "type": "string",
+    "id": 9
+  },
+  {
+    "field": "Branch",
+    "type": "string",
+    "id": 10
   }
 ]

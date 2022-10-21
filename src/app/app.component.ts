@@ -352,6 +352,13 @@ export class AppComponent {
       // this.colFields = Object.keys(this.data[0]);
       console.log("KEYS value", this.colFields);
     }, 1600);
+
+    this.api.getAllCol().subscribe((res: any) => {
+      this.column = res.filter((item: any) => item);
+      console.log(this.column, "response==========");
+    });
+
+
     //get the Grid model.
     this.value = localStorage.getItem("treegrid")!;
     $(".e-treegrid .e-headercell.cssClassaa").css(
@@ -394,7 +401,7 @@ export class AppComponent {
   ngOnInit(): void {
     this.api.getAllCol().subscribe((res: any) => {
       console.log("NGoninit start")
-      this.column = res.field.substr(0, 1).toUpperCase() + res.field.substr(1);
+      this.column = res
 
       console.log("API COL", res.field.substr(0, 1).toUpperCase() + res.field.substr(1));
     });
@@ -572,7 +579,6 @@ var colcolorval = window.localStorage.getItem("colcolor");
       const dialog = args.dialog;
       dialog.allowEditing = false;
       const StudentID = "StudentID";
-      dialog.column.id.allowEditing = false;
       dialog.showCloseIcon = false;
       dialog.height = 400;
       // change the header of the dialog
@@ -634,9 +640,12 @@ var colcolorval = window.localStorage.getItem("colcolor");
     dataSourceChangedEvent: DataSourceChangedEventArgs
   ): void {
     if (dataSourceChangedEvent.action === "add") {
-      console.log("DataSourceChangedEvent line 627 ::", dataSourceChangedEvent);
-      dataSourceChangedEvent
-      this.api.addRecord(dataSourceChangedEvent).subscribe(() => {
+      var tooldata:any;
+      tooldata= dataSourceChangedEvent;
+
+      console.log("DataSourceChangedEvent line 627 ::", tooldata.data.id);
+      tooldata.data.id = this.data.length + 1;
+      this.api.addRecord(tooldata).subscribe(() => {
         dataSourceChangedEvent.endEdit;
       });
     }
